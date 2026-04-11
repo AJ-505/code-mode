@@ -1,4 +1,5 @@
 # Code Mode
+
 This is a benchmark to test traditional tool-calling methods & MCP against 'Code Mode', a new paradigm gaining traction where the LLM directly writes code to achieve its outcomes. These tests are intentionally designed to mimic real-world LLM use cases.
 
 Ensure you have `bun` installed:
@@ -32,12 +33,14 @@ gh auth login
 ```
 
 And the Google Workspaces CLI:
+
 ```bash
 # For all platforms - install using npm
 npm install -g @googleworkspace/cli
 ```
 
 ... And, the Slack CLI:
+
 ```bash
 # MacOS/Linux
 curl -fsSL https://downloads.slack-edge.com/slack-cli/install.sh | bash

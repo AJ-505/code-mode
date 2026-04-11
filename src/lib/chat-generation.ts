@@ -1,39 +1,57 @@
-import { OpenRouter } from "@openrouter/agent";
+import {
+	type ChatAssistantMessage,
+	OpenRouter,
+	toChatMessage,
+} from "@openrouter/agent";
 import { env } from "../env.js";
 
-type ProprietaryModel =
+export type ProprietaryModel =
 	| "anthropic/claude-opus-4.6"
 	| "openai/gpt-5.4"
 	| "google/gemini-3.1-pro-preview";
 
-type OpenWeightModel =
+export type OpenWeightModel =
 	| "z-ai/glm-5.1"
 	| "minimax/minimax-m2.7"
 	| "moonshotai/kimi-k2.5";
 
-type FreeModel = "openRouter/free";
+export type FreeModel = "openRouter/free";
 
-type Model = ProprietaryModel | OpenWeightModel | FreeModel;
+export type Model = ProprietaryModel | OpenWeightModel | FreeModel;
 
 /**
 Prompt hierarchy - Determines order of priority
 */
-type Role = "user" | "system";
+export type Role = "user" | "system" | "assistant" | "developer";
 
-export const client = new OpenRouter({
+export const openrouter = new OpenRouter({
 	apiKey: env.OPENROUTER_API_KEY,
 });
 
 export async function generateResponse(
-	{ prompt, model, role }: { prompt: string; model: Model; role: Role },
+	{ prompt, model, role, chatHistory }: {
+		prompt: string;
+		model: Model;
+		role: Role;
+		chatHistory: ChatAssistantMessage[];
+	},
 ) {
-	const response = await client.callModel({
+	const modelResult = openrouter.callModel({
 		model,
 		input: [
+			...chatHistory,
 			{ role, content: prompt },
 		],
 	});
-	return response;
+
+	const openResponseResult = await modelResult.getResponse();
+	const additionalMessage = toChatMessage(openResponseResult);
+	const newHistory = [...chatHistory, additionalMessage];
+
+	return {
+		chatHistory: newHistory,
+		modelResult,
+	};
 }
 
 export async function callTool() {

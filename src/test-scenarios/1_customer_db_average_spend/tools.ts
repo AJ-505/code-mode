@@ -53,7 +53,7 @@ const withDb = async <T>(
 const customerSummarySchema = z.object({
   id: z.uuid(),
   name: z.string(),
-  email: z.string().email(),
+  email: z.email(),
   createdAt: z.iso.datetime(),
 });
 

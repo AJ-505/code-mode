@@ -9,4 +9,4 @@ MCP = Model Context Protocol => Standard developed by Anthropic to connect agent
 4. Retrieve a specific keyword made by a specific person in a meeting minutes on a particular day from a Google Drive folder
 5. Check the user's calendar to see how their schedule is like, and schedule a hypothetical meeting with someone in Bolivia. This requires good time-zone understanding + correct usage of available tools.
 6. Use the Github MCP server to fetch a repository, make a specific change, and create a PR.
-7. Programmatically expose a github client that exposes all the functionality of the Github API, or instead of exposing all that functioanlity,
+7. Programmatically expose a github client that exposes all the functionality of the Github API, or instead of exposing all that functionality.

@@ -2,7 +2,7 @@ import * as Bun from "bun";
 import { z } from "zod";
 
 const envSchema = z.object({
-  OPENROUTER_API_KEY: z.string(),
+  OPENROUTER_API_KEY: z.string().min(10),
 });
 
 function validateEnvironmentVariables() {

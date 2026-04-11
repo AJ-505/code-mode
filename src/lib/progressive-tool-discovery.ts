@@ -21,7 +21,6 @@ export const discoverTools = tool({
 		),
 	}),
 	execute: async ({ toolNames }) => {
-		// Return full schemas + descriptions for the requested tools
 		const discovered = toolNames.map(name => {
 			const fullTool = allLazyToolsMap.get(name);
 			if (!fullTool) return { error: `Tool ${name} not found` };
@@ -36,5 +35,4 @@ export const discoverTools = tool({
 	},
 });
 
-// 2. Your actual lazy tools (stored in a Map, not sent initially)
-const allLazyToolsMap = new Map(); // populate with real tools
+const allLazyToolsMap = new Map();

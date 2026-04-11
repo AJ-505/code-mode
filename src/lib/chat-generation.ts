@@ -36,17 +36,19 @@ export async function generateResponse(
 		chatHistory: ChatAssistantMessage[];
 	},
 ) {
+	const input = [
+		...chatHistory,
+		{ role, content: prompt },
+	];
+
 	const modelResult = openrouter.callModel({
 		model,
-		input: [
-			...chatHistory,
-			{ role, content: prompt },
-		],
+		input,
 	});
 
 	const openResponseResult = await modelResult.getResponse();
 	const additionalMessage = toChatMessage(openResponseResult);
-	const newHistory = [...chatHistory, additionalMessage];
+	const newHistory = [...input, additionalMessage];
 
 	return {
 		chatHistory: newHistory,

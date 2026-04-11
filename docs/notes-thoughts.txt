@@ -1,0 +1,4 @@
+1. We have to expose a get_datetime() tool so that the agent can know the exact Date/Time- it needs it for various operations.
+For Code Mode, we actually don't have to expose this tool, because the agent will simply write Typescript to fetch the date/time with the built-in APIs.
+
+2. For the Code Mode implementation of the Github/Slack Clients, I believe we should just directly use the Github CLI tool in the terminal (where Code Mode "lives") instead of re-implementing the interface in Code Mode. This massively simplifies what we have to do, because for code mode, we can just tell the agent that it has access to the Github CLI and it already knows how to use it. Same for Google Drive as well - we can give the agent access to the Github workspace CLI (`gws`) instead of having to re-invent the wheel. And oh, there's also a Slack CLI!

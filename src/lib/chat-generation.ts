@@ -1,4 +1,4 @@
-import { OpenRouter } from "@openrouter/sdk";
+import { OpenRouter } from "@openrouter/agent";
 import { env } from "../env.js";
 
 type ProprietaryModel =
@@ -27,13 +27,11 @@ export const client = new OpenRouter({
 export async function generateResponse(
 	{ prompt, model, role }: { prompt: string; model: Model; role: Role },
 ) {
-	const response = await client.chat.send({
-		chatRequest: {
-			model,
-			messages: [
-				{ role, content: prompt },
-			],
-		},
+	const response = await client.callModel({
+		model,
+		input: [
+			{ role, content: prompt },
+		],
 	});
 	return response;
 }

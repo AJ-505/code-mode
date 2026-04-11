@@ -1,6 +1,10 @@
 {
+  "exclude": ["node_modules", "dist"],
   // Visit https://aka.ms/tsconfig to read more about this file
   "compilerOptions": {
+    "paths": {
+      "@/*": ["./src/*"]
+    },
     // File Layout
     // "rootDir": "./src",
     // "outDir": "./dist",
@@ -15,7 +19,6 @@
     // "types": ["node"],
     // and npm install -D @types/node
     // "include": [],
-    "exclude": ["node_modules", "dist"],
 
     // Other Outputs
     "sourceMap": true,

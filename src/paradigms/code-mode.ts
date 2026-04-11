@@ -1,5 +1,5 @@
 import { OpenRouter } from "@openrouter/sdk";
-import { validateEnvironmentVariables } from "../env.js";
+import { env } from "../env.js";
 
 type ProprietaryModel =
 	| "anthropic/claude-opus-4.6"
@@ -19,8 +19,6 @@ type Model = ProprietaryModel | OpenWeightModel | FreeModel;
 Prompt hierarchy - Determines order of priority
 */
 type Role = "user" | "system";
-
-const env = validateEnvironmentVariables();
 
 export const client = new OpenRouter({
 	apiKey: env.OPENROUTER_API_KEY,

@@ -51,3 +51,16 @@ irm https://downloads.slack-edge.com/slack-cli/install-windows.ps1 | iex
 ```
 
 **NOTE**: This repo is still in its very early stages. Please contact the repo owner if things change drastically without being documented. PRs are welcome.
+
+## Benchmark 1 (Customer DB) setup
+
+Set a Postgres URL in your `.env`:
+
+`DATABASE_URL=postgres://user:password@host:5432/dbname`
+
+Then run:
+
+- `bun run db:generate`
+- `bun run db:push`
+
+Schema file: `src/db/schema.ts`

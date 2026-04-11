@@ -6,6 +6,13 @@ import { z } from "zod";
 import { env } from "../../env.js";
 import { customers, transactions } from "../../db/schema.js";
 
+const pool = postgres(env.DATABASE_URL, { max: 10 });
+const db = drizzle(pool, { schema: { customers, transactions } });
+
+export async function closeBenchmark1DbPool() {
+  await pool.end();
+}
+
 const escapeLike = (value: string) =>
   value.replaceAll("\\", "\\\\").replaceAll("%", "\\%").replaceAll("_", "\\_");
 
@@ -69,12 +76,7 @@ export const getCurrentDatetime = tool({
   description: "Get the current ISO datetime to anchor time-window analysis.",
   inputSchema: z.object({}),
   outputSchema: z.object({ now: z.iso.datetime() }),
-  execute: async () =>
-    withDb(
-      "get_current_datetime",
-      async () => ({ now: new Date().toISOString() }),
-      {}
-    ),
+  execute: async () => ({ now: new Date().toISOString() }),
 });
 
 export const getAllCustomers = tool({
@@ -93,39 +95,32 @@ export const getAllCustomers = tool({
     withDb(
       "get_all_customers",
       async () => {
-        const client = postgres(env.DATABASE_URL);
-        const db = drizzle(client, { schema: { customers } });
+        const totalResult = await db
+          .select({ count: sql<number>`count(*)::int` })
+          .from(customers);
 
-        try {
-          const totalResult = await db
-            .select({ count: sql<number>`count(*)::int` })
-            .from(customers);
+        const rows = await db
+          .select({
+            id: customers.id,
+            name: customers.name,
+            email: customers.email,
+            createdAt: customers.createdAt,
+          })
+          .from(customers)
+          .orderBy(asc(customers.createdAt))
+          .limit(input.limit)
+          .offset(input.offset);
 
-          const rows = await db
-            .select({
-              id: customers.id,
-              name: customers.name,
-              email: customers.email,
-              createdAt: customers.createdAt,
-            })
-            .from(customers)
-            .orderBy(asc(customers.createdAt))
-            .limit(input.limit)
-            .offset(input.offset);
-
-          return {
-            customers: rows.map((row) => ({
-              id: row.id,
-              name: row.name,
-              email: row.email,
-              createdAt: row.createdAt.toISOString(),
-            })),
-            count: totalResult[0]?.count ?? 0,
-            returnedCount: rows.length,
-          };
-        } finally {
-          await client.end();
-        }
+        return {
+          customers: rows.map((row) => ({
+            id: row.id,
+            name: row.name,
+            email: row.email,
+            createdAt: row.createdAt.toISOString(),
+          })),
+          count: totalResult[0]?.count ?? 0,
+          returnedCount: rows.length,
+        };
       },
       input
     ),
@@ -147,41 +142,35 @@ export const searchCustomersByName = tool({
     withDb(
       "search_customers_by_name",
       async () => {
-        const client = postgres(env.DATABASE_URL);
-        const db = drizzle(client, { schema: { customers } });
         const escapedQuery = escapeLike(input.query);
 
-        try {
-          const totalResult = await db
-            .select({ count: sql<number>`count(*)::int` })
-            .from(customers)
-            .where(ilike(customers.name, `%${escapedQuery}%`));
+        const totalResult = await db
+          .select({ count: sql<number>`count(*)::int` })
+          .from(customers)
+          .where(ilike(customers.name, `%${escapedQuery}%`));
 
-          const rows = await db
-            .select({
-              id: customers.id,
-              name: customers.name,
-              email: customers.email,
-              createdAt: customers.createdAt,
-            })
-            .from(customers)
-            .where(ilike(customers.name, `%${escapedQuery}%`))
-            .orderBy(asc(customers.name))
-            .limit(input.limit);
+        const rows = await db
+          .select({
+            id: customers.id,
+            name: customers.name,
+            email: customers.email,
+            createdAt: customers.createdAt,
+          })
+          .from(customers)
+          .where(ilike(customers.name, `%${escapedQuery}%`))
+          .orderBy(asc(customers.name))
+          .limit(input.limit);
 
-          return {
-            customers: rows.map((row) => ({
-              id: row.id,
-              name: row.name,
-              email: row.email,
-              createdAt: row.createdAt.toISOString(),
-            })),
-            count: totalResult[0]?.count ?? 0,
-            returnedCount: rows.length,
-          };
-        } finally {
-          await client.end();
-        }
+        return {
+          customers: rows.map((row) => ({
+            id: row.id,
+            name: row.name,
+            email: row.email,
+            createdAt: row.createdAt.toISOString(),
+          })),
+          count: totalResult[0]?.count ?? 0,
+          returnedCount: rows.length,
+        };
       },
       input
     ),
@@ -208,45 +197,38 @@ export const listTransactionsInWindow = tool({
         const from = new Date(input.fromIso);
         const to = new Date(input.toIso);
 
-        const client = postgres(env.DATABASE_URL);
-        const db = drizzle(client, { schema: { transactions } });
+        const rows = await db
+          .select({
+            id: transactions.id,
+            customerId: transactions.customerId,
+            amount: transactions.amount,
+            createdAt: transactions.createdAt,
+          })
+          .from(transactions)
+          .where(
+            input.customerId
+              ? and(
+                  eq(transactions.customerId, input.customerId),
+                  gte(transactions.createdAt, from),
+                  lte(transactions.createdAt, to)
+                )
+              : and(
+                  gte(transactions.createdAt, from),
+                  lte(transactions.createdAt, to)
+                )
+          )
+          .orderBy(asc(transactions.createdAt))
+          .limit(input.limit);
 
-        try {
-          const rows = await db
-            .select({
-              id: transactions.id,
-              customerId: transactions.customerId,
-              amount: transactions.amount,
-              createdAt: transactions.createdAt,
-            })
-            .from(transactions)
-            .where(
-              input.customerId
-                ? and(
-                    eq(transactions.customerId, input.customerId),
-                    gte(transactions.createdAt, from),
-                    lte(transactions.createdAt, to)
-                  )
-                : and(
-                    gte(transactions.createdAt, from),
-                    lte(transactions.createdAt, to)
-                  )
-            )
-            .orderBy(asc(transactions.createdAt))
-            .limit(input.limit);
-
-          return {
-            transactions: rows.map((row) => ({
-              id: row.id,
-              customerId: row.customerId,
-              amount: Number(row.amount),
-              createdAt: row.createdAt.toISOString(),
-            })),
-            count: rows.length,
-          };
-        } finally {
-          await client.end();
-        }
+        return {
+          transactions: rows.map((row) => ({
+            id: row.id,
+            customerId: row.customerId,
+            amount: Number(row.amount),
+            createdAt: row.createdAt.toISOString(),
+          })),
+          count: rows.length,
+        };
       },
       input
     ),
@@ -276,42 +258,35 @@ export const computeCustomerSpendStats = tool({
         const from = new Date(input.fromIso);
         const to = new Date(input.toIso);
 
-        const client = postgres(env.DATABASE_URL);
-        const db = drizzle(client, { schema: { transactions } });
+        const rows = await db
+          .select({
+            transactionCount: sql<number>`count(*)::int`,
+            totalSpend: sql<number>`coalesce(sum(${transactions.amount}), 0)::float8`,
+            averageSpend: sql<number>`coalesce(avg(${transactions.amount}), 0)::float8`,
+          })
+          .from(transactions)
+          .where(
+            and(
+              eq(transactions.customerId, input.customerId),
+              gte(transactions.createdAt, from),
+              lte(transactions.createdAt, to)
+            )
+          );
 
-        try {
-          const rows = await db
-            .select({
-              transactionCount: sql<number>`count(*)::int`,
-              totalSpend: sql<number>`coalesce(sum(${transactions.amount}), 0)::float8`,
-              averageSpend: sql<number>`coalesce(avg(${transactions.amount}), 0)::float8`,
-            })
-            .from(transactions)
-            .where(
-              and(
-                eq(transactions.customerId, input.customerId),
-                gte(transactions.createdAt, from),
-                lte(transactions.createdAt, to)
-              )
-            );
+        const stats = rows[0] ?? {
+          transactionCount: 0,
+          totalSpend: 0,
+          averageSpend: 0,
+        };
 
-          const stats = rows[0] ?? {
-            transactionCount: 0,
-            totalSpend: 0,
-            averageSpend: 0,
-          };
-
-          return {
-            customerId: input.customerId,
-            fromIso: input.fromIso,
-            toIso: input.toIso,
-            transactionCount: stats.transactionCount,
-            totalSpend: Number(Number(stats.totalSpend ?? 0).toFixed(2)),
-            averageSpend: Number(Number(stats.averageSpend ?? 0).toFixed(2)),
-          };
-        } finally {
-          await client.end();
-        }
+        return {
+          customerId: input.customerId,
+          fromIso: input.fromIso,
+          toIso: input.toIso,
+          transactionCount: stats.transactionCount,
+          totalSpend: Number((stats.totalSpend ?? 0).toFixed(2)),
+          averageSpend: Number((stats.averageSpend ?? 0).toFixed(2)),
+        };
       },
       input
     ),

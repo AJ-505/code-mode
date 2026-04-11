@@ -88,9 +88,16 @@ const discoveryCalls = await discoveryResult.getToolCalls();
 const discoveredNames = discoveryCalls
   .filter((call) => call.name === "discover_tools")
   .flatMap((call) => {
-    const maybeNames = (call.arguments as { toolNames?: unknown }).toolNames;
-    return Array.isArray(maybeNames)
-      ? maybeNames.filter((name): name is string => typeof name === "string")
+    const args = call.arguments;
+    if (typeof args !== "object" || args === null || !("toolNames" in args)) {
+      return [];
+    }
+
+    const maybeToolNames = (args as { toolNames?: unknown }).toolNames;
+    return Array.isArray(maybeToolNames)
+      ? maybeToolNames.filter(
+          (name): name is string => typeof name === "string"
+        )
       : [];
   });
 

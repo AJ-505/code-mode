@@ -28,7 +28,7 @@ const benchmarkObs = (event: string, data: Record<string, unknown>) => {
   );
 };
 
-const withDb = async <T>(
+const withObservability = async <T>(
   toolName: string,
   operation: () => Promise<T>,
   input: Record<string, unknown>
@@ -92,7 +92,7 @@ export const getAllCustomers = tool({
     returnedCount: z.number().int().nonnegative(),
   }),
   execute: async (input) =>
-    withDb(
+    withObservability(
       "get_all_customers",
       async () => {
         const totalResult = await db
@@ -139,7 +139,7 @@ export const searchCustomersByName = tool({
     returnedCount: z.number().int().nonnegative(),
   }),
   execute: async (input) =>
-    withDb(
+    withObservability(
       "search_customers_by_name",
       async () => {
         const escapedQuery = escapeLike(input.query);
@@ -189,13 +189,26 @@ export const listTransactionsInWindow = tool({
   outputSchema: z.object({
     transactions: z.array(transactionRowSchema),
     count: z.number().int().nonnegative(),
+    returnedCount: z.number().int().nonnegative(),
   }),
   execute: async (input) =>
-    withDb(
+    withObservability(
       "list_transactions_in_window",
       async () => {
         const from = new Date(input.fromIso);
         const to = new Date(input.toIso);
+        const whereClause = input.customerId
+          ? and(
+              eq(transactions.customerId, input.customerId),
+              gte(transactions.createdAt, from),
+              lte(transactions.createdAt, to)
+            )
+          : and(gte(transactions.createdAt, from), lte(transactions.createdAt, to));
+
+        const totalResult = await db
+          .select({ count: sql<number>`count(*)::int` })
+          .from(transactions)
+          .where(whereClause);
 
         const rows = await db
           .select({
@@ -205,18 +218,7 @@ export const listTransactionsInWindow = tool({
             createdAt: transactions.createdAt,
           })
           .from(transactions)
-          .where(
-            input.customerId
-              ? and(
-                  eq(transactions.customerId, input.customerId),
-                  gte(transactions.createdAt, from),
-                  lte(transactions.createdAt, to)
-                )
-              : and(
-                  gte(transactions.createdAt, from),
-                  lte(transactions.createdAt, to)
-                )
-          )
+          .where(whereClause)
           .orderBy(asc(transactions.createdAt))
           .limit(input.limit);
 
@@ -227,7 +229,8 @@ export const listTransactionsInWindow = tool({
             amount: Number(row.amount),
             createdAt: row.createdAt.toISOString(),
           })),
-          count: rows.length,
+          count: totalResult[0]?.count ?? 0,
+          returnedCount: rows.length,
         };
       },
       input
@@ -252,7 +255,7 @@ export const computeCustomerSpendStats = tool({
     averageSpend: z.number(),
   }),
   execute: async (input) =>
-    withDb(
+    withObservability(
       "compute_customer_spend_stats",
       async () => {
         const from = new Date(input.fromIso);

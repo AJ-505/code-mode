@@ -1,7 +1,7 @@
 import { generateResponse, type Model } from "../../lib/chat-generation.js";
 import { PROMPTS } from "../../lib/prompts.js";
 
-const model: Model = "openRouter/free";
+const model: Model = "openrouter/free";
 
 let { chatHistory } = await generateResponse({
   model,

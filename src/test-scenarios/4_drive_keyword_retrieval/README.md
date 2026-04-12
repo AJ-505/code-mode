@@ -1,13 +1,11 @@
 # Scenario 4 (Google Drive Keyword Retrieval)
 
-Status: scaffolded placeholder for upcoming implementation.
+Status: wired and runnable.
 
-Planned benchmark:
+Run commands:
 
-- regular mode using constrained Google Drive/Docs tools
-- code-mode using restricted code execution with a Google API wrapper
+- `bun run benchmark:scenario4:regular`
+- `bun run benchmark:scenario4:code-mode`
 
-Goal:
-
-- retrieve a specific keyword said by a specific person from meeting notes on a target day
-- compare correctness, speed, token usage, and estimated cost
+The current implementation uses deterministic baseline matching excerpts to validate harness behavior,
+plus full observability logs in `results/` and paired regular/code-mode comparison output.

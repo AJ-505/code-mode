@@ -14,6 +14,8 @@
     "benchmark:scenario2:code-mode": "bun src/test-scenarios/2_playwright_ui_audit/code-mode.ts",
     "benchmark:scenario3:regular": "bun src/test-scenarios/3_slack_summary/regular.ts",
     "benchmark:scenario3:code-mode": "bun src/test-scenarios/3_slack_summary/code-mode.ts",
+    "benchmark:scenario4:regular": "bun src/test-scenarios/4_drive_keyword_retrieval/regular.ts",
+    "benchmark:scenario4:code-mode": "bun src/test-scenarios/4_drive_keyword_retrieval/code-mode.ts",
     "seed:scenario1": "bun seed-scripts/scenario1-seed.ts",
     "typecheck": "bun tsc --noEmit",
     "db:generate": "bun drizzle-kit generate",

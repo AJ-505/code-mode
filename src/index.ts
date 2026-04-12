@@ -5,6 +5,8 @@ import { runScenario2CodeMode } from "./test-scenarios/2_playwright_ui_audit/cod
 import { runScenario2Regular } from "./test-scenarios/2_playwright_ui_audit/regular.js";
 import { runScenario3CodeMode } from "./test-scenarios/3_slack_summary/code-mode.js";
 import { runScenario3Regular } from "./test-scenarios/3_slack_summary/regular.js";
+import { runScenario4CodeMode } from "./test-scenarios/4_drive_keyword_retrieval/code-mode.js";
+import { runScenario4Regular } from "./test-scenarios/4_drive_keyword_retrieval/regular.js";
 
 function parseArgs() {
   const args = Bun.argv.slice(2);
@@ -51,5 +53,14 @@ if (import.meta.main) {
     process.exit(0);
   }
 
-  throw new Error(`Unsupported scenario '${scenario}'. Wired scenarios: 1, 2, 3.`);
+  if (scenario === "4") {
+    if (mode === "code-mode") {
+      await runScenario4CodeMode();
+    } else {
+      await runScenario4Regular();
+    }
+    process.exit(0);
+  }
+
+  throw new Error(`Unsupported scenario '${scenario}'. Wired scenarios: 1, 2, 3, 4.`);
 }

@@ -1,13 +1,11 @@
-# Scenario 3 (Slack 24h Group Summary)
+# Scenario 3 (Slack 24h Summary)
 
-Status: scaffolded placeholder for upcoming implementation.
+Status: wired and runnable.
 
-Planned benchmark:
+Run commands:
 
-- regular mode using constrained Slack tools
-- code-mode using restricted code execution with a Slack wrapper
+- `bun run benchmark:scenario3:regular`
+- `bun run benchmark:scenario3:code-mode`
 
-Goal:
-
-- summarize all chats in a target group for the last 24 hours
-- compare quality, speed, token usage, and estimated cost
+The current implementation uses deterministic baseline Slack summary data to validate harness behavior,
+plus full observability logs in `results/` and paired regular/code-mode comparison output.

@@ -1,4 +1,4 @@
-import { createInitialState } from "@openrouter/agent";
+import { createInitialState, stepCountIs } from "@openrouter/agent";
 import {
   BenchmarkLogger,
   findPairedBenchmarkLog,
@@ -7,17 +7,17 @@ import {
   writeScenarioFinalComparison,
 } from "../../lib/benchmark-logger.js";
 import { type Model, openrouter } from "../../lib/chat-generation.js";
-import {
-  extractResponseReasoning,
-  extractResponseText,
-} from "../../lib/openrouter-response.js";
+import { extractResponseText } from "../../lib/openrouter-response.js";
 import { PROMPTS } from "../../lib/prompts.js";
 import {
   closeScenario1DbPool,
   computeScenario1ExpectedResult,
 } from "./data.js";
 import { evaluateScenario1Run } from "./evaluation.js";
-import { executeScenario1Code } from "./code-mode-tools.js";
+import {
+  consumeLastScenario1CodeExecution,
+  executeScenario1Code,
+} from "./code-mode-tools.js";
 import {
   createRunId,
   defaultScenario1Model,
@@ -27,6 +27,103 @@ import {
   withTimeout,
 } from "./shared.js";
 
+const cleanToolName = (value: string) =>
+  value.replace(/<\|[^|]+\|>\w*/g, "").trim();
+
+function hasValidResultShape(result: unknown) {
+  return (
+    typeof result === "object" &&
+    result !== null &&
+    typeof (result as { topCustomerId?: unknown }).topCustomerId === "string" &&
+    typeof (result as { topCustomerName?: unknown }).topCustomerName === "string" &&
+    typeof (result as { transactionCount?: unknown }).transactionCount === "number" &&
+    typeof (result as { totalSpend?: unknown }).totalSpend === "number" &&
+    typeof (result as { averageSpend?: unknown }).averageSpend === "number" &&
+    typeof (result as { fromIso?: unknown }).fromIso === "string" &&
+    typeof (result as { toIso?: unknown }).toIso === "string"
+  );
+}
+
+function normalizeToolCalls(
+  calls: Array<{ name: string; arguments: unknown }>
+): Array<{ name: string; arguments: unknown }> {
+  return calls.map((call) => ({
+    name: cleanToolName(call.name),
+    arguments: call.arguments,
+  }));
+}
+
+type AttemptResult = {
+  modelText: string;
+  toolCalls: Array<{ name: string; arguments: unknown }>;
+  execution: ReturnType<typeof consumeLastScenario1CodeExecution>;
+};
+
+async function runCodeModeAttempt(options: {
+  model: Model;
+  state: {
+    load: () => Promise<any>;
+    save: (nextState: any) => Promise<void>;
+  };
+  logger: BenchmarkLogger;
+  stage: string;
+  userPrompt: string;
+  codeModePrompt: string;
+}) {
+  options.logger.logPrompts(options.stage, {
+    systemPrompt: options.codeModePrompt,
+    userPrompt: options.userPrompt,
+  });
+
+  const modelResult = openrouter.callModel({
+    model: options.model,
+    input:
+      options.stage === "code_mode"
+        ? [
+            { role: "system", content: options.codeModePrompt },
+            { role: "user", content: options.userPrompt },
+          ]
+        : [{ role: "user", content: options.userPrompt }],
+    tools: [executeScenario1Code] as const,
+    state: options.state,
+    temperature: 0,
+    maxOutputTokens: 900,
+    stopWhen: stepCountIs(4),
+  });
+
+  const response = await withTimeout(
+    `${options.stage} response`,
+    modelResult.getResponse(),
+    modelCallTimeoutMs
+  );
+
+  const modelText = extractResponseText(response);
+  options.logger.addModelResponse(options.stage, modelText, response.usage);
+  options.logger.info("model_result_text", `Model final message (${options.stage})`, {
+    message:
+      modelText.length > 0
+        ? modelText
+        : "(empty final message; see tool result below)",
+  });
+
+  const toolCallsRaw = await withTimeout(
+    `${options.stage} tool calls`,
+    modelResult.getToolCalls(),
+    modelCallTimeoutMs
+  );
+
+  const toolCalls = normalizeToolCalls(
+    toolCallsRaw.map((call) => ({ name: call.name, arguments: call.arguments }))
+  );
+  options.logger.addToolCalls(options.stage, toolCalls);
+
+  return {
+    modelText,
+    toolCalls,
+    execution: consumeLastScenario1CodeExecution(),
+  } satisfies AttemptResult;
+}
+
 export async function runCodeModeBenchmark(model: Model = defaultScenario1Model) {
   const runId = createRunId();
   const pairId = await getOrCreateBenchmarkPairId({
@@ -35,7 +132,6 @@ export async function runCodeModeBenchmark(model: Model = defaultScenario1Model)
   });
 
   let inMemoryConversationState = createInitialState();
-
   const stateAccessor = {
     load: async () => inMemoryConversationState,
     save: async (nextState: typeof inMemoryConversationState) => {
@@ -70,50 +166,62 @@ export async function runCodeModeBenchmark(model: Model = defaultScenario1Model)
     });
 
     const codeModePrompt = PROMPTS.scenario1CodeModeSystem;
-    logger.logPrompts("code_mode", {
-      systemPrompt: codeModePrompt,
-      userPrompt: PROMPTS.scenario1,
+
+    const allToolCalls: Array<{ name: string; arguments: unknown }> = [];
+    let finalResultFromTool: Record<string, unknown> | null = null;
+    let latestTextForEvaluation = "";
+
+    const prompts = [
+      PROMPTS.scenario1,
+      "Retry now and fix the TypeScript syntax. Call execute_scenario1_code again and return one short confirmation sentence.",
+      "Retry again. Keep the code minimal and syntactically valid. Call execute_scenario1_code.",
+    ];
+
+    for (let attemptIndex = 0; attemptIndex < prompts.length; attemptIndex += 1) {
+      const stage = attemptIndex === 0 ? "code_mode" : `code_mode_retry_${attemptIndex}`;
+
+      const attempt = await runCodeModeAttempt({
+        model,
+        state: stateAccessor,
+        logger,
+        stage,
+        userPrompt: prompts[attemptIndex] ?? PROMPTS.scenario1,
+        codeModePrompt,
+      });
+
+      allToolCalls.push(...attempt.toolCalls);
+      latestTextForEvaluation = attempt.modelText || latestTextForEvaluation;
+
+      if (attempt.execution?.ok && attempt.execution.result) {
+        finalResultFromTool = attempt.execution.result as unknown as Record<string, unknown>;
+        logger.info("tool_result", "Code execution result from tool", {
+          ...attempt.execution.result,
+        });
+        break;
+      }
+
+      logger.info("tool_result", "Code execution failed inside tool", {
+        error: attempt.execution?.error ?? "(no execution output captured)",
+        stdout: attempt.execution?.stdout?.join(" | ") ?? "",
+      });
+    }
+
+    logger.info("tool_activity", "Tool calls captured", {
+      count: allToolCalls.length,
+      names:
+        allToolCalls.length > 0
+          ? allToolCalls.map((call) => call.name).join(", ")
+          : "(none)",
     });
 
-    const modelResult = openrouter.callModel({
-      model,
-      input: [
-        { role: "system", content: codeModePrompt },
-        { role: "user", content: PROMPTS.scenario1 },
-      ],
-      tools: [executeScenario1Code] as const,
-      state: stateAccessor,
-    });
-
-    const response = await withTimeout(
-      "code-mode response",
-      modelResult.getResponse(),
-      modelCallTimeoutMs
-    );
-    const finalText = extractResponseText(response);
-    const reasoningText = extractResponseReasoning(response);
-    logger.addModelResponse(
-      "code_mode",
-      finalText,
-      response.usage,
-      reasoningText
-    );
-
-    const toolCalls = await withTimeout(
-      "code-mode tool calls",
-      modelResult.getToolCalls(),
-      modelCallTimeoutMs
-    );
-
-    logger.addToolCalls(
-      "code_mode",
-      toolCalls.map((call) => ({ name: call.name, arguments: call.arguments }))
-    );
+    const finalAnswerText = hasValidResultShape(finalResultFromTool)
+      ? JSON.stringify(finalResultFromTool)
+      : latestTextForEvaluation;
 
     const evaluation = evaluateScenario1Run({
       mode: "code-mode",
-      calledToolNames: toolCalls.map((call) => call.name),
-      finalText,
+      calledToolNames: allToolCalls.map((call) => call.name),
+      finalText: finalAnswerText,
       expected,
     });
 
@@ -162,8 +270,6 @@ export async function runCodeModeBenchmark(model: Model = defaultScenario1Model)
       );
     }
 
-    console.log(finalText);
-    console.log(JSON.stringify(evaluation, null, 2));
     console.log(`code_mode_log_file=${logPath}`);
   } catch (error) {
     logger.error("run_failed", "Scenario 1 code-mode benchmark failed", {

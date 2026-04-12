@@ -107,3 +107,44 @@ export function extractResponseReasoning(response: { output?: unknown }): string
 
   return chunks.join("\n").trim();
 }
+
+export function extractFunctionCallOutputs(response: { output?: unknown }) {
+  const output = response.output;
+  if (!Array.isArray(output)) return [] as Array<{ callId?: string; output: unknown }>;
+
+  const results: Array<{ callId?: string; output: unknown }> = [];
+
+  for (const item of output) {
+    if (typeof item !== "object" || item === null) continue;
+
+    const type =
+      "type" in item && typeof (item as { type?: unknown }).type === "string"
+        ? (item as { type: string }).type
+        : "";
+
+    if (type !== "function_call_output") continue;
+
+    const callId =
+      "callId" in item && typeof (item as { callId?: unknown }).callId === "string"
+        ? (item as { callId: string }).callId
+        : null;
+
+    const rawOutput = (item as { output?: unknown }).output;
+    let parsedOutput: unknown = rawOutput;
+
+    if (typeof rawOutput === "string") {
+      const trimmed = rawOutput.trim();
+      if (trimmed.startsWith("{") || trimmed.startsWith("[")) {
+        try {
+          parsedOutput = JSON.parse(trimmed);
+        } catch {
+          parsedOutput = rawOutput;
+        }
+      }
+    }
+
+    results.push(callId ? { callId, output: parsedOutput } : { output: parsedOutput });
+  }
+
+  return results;
+}

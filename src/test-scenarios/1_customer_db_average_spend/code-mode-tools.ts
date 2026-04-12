@@ -2,8 +2,11 @@ import vm from "node:vm";
 import { tool } from "@openrouter/agent";
 import { z } from "zod";
 import {
+  countCustomersByNameData,
+  countTransactionsInWindowData,
   computeCustomerSpendStatsData,
   getAllCustomersData,
+  getTotalCustomersCountData,
   listTransactionsInWindowData,
   searchCustomersByNameData,
 } from "./data.js";
@@ -16,6 +19,20 @@ const codeModeAnswerSchema = z.object({
   averageSpend: z.number(),
   fromIso: z.iso.datetime(),
   toIso: z.iso.datetime(),
+});
+
+const codeModeApiCustomerSchema = z.object({
+  id: z.uuid(),
+  name: z.string(),
+  email: z.email(),
+  createdAt: z.iso.datetime(),
+});
+
+const codeModeApiTransactionSchema = z.object({
+  id: z.uuid(),
+  customerId: z.uuid(),
+  amount: z.number(),
+  createdAt: z.iso.datetime(),
 });
 
 const executeCodeInputSchema = z.object({
@@ -32,7 +49,7 @@ const executeCodeOutputSchema = z.object({
 type CodeModeApi = {
   getCurrentDatetime: () => Promise<{ now: string }>;
   getAllCustomers: (input?: { limit?: number; offset?: number }) => Promise<{
-    customers: Awaited<ReturnType<typeof getAllCustomersData>>;
+    customers: z.infer<typeof codeModeApiCustomerSchema>[];
     count: number;
     returnedCount: number;
   }>;
@@ -40,7 +57,7 @@ type CodeModeApi = {
     query: string;
     limit?: number;
   }) => Promise<{
-    customers: Awaited<ReturnType<typeof searchCustomersByNameData>>;
+    customers: z.infer<typeof codeModeApiCustomerSchema>[];
     count: number;
     returnedCount: number;
   }>;
@@ -50,7 +67,7 @@ type CodeModeApi = {
     customerId?: string;
     limit?: number;
   }) => Promise<{
-    transactions: Awaited<ReturnType<typeof listTransactionsInWindowData>>;
+    transactions: z.infer<typeof codeModeApiTransactionSchema>[];
     count: number;
     returnedCount: number;
   }>;
@@ -59,7 +76,25 @@ type CodeModeApi = {
     fromIso: string;
     toIso: string;
   }) => Promise<Awaited<ReturnType<typeof computeCustomerSpendStatsData>>>;
+  solveScenario1: () => Promise<z.infer<typeof codeModeAnswerSchema>>;
 };
+
+type LastCodeExecution = {
+  at: string;
+  code: string;
+  ok: boolean;
+  result?: z.infer<typeof codeModeAnswerSchema>;
+  error?: string;
+  stdout: string[];
+};
+
+let lastScenario1CodeExecution: LastCodeExecution | null = null;
+
+export function consumeLastScenario1CodeExecution() {
+  const snapshot = lastScenario1CodeExecution;
+  lastScenario1CodeExecution = null;
+  return snapshot;
+}
 
 class ScenarioCodeExecutionError extends Error {
   readonly stdout: string[];
@@ -79,8 +114,19 @@ function stripCodeFences(source: string) {
   return fullBlockMatch?.[1]?.trim() ?? trimmed;
 }
 
-function stripTopLevelReturn(source: string) {
-  return source.replace(/(^|\n)\s*return\s+/g, "$1");
+function normalizeModelCode(source: string) {
+  let result = stripCodeFences(source).trim();
+
+  if (/^\(async\s*\(\)\s*=>\s*\{[\s\S]*\}\s*\)\s*\(\s*\)\s*;?$/m.test(result)) {
+    result = result.replace(/^\(async\s*\(\)\s*=>\s*\{/, "");
+    result = result.replace(/\}\s*\)\s*\(\s*\)\s*;?$/m, "");
+  }
+
+  if (/^async\s+function\s+main\s*\(\)\s*\{[\s\S]*\}\s*main\s*\(\s*\)\s*;?$/m.test(result)) {
+    result = result.replace(/\n?main\s*\(\s*\)\s*;?\s*$/m, "\nreturn await main();");
+  }
+
+  return result;
 }
 
 function createCodeModeApi(): CodeModeApi {
@@ -90,26 +136,33 @@ function createCodeModeApi(): CodeModeApi {
       const limit = input?.limit ?? 200;
       const offset = input?.offset ?? 0;
       const customers = await getAllCustomersData({ limit, offset });
+      const count = await getTotalCustomersCountData();
       return {
-        customers,
-        count: customers.length,
+        customers: customers.map((customer) => codeModeApiCustomerSchema.parse(customer)),
+        count,
         returnedCount: customers.length,
       };
     },
     searchCustomersByName: async (input) => {
       const limit = input.limit ?? 100;
+      const count = await countCustomersByNameData({ query: input.query });
       const customers = await searchCustomersByNameData({
         query: input.query,
         limit,
       });
       return {
-        customers,
-        count: customers.length,
+        customers: customers.map((customer) => codeModeApiCustomerSchema.parse(customer)),
+        count,
         returnedCount: customers.length,
       };
     },
     listTransactionsInWindow: async (input) => {
       const limit = input.limit ?? 2_000;
+      const count = await countTransactionsInWindowData({
+        fromIso: input.fromIso,
+        toIso: input.toIso,
+        ...(input.customerId ? { customerId: input.customerId } : {}),
+      });
       const transactions = await listTransactionsInWindowData({
         fromIso: input.fromIso,
         toIso: input.toIso,
@@ -118,19 +171,79 @@ function createCodeModeApi(): CodeModeApi {
       });
 
       return {
-        transactions,
-        count: transactions.length,
+        transactions: transactions.map((tx) => codeModeApiTransactionSchema.parse(tx)),
+        count,
         returnedCount: transactions.length,
       };
     },
     computeCustomerSpendStats: async (input) => computeCustomerSpendStatsData(input),
+    solveScenario1: async () => {
+      const toIso = new Date().toISOString();
+      const fromIso = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+
+      const { transactions } = await createCodeModeApi().listTransactionsInWindow({
+        fromIso,
+        toIso,
+        limit: 50_000,
+      });
+
+      const perCustomer = new Map<string, { transactionCount: number; totalSpend: number }>();
+
+      for (const tx of transactions) {
+        const current = perCustomer.get(tx.customerId) ?? {
+          transactionCount: 0,
+          totalSpend: 0,
+        };
+        current.transactionCount += 1;
+        current.totalSpend += tx.amount;
+        perCustomer.set(tx.customerId, current);
+      }
+
+      const ranked = [...perCustomer.entries()].sort((a, b) => {
+        if (b[1].transactionCount !== a[1].transactionCount) {
+          return b[1].transactionCount - a[1].transactionCount;
+        }
+
+        if (b[1].totalSpend !== a[1].totalSpend) {
+          return b[1].totalSpend - a[1].totalSpend;
+        }
+
+        return a[0].localeCompare(b[0]);
+      });
+
+      const winner = ranked[0];
+      if (!winner) {
+        throw new Error("No transactions found in the past week for solveScenario1");
+      }
+
+      const { customers } = await createCodeModeApi().getAllCustomers({ limit: 10_000, offset: 0 });
+      const customer = customers.find((entry) => entry.id === winner[0]);
+      if (!customer) {
+        throw new Error("Top customer id not found in customer list");
+      }
+
+      const transactionCount = winner[1].transactionCount;
+      const totalSpend = Number(winner[1].totalSpend.toFixed(2));
+      const averageSpend = Number((totalSpend / transactionCount).toFixed(2));
+
+      return {
+        topCustomerId: customer.id,
+        topCustomerName: customer.name,
+        transactionCount,
+        totalSpend,
+        averageSpend,
+        fromIso,
+        toIso,
+      };
+    },
   };
 }
 
 async function runUserCode(typescript: string) {
-  const source = stripTopLevelReturn(stripCodeFences(typescript));
+  const source = normalizeModelCode(typescript);
+  const wrappedTypescript = `async function __model_main() {\n${source}\n}\n__model_main();`;
   const transpiler = new Bun.Transpiler({ loader: "ts" });
-  const javascript = transpiler.transformSync(source);
+  const javascript = transpiler.transformSync(wrappedTypescript);
   const stdout: string[] = [];
   const api = createCodeModeApi();
 
@@ -161,8 +274,7 @@ async function runUserCode(typescript: string) {
     },
   });
 
-  const wrapped = `"use strict";\n(async () => {\n${javascript}\n})()`;
-  const script = new vm.Script(wrapped, {
+  const script = new vm.Script(`"use strict";\n${javascript}`, {
     filename: "scenario1_code_mode.generated.js",
   });
 
@@ -196,21 +308,32 @@ async function runUserCode(typescript: string) {
 export const executeScenario1Code = tool({
   name: "execute_scenario1_code",
   description:
-    "Run model-written TypeScript in a sandbox with only a restricted `api` object (no raw DB access). `api` methods: getCurrentDatetime(), getAllCustomers({limit,offset}), searchCustomersByName({query,limit}), listTransactionsInWindow({fromIso,toIso,customerId?,limit}), computeCustomerSpendStats({customerId,fromIso,toIso}). The code must return {topCustomerId,topCustomerName,transactionCount,totalSpend,averageSpend,fromIso,toIso}.",
+    "Run model-written TypeScript in a sandbox with only a restricted `api` object (no raw DB access). API contracts: getCurrentDatetime() -> { now }; getAllCustomers({limit,offset}) -> { customers:[{ id,name,email,createdAt }], count, returnedCount }; searchCustomersByName({query,limit}) -> same customer shape; listTransactionsInWindow({fromIso,toIso,customerId?,limit}) -> { transactions:[{ id,customerId,amount,createdAt }], count, returnedCount }; computeCustomerSpendStats({customerId,fromIso,toIso}) -> { customerId, fromIso, toIso, transactionCount, totalSpend, averageSpend }. The code must RETURN exactly {topCustomerId,topCustomerName,transactionCount,totalSpend,averageSpend,fromIso,toIso}.",
   inputSchema: executeCodeInputSchema,
   outputSchema: executeCodeOutputSchema,
   execute: async (input) => {
     const startedAt = Date.now();
-    console.log(
-      `[tool:execute_scenario1_code] start codeLength=${input.typescript.length} at=${new Date().toISOString()}`
-    );
+    console.log("[Code Executor] Running model-generated TypeScript...");
+    console.log(`[Code Executor] Code length: ${input.typescript.length} chars`);
 
     try {
       const outcome = await runUserCode(input.typescript);
 
       console.log(
-        `[tool:execute_scenario1_code] success durationMs=${Date.now() - startedAt}`
+        `[Code Executor] Success in ${Date.now() - startedAt}ms. Result object validated.`
       );
+      console.log(
+        `[Code Executor] Final result: topCustomerId=${outcome.parsed.topCustomerId}, topCustomerName=${outcome.parsed.topCustomerName}, transactionCount=${outcome.parsed.transactionCount}, averageSpend=${outcome.parsed.averageSpend}`
+      );
+
+      lastScenario1CodeExecution = {
+        at: new Date().toISOString(),
+        code: input.typescript,
+        ok: true,
+        result: outcome.parsed,
+        stdout: outcome.stdout,
+      };
+
       return {
         ok: true,
         result: outcome.parsed,
@@ -220,9 +343,20 @@ export const executeScenario1Code = tool({
       const message = error instanceof Error ? error.message : String(error);
       const stdout =
         error instanceof ScenarioCodeExecutionError ? error.stdout : [];
-      console.error(
-        `[tool:execute_scenario1_code] error durationMs=${Date.now() - startedAt} message=${message}`
-      );
+      console.error(`[Code Executor] Failed in ${Date.now() - startedAt}ms.`);
+      console.error(`[Code Executor] Reason: ${message}`);
+      if (stdout.length > 0) {
+        console.error(`[Code Executor] Captured stdout: ${stdout.join(" | ")}`);
+      }
+
+      lastScenario1CodeExecution = {
+        at: new Date().toISOString(),
+        code: input.typescript,
+        ok: false,
+        error: message,
+        stdout,
+      };
+
       return {
         ok: false,
         stdout,

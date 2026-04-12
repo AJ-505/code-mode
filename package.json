@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "@openrouter/agent": "^0.3.0",
+    "chalk": "^5.4.1",
     "drizzle-orm": "^0.45.2",
     "postgres": "^3.4.9",
     "zod": "^4.3.6"

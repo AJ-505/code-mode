@@ -1,0 +1,109 @@
+{
+  "benchmarkId": "1_customer_db_average_spend",
+  "scenarioNumber": 1,
+  "mode": "code-mode",
+  "model": "google/gemma-4-26b-a4b-it:free",
+  "pairId": "d84ac1ea7660",
+  "runId": "6c3f5a190231",
+  "runStartedAt": "2026-04-12T11:01:52.675Z",
+  "status": "failed",
+  "didFailTest": true,
+  "pricing": {
+    "inputPerMillionUsd": 0,
+    "outputPerMillionUsd": 0,
+    "cachedInputPerMillionUsd": 0
+  },
+  "usage": {
+    "inputTokens": 0,
+    "outputTokens": 0,
+    "cachedTokens": 0,
+    "totalTokens": 0,
+    "estimatedCostUsd": 0
+  },
+  "modelResponses": [],
+  "toolCalls": [],
+  "events": [
+    {
+      "ts": "2026-04-12T11:01:52.675Z",
+      "level": "info",
+      "event": "run_start",
+      "message": "Scenario 1 code-mode benchmark started",
+      "data": {
+        "benchmarkId": "1_customer_db_average_spend",
+        "model": "google/gemma-4-26b-a4b-it:free",
+        "modelCallTimeoutMs": 120000
+      }
+    },
+    {
+      "ts": "2026-04-12T11:01:56.774Z",
+      "level": "info",
+      "event": "expected_result_human",
+      "message": "Expected result (from seeded DB)",
+      "data": {
+        "fromIso": "2026-04-05T11:01:52.677Z",
+        "toIso": "2026-04-12T11:01:52.677Z",
+        "topCustomerId": "acce8ff9-a7f8-4d2f-bd87-b6142b189b08",
+        "topCustomerName": "Avery Benchmark",
+        "transactionCount": 42,
+        "averageSpend": 254.64,
+        "totalSpend": 10694.71
+      }
+    },
+    {
+      "ts": "2026-04-12T11:01:56.775Z",
+      "level": "info",
+      "event": "expected_result",
+      "message": "Computed scenario expected result from DB seed",
+      "data": {
+        "topCustomerId": "acce8ff9-a7f8-4d2f-bd87-b6142b189b08",
+        "transactionCount": 42,
+        "averageSpend": 254.64
+      }
+    },
+    {
+      "ts": "2026-04-12T11:01:56.776Z",
+      "level": "info",
+      "event": "prompts",
+      "message": "Prompts for code_mode",
+      "data": {
+        "systemPrompt": "You are a specialised benchmark agent.\nUse progressive discovery when tools are hidden.\nIf the required tool is not directly available, call discover_tools with the exact tool names you need, then continue to solve the task.\n\nYou are now in code-mode.\nWrite TypeScript code that uses ONLY the provided tool execute_scenario1_code.\nWhen calling the tool, pass a full TS program string in input key \"typescript\".\nDo not explain your reasoning.\nDo not output long analysis.\nYour code must return a plain object as the last expression.\nDo not wrap code in markdown fences.\nYour final assistant message must contain only a single short sentence confirming completion.\nIn that program, use the provided global \"api\" methods:\n- await api.getCurrentDatetime()\n- await api.getAllCustomers({ limit, offset })\n- await api.searchCustomersByName({ query, limit })\n- await api.listTransactionsInWindow({ fromIso, toIso, customerId?, limit })\n- await api.computeCustomerSpendStats({ customerId, fromIso, toIso })\nThe TS program must return JSON object with keys:\n{ topCustomerId, topCustomerName, transactionCount, totalSpend, averageSpend, fromIso, toIso }\nDo not mention placeholders. Compute the real answer and return concise final JSON.",
+        "userPrompt": "\nCan you find the customer who made the most transactions in the past week, as well as their average spend in that time?\n"
+      }
+    },
+    {
+      "ts": "2026-04-12T11:01:58.482Z",
+      "level": "error",
+      "event": "run_failed",
+      "message": "Scenario 1 code-mode benchmark failed",
+      "data": {
+        "error": "Provider returned error"
+      }
+    },
+    {
+      "ts": "2026-04-12T11:01:58.482Z",
+      "level": "info",
+      "event": "run_finished",
+      "message": "Benchmark run finished",
+      "data": {
+        "status": "failed",
+        "didFailTest": true,
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "cachedTokens": 0,
+        "totalTokens": 0,
+        "estimatedCostUsd": 0
+      }
+    }
+  ],
+  "expectedResult": {
+    "fromIso": "2026-04-05T11:01:52.677Z",
+    "toIso": "2026-04-12T11:01:52.677Z",
+    "topCustomerId": "acce8ff9-a7f8-4d2f-bd87-b6142b189b08",
+    "topCustomerName": "Avery Benchmark",
+    "transactionCount": 42,
+    "averageSpend": 254.64,
+    "totalSpend": 10694.71
+  },
+  "runFinishedAt": "2026-04-12T11:01:58.482Z",
+  "error": "Provider returned error"
+}

@@ -8,7 +8,6 @@ import {
 } from "../../lib/benchmark-logger.js";
 import { type Model, openrouter } from "../../lib/chat-generation.js";
 import {
-  extractResponseReasoning,
   extractResponseText,
 } from "../../lib/openrouter-response.js";
 import {
@@ -100,13 +99,7 @@ export async function runRegularBenchmark(model: Model = defaultScenario1Model) 
     modelCallTimeoutMs
   );
   const discoveryText = extractResponseText(discoveryResponse);
-  const discoveryReasoning = extractResponseReasoning(discoveryResponse);
-  logger.addModelResponse(
-    "discovery",
-    discoveryText,
-    discoveryResponse.usage,
-    discoveryReasoning
-  );
+  logger.addModelResponse("discovery", discoveryText, discoveryResponse.usage);
 
   const discoveryCalls = await withTimeout(
     "regular discovery tool calls",
@@ -150,13 +143,7 @@ export async function runRegularBenchmark(model: Model = defaultScenario1Model) 
       modelCallTimeoutMs
     );
     const retryText = extractResponseText(retryResponse);
-    const retryReasoning = extractResponseReasoning(retryResponse);
-    logger.addModelResponse(
-      "discovery_retry",
-      retryText,
-      retryResponse.usage,
-      retryReasoning
-    );
+    logger.addModelResponse("discovery_retry", retryText, retryResponse.usage);
 
     const retryCalls = await withTimeout(
       "regular retry discovery tool calls",
@@ -217,13 +204,7 @@ export async function runRegularBenchmark(model: Model = defaultScenario1Model) 
     modelCallTimeoutMs
   );
   const finalText = extractResponseText(executionResponse);
-  const executionReasoning = extractResponseReasoning(executionResponse);
-  logger.addModelResponse(
-    "execution",
-    finalText,
-    executionResponse.usage,
-    executionReasoning
-  );
+  logger.addModelResponse("execution", finalText, executionResponse.usage);
 
   const executionCalls = await withTimeout(
     "regular execution tool calls",
@@ -292,8 +273,6 @@ export async function runRegularBenchmark(model: Model = defaultScenario1Model) 
     );
   }
 
-  console.log(finalText);
-  console.log(JSON.stringify(evaluation, null, 2));
   console.log(`regular_log_file=${logPath}`);
   } catch (error) {
   logger.error("run_failed", "Scenario 1 regular benchmark failed", {

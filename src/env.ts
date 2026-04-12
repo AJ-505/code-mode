@@ -13,7 +13,7 @@ const numberFromEnv = (defaultValue: number, schema: z.ZodNumber) =>
 export const envSchema = z.object({
   OPENROUTER_API_KEY: z.string().min(10),
   DATABASE_URL: z.string().min(10),
-  BENCHMARK_MODEL_TIMEOUT_MS: numberFromEnv(120_000, z.number().int().positive()),
+  BENCHMARK_MODEL_TIMEOUT_MS: numberFromEnv(240_000, z.number().int().positive()),
   INPUT_COST_PER_MILLION_USD: numberFromEnv(0, z.number().nonnegative()),
   OUTPUT_COST_PER_MILLION_USD: numberFromEnv(0, z.number().nonnegative()),
   CACHED_INPUT_COST_PER_MILLION_USD: numberFromEnv(0, z.number().nonnegative()),

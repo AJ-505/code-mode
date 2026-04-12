@@ -1,4 +1,5 @@
 import * as Bun from "bun";
+import chalk from "chalk";
 import { randomUUID } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { env } from "../env.js";
@@ -41,11 +42,45 @@ function formatHumanValue(value: unknown) {
     return "(none)";
   }
 
-  return `\n${indentBlock(JSON.stringify(value, null, 2), 4)}`;
+  if (Array.isArray(value)) {
+    return value.map((item) => compactHumanValue(item)).join(", ");
+  }
+
+  if (typeof value === "object") {
+    return Object.entries(value as Record<string, unknown>)
+      .map(([key, entry]) => `${prettyLabel(key)}=${compactHumanValue(entry)}`)
+      .join("; ");
+  }
+
+  return String(value);
+}
+
+function compactHumanValue(value: unknown): string {
+  if (typeof value === "string") return value;
+  if (typeof value === "number" || typeof value === "boolean") return String(value);
+  if (value === null || value === undefined) return "(none)";
+
+  if (Array.isArray(value)) {
+    return value.map((item) => compactHumanValue(item)).join(", ");
+  }
+
+  if (typeof value === "object") {
+    return Object.entries(value as Record<string, unknown>)
+      .map(([key, entry]) => `${prettyLabel(key)}=${compactHumanValue(entry)}`)
+      .join("; ");
+  }
+
+  return String(value);
 }
 
 function cleanToolName(value: string) {
   return value.replace(/<\|[^|]+\|>\w*/g, "").trim();
+}
+
+function previewModelText(text: string) {
+  const compact = text.replace(/\s+/g, " ").trim();
+  if (compact.length <= 240) return compact;
+  return `${compact.slice(0, 240)}...`;
 }
 
 export type BenchmarkMode = "regular" | "code-mode";
@@ -78,6 +113,7 @@ export type BenchmarkJsonLog = {
   modelResponses: Array<{
     stage: string;
     text: string;
+    reasoning?: string;
     usage: {
       inputTokens: number;
       outputTokens: number;
@@ -197,10 +233,14 @@ export class BenchmarkLogger {
 
   info(event: string, message: string, data?: Record<string, unknown>) {
     const ts = new Date().toISOString();
-    console.log(`[${ts}] [${this.log.mode}] ${message}`);
+    console.log(
+      `${chalk.dim(`[${ts}]`)} ${chalk.cyan(`[${this.log.mode}]`)} ${chalk.white(message)}`
+    );
     if (data) {
       for (const [key, value] of Object.entries(data)) {
-        console.log(`  - ${prettyLabel(key)}: ${formatHumanValue(value)}`);
+        console.log(
+          `  ${chalk.gray("-")} ${chalk.yellow(prettyLabel(key))}: ${formatHumanValue(value)}`
+        );
       }
     }
     this.log.events.push(
@@ -212,10 +252,14 @@ export class BenchmarkLogger {
 
   error(event: string, message: string, data?: Record<string, unknown>) {
     const ts = new Date().toISOString();
-    console.error(`[${ts}] [${this.log.mode}] ${message}`);
+    console.error(
+      `${chalk.dim(`[${ts}]`)} ${chalk.red(`[${this.log.mode}]`)} ${chalk.red(message)}`
+    );
     if (data) {
       for (const [key, value] of Object.entries(data)) {
-        console.error(`  - ${prettyLabel(key)}: ${formatHumanValue(value)}`);
+        console.error(
+          `  ${chalk.gray("-")} ${chalk.yellow(prettyLabel(key))}: ${formatHumanValue(value)}`
+        );
       }
     }
     this.log.events.push(
@@ -246,8 +290,8 @@ export class BenchmarkLogger {
     const estimatedCostUsd = estimateCost(snapshot, this.log.pricing);
 
     this.info("model_response", `Model response captured for ${stage}`, {
-      text,
-      reasoning: reasoning ?? "(not provided)",
+      responsePreview: previewModelText(text),
+      responseChars: text.length,
       inputTokens: snapshot.inputTokens,
       outputTokens: snapshot.outputTokens,
       cachedTokens: snapshot.cachedTokens,
@@ -258,6 +302,7 @@ export class BenchmarkLogger {
     this.log.modelResponses.push({
       stage,
       text,
+      ...(reasoning ? { reasoning } : {}),
       usage: {
         ...snapshot,
         estimatedCostUsd,
@@ -282,10 +327,12 @@ export class BenchmarkLogger {
     for (const call of calls) {
       const normalizedName = cleanToolName(call.name);
       this.info("tool_call", `Tool called in ${stage}: ${normalizedName}`, {
-        rawToolName: call.name,
         stage,
         toolName: normalizedName,
-        arguments: call.arguments,
+        callDetails:
+          normalizedName === "execute_scenario1_code"
+            ? "TypeScript code provided (see code block below)"
+            : compactHumanValue(call.arguments),
       });
 
       if (
@@ -295,7 +342,7 @@ export class BenchmarkLogger {
         typeof (call.arguments as { typescript?: unknown }).typescript === "string"
       ) {
         this.info("tool_code", "Code passed to execute_scenario1_code", {
-          typescript: (call.arguments as { typescript: string }).typescript,
+          code: (call.arguments as { typescript: string }).typescript,
         });
       }
 
@@ -309,7 +356,39 @@ export class BenchmarkLogger {
 
   setEvaluation(evaluation: Record<string, unknown>) {
     this.log.evaluation = evaluation;
-    this.info("evaluation_human", "Model result and evaluation", evaluation);
+
+    const expectedEval =
+      typeof evaluation.expectedEval === "object" &&
+      evaluation.expectedEval !== null
+        ? (evaluation.expectedEval as Record<string, unknown>)
+        : null;
+    const parsed =
+      expectedEval &&
+      typeof expectedEval.parsed === "object" &&
+      expectedEval.parsed !== null
+        ? (expectedEval.parsed as Record<string, unknown>)
+        : null;
+
+    this.info("model_result", "Model result (parsed)", {
+      topCustomerId: parsed?.topCustomerId ?? "(missing)",
+      topCustomerName: parsed?.topCustomerName ?? "(missing)",
+      transactionCount: parsed?.transactionCount ?? "(missing)",
+      averageSpend: parsed?.averageSpend ?? "(missing)",
+      totalSpend: parsed?.totalSpend ?? "(missing)",
+      fromIso: parsed?.fromIso ?? "(missing)",
+      toIso: parsed?.toIso ?? "(missing)",
+    });
+
+    const toolEval =
+      typeof evaluation.toolEval === "object" && evaluation.toolEval !== null
+        ? (evaluation.toolEval as Record<string, unknown>)
+        : null;
+
+    this.info("evaluation_human", "Evaluation summary", {
+      overallPass: evaluation.overallPass === true,
+      toolPass: toolEval?.pass === true,
+      expectedPass: expectedEval?.pass === true,
+    });
   }
 
   setExpectedResult(expectedResult: Record<string, unknown>) {

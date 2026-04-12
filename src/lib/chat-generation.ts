@@ -16,7 +16,7 @@ export type OpenWeightModel =
   | "minimax/minimax-m2.7"
   | "moonshotai/kimi-k2.5";
 
-export type FreeModel = "openrouter/free";
+export type FreeModel = "openrouter/free" | "google/gemma-4-26b-a4b-it:free";
 
 export type Model = ProprietaryModel | OpenWeightModel | FreeModel;
 

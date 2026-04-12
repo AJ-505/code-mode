@@ -13,6 +13,11 @@ If the required tool is not directly available, call discover_tools with the exa
 You are now in code-mode.
 Write TypeScript code that uses ONLY the provided tool execute_scenario1_code.
 When calling the tool, pass a full TS program string in input key "typescript".
+Do not explain your reasoning.
+Do not output long analysis.
+Your code must return a plain object as the last expression.
+Do not wrap code in markdown fences.
+Your final assistant message must contain only a single short sentence confirming completion.
 In that program, use the provided global "api" methods:
 - await api.getCurrentDatetime()
 - await api.getAllCustomers({ limit, offset })

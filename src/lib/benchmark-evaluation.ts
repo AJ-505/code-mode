@@ -26,11 +26,17 @@ const normalize = (value: string) =>
     .replace(/\s+/g, " ")
     .trim();
 
-const normalizeToolName = (value: string) =>
-  value
-    .replace(/<\|[^|]+\|>\w*/g, "")
-    .replace(/\s+/g, "")
-    .trim();
+const normalizeToolName = (value: string) => {
+  let normalized = value.replace(/<\|[^|]+\|>\w*/g, "").trim();
+
+  if (normalized.includes("\"name\":\"")) {
+    const match = normalized.match(/\"name\":\"([^\"]+)\"/);
+    if (match?.[1]) normalized = match[1];
+  }
+
+  normalized = normalized.replace(/[\[\]{}"'<>]/g, "").trim();
+  return normalized;
+};
 
 const countNumericMentions = (value: string) => {
   const matches = value.match(/\b\d+(?:\.\d+)?\b/g);

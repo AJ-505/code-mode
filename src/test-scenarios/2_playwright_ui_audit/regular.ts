@@ -143,15 +143,6 @@ export async function runScenario2Regular(model: Model = defaultScenario2Model) 
     logger.setEvaluation(evaluation as unknown as Record<string, unknown>);
     logger.finish({ didFailTest: !evaluation.overallPass });
 
-    const logPath = await logger.writeToFile();
-    await markBenchmarkPairLog({
-      scenarioNumber: scenario2Number,
-      model,
-      pairId,
-      mode: "regular",
-      logPath,
-    });
-
     const codeMode = await findPairedBenchmarkLog({
       scenarioNumber: scenario2Number,
       model,
@@ -174,6 +165,15 @@ export async function runScenario2Regular(model: Model = defaultScenario2Model) 
         reasons: comparison.comparison.reasons,
       });
     }
+
+    const logPath = await logger.writeToFile();
+    await markBenchmarkPairLog({
+      scenarioNumber: scenario2Number,
+      model,
+      pairId,
+      mode: "regular",
+      logPath,
+    });
 
     console.log(`scenario2_regular_log_file=${logPath}`);
   } catch (error) {

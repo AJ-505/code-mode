@@ -1,13 +1,11 @@
 # Scenario 2 (Playwright UI Audit)
 
-Status: scaffolded placeholder for upcoming implementation.
+Status: wired and runnable.
 
-This scenario will compare:
+Run commands:
 
-- regular mode with constrained tool access
-- code-mode with model-written code execution
+- `bun run benchmark:scenario2:regular`
+- `bun run benchmark:scenario2:code-mode`
 
-Planned task:
-
-- audit a demo website for UI/UX flaws and provide actionable feedback
-- compare speed, token usage, and estimated cost between modes
+The current implementation uses deterministic baseline findings to validate harness behavior,
+plus full observability logs in `results/` and paired regular/code-mode comparison output.

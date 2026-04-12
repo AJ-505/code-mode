@@ -1,0 +1,358 @@
+import * as Bun from "bun";
+import { mkdir } from "node:fs/promises";
+
+type UsageLike = {
+  inputTokens?: number;
+  outputTokens?: number;
+  totalTokens?: number;
+  inputTokensDetails?: {
+    cachedTokens?: number;
+  };
+};
+
+export type BenchmarkMode = "regular" | "code-mode";
+
+export type PricingConfig = {
+  inputPerMillionUsd: number;
+  outputPerMillionUsd: number;
+  cachedInputPerMillionUsd: number;
+};
+
+export type BenchmarkJsonLog = {
+  benchmarkId: string;
+  scenarioNumber: number;
+  mode: BenchmarkMode;
+  model: string;
+  runId: string;
+  runStartedAt: string;
+  runFinishedAt?: string;
+  status: "passed" | "failed";
+  didFailTest: boolean;
+  pricing: PricingConfig;
+  usage: {
+    inputTokens: number;
+    outputTokens: number;
+    cachedTokens: number;
+    totalTokens: number;
+    estimatedCostUsd: number;
+  };
+  modelResponses: Array<{
+    stage: string;
+    text: string;
+    usage: {
+      inputTokens: number;
+      outputTokens: number;
+      cachedTokens: number;
+      totalTokens: number;
+      estimatedCostUsd: number;
+    };
+  }>;
+  toolCalls: Array<{
+    stage: string;
+    name: string;
+    arguments: unknown;
+  }>;
+  events: Array<{
+    ts: string;
+    level: "info" | "error";
+    event: string;
+    message: string;
+    data?: Record<string, unknown>;
+  }>;
+  evaluation?: Record<string, unknown>;
+  expectedResult?: Record<string, unknown>;
+  comparison?: {
+    winner: "regular" | "code-mode" | "tie";
+    reasons: string[];
+  };
+  error?: string;
+};
+
+type LoggerConfig = {
+  benchmarkId: string;
+  scenarioNumber: number;
+  mode: BenchmarkMode;
+  model: string;
+  runId: string;
+  pricing: PricingConfig;
+};
+
+const DEFAULT_PRICING: PricingConfig = {
+  inputPerMillionUsd: Number(Bun.env.INPUT_COST_PER_MILLION_USD ?? 0),
+  outputPerMillionUsd: Number(Bun.env.OUTPUT_COST_PER_MILLION_USD ?? 0),
+  cachedInputPerMillionUsd: Number(Bun.env.CACHED_INPUT_COST_PER_MILLION_USD ?? 0),
+};
+
+function sanitizeLabel(value: string) {
+  return value.replaceAll(/[^a-zA-Z0-9_.-]/g, "_");
+}
+
+export function toResultLabel(value: string) {
+  return sanitizeLabel(value);
+}
+
+function getResultsPath(log: BenchmarkJsonLog) {
+  const modelLabel = sanitizeLabel(log.model);
+  const dateLabel = sanitizeLabel(log.runStartedAt.replaceAll(":", "-"));
+  const fileName = `${modelLabel}-scenario-${log.scenarioNumber}-${log.mode}-${log.runId}-${dateLabel}.json`;
+  return `results/${fileName}`;
+}
+
+function getUsageSnapshot(usage: UsageLike | null | undefined) {
+  return {
+    inputTokens: usage?.inputTokens ?? 0,
+    outputTokens: usage?.outputTokens ?? 0,
+    cachedTokens: usage?.inputTokensDetails?.cachedTokens ?? 0,
+    totalTokens: usage?.totalTokens ?? 0,
+  };
+}
+
+function estimateCost(snapshot: {
+  inputTokens: number;
+  outputTokens: number;
+  cachedTokens: number;
+}, pricing: PricingConfig) {
+  const nonCachedInput = Math.max(snapshot.inputTokens - snapshot.cachedTokens, 0);
+
+  const cost =
+    (nonCachedInput / 1_000_000) * pricing.inputPerMillionUsd +
+    (snapshot.cachedTokens / 1_000_000) * pricing.cachedInputPerMillionUsd +
+    (snapshot.outputTokens / 1_000_000) * pricing.outputPerMillionUsd;
+
+  return Number(cost.toFixed(6));
+}
+
+export class BenchmarkLogger {
+  private readonly log: BenchmarkJsonLog;
+
+  constructor(config: LoggerConfig) {
+    this.log = {
+      benchmarkId: config.benchmarkId,
+      scenarioNumber: config.scenarioNumber,
+      mode: config.mode,
+      model: config.model,
+      runId: config.runId,
+      runStartedAt: new Date().toISOString(),
+      status: "failed",
+      didFailTest: true,
+      pricing: config.pricing,
+      usage: {
+        inputTokens: 0,
+        outputTokens: 0,
+        cachedTokens: 0,
+        totalTokens: 0,
+        estimatedCostUsd: 0,
+      },
+      modelResponses: [],
+      toolCalls: [],
+      events: [],
+    };
+  }
+
+  static getDefaultPricing() {
+    return DEFAULT_PRICING;
+  }
+
+  info(event: string, message: string, data?: Record<string, unknown>) {
+    const ts = new Date().toISOString();
+    const suffix = data ? ` | ${JSON.stringify(data)}` : "";
+    console.log(`[${ts}] [${this.log.mode}] ${event}: ${message}${suffix}`);
+    this.log.events.push(
+      data
+        ? { ts, level: "info", event, message, data }
+        : { ts, level: "info", event, message }
+    );
+  }
+
+  error(event: string, message: string, data?: Record<string, unknown>) {
+    const ts = new Date().toISOString();
+    const suffix = data ? ` | ${JSON.stringify(data)}` : "";
+    console.error(`[${ts}] [${this.log.mode}] ${event}: ${message}${suffix}`);
+    this.log.events.push(
+      data
+        ? { ts, level: "error", event, message, data }
+        : { ts, level: "error", event, message }
+    );
+  }
+
+  addModelResponse(
+    stage: string,
+    text: string,
+    usage: UsageLike | null | undefined
+  ) {
+    const snapshot = getUsageSnapshot(usage);
+    const estimatedCostUsd = estimateCost(snapshot, this.log.pricing);
+
+    this.info("model_response", `Model response captured for ${stage}`, {
+      text,
+      inputTokens: snapshot.inputTokens,
+      outputTokens: snapshot.outputTokens,
+      cachedTokens: snapshot.cachedTokens,
+      totalTokens: snapshot.totalTokens,
+      estimatedCostUsd,
+    });
+
+    this.log.modelResponses.push({
+      stage,
+      text,
+      usage: {
+        ...snapshot,
+        estimatedCostUsd,
+      },
+    });
+
+    this.log.usage.inputTokens += snapshot.inputTokens;
+    this.log.usage.outputTokens += snapshot.outputTokens;
+    this.log.usage.cachedTokens += snapshot.cachedTokens;
+    this.log.usage.totalTokens += snapshot.totalTokens;
+    this.log.usage.estimatedCostUsd = estimateCost(
+      {
+        inputTokens: this.log.usage.inputTokens,
+        outputTokens: this.log.usage.outputTokens,
+        cachedTokens: this.log.usage.cachedTokens,
+      },
+      this.log.pricing
+    );
+  }
+
+  addToolCalls(stage: string, calls: Array<{ name: string; arguments: unknown }>) {
+    for (const call of calls) {
+      this.info("tool_call", `Tool called: ${call.name}`, {
+        stage,
+        toolName: call.name,
+        arguments: call.arguments,
+      });
+      this.log.toolCalls.push({
+        stage,
+        name: call.name,
+        arguments: call.arguments,
+      });
+    }
+  }
+
+  setEvaluation(evaluation: Record<string, unknown>) {
+    this.log.evaluation = evaluation;
+  }
+
+  setExpectedResult(expectedResult: Record<string, unknown>) {
+    this.log.expectedResult = expectedResult;
+  }
+
+  setComparison(comparison: { winner: "regular" | "code-mode" | "tie"; reasons: string[] }) {
+    this.log.comparison = comparison;
+  }
+
+  finish(options: { didFailTest: boolean; error?: string }) {
+    this.log.didFailTest = options.didFailTest;
+    this.log.status = options.didFailTest ? "failed" : "passed";
+    this.log.runFinishedAt = new Date().toISOString();
+    if (options.error) this.log.error = options.error;
+
+    this.info("run_finished", "Benchmark run finished", {
+      status: this.log.status,
+      didFailTest: this.log.didFailTest,
+      totalTokens: this.log.usage.totalTokens,
+      estimatedCostUsd: this.log.usage.estimatedCostUsd,
+    });
+  }
+
+  async writeToFile() {
+    await mkdir("results", { recursive: true });
+    const path = getResultsPath(this.log);
+    await Bun.write(path, `${JSON.stringify(this.log, null, 2)}\n`);
+    this.info("log_written", "Wrote JSON benchmark log file", { path });
+    return path;
+  }
+
+  toJSON() {
+    return this.log;
+  }
+}
+
+export async function writeScenarioFinalComparison(options: {
+  benchmarkId: string;
+  scenarioNumber: number;
+  model: string;
+  runId: string;
+  regular: BenchmarkJsonLog;
+  codeMode: BenchmarkJsonLog;
+}) {
+  await mkdir("results", { recursive: true });
+
+  const score = (log: BenchmarkJsonLog) => {
+    const passScore = log.didFailTest ? 0 : 1;
+    const tokenPenalty = log.usage.totalTokens;
+    const costPenalty = log.usage.estimatedCostUsd;
+    return passScore * 10_000 - tokenPenalty - costPenalty * 1_000;
+  };
+
+  const regularScore = score(options.regular);
+  const codeModeScore = score(options.codeMode);
+
+  let winner: "regular" | "code-mode" | "tie" = "tie";
+  if (regularScore > codeModeScore) winner = "regular";
+  if (codeModeScore > regularScore) winner = "code-mode";
+
+  const reasons = [
+    `regular: didFail=${options.regular.didFailTest}, tokens=${options.regular.usage.totalTokens}, costUsd=${options.regular.usage.estimatedCostUsd}`,
+    `code-mode: didFail=${options.codeMode.didFailTest}, tokens=${options.codeMode.usage.totalTokens}, costUsd=${options.codeMode.usage.estimatedCostUsd}`,
+  ];
+
+  const comparison = {
+    benchmarkId: options.benchmarkId,
+    scenarioNumber: options.scenarioNumber,
+    model: options.model,
+    runId: options.runId,
+    createdAt: new Date().toISOString(),
+    winner,
+    reasons,
+    regular: {
+      didFailTest: options.regular.didFailTest,
+      totalTokens: options.regular.usage.totalTokens,
+      estimatedCostUsd: options.regular.usage.estimatedCostUsd,
+    },
+    codeMode: {
+      didFailTest: options.codeMode.didFailTest,
+      totalTokens: options.codeMode.usage.totalTokens,
+      estimatedCostUsd: options.codeMode.usage.estimatedCostUsd,
+    },
+  };
+
+  const modelLabel = sanitizeLabel(options.model);
+  const fileName = `${modelLabel}-scenario-${options.scenarioNumber}-final-${options.runId}-${sanitizeLabel(comparison.createdAt.replaceAll(":", "-"))}.json`;
+  const path = `results/${fileName}`;
+  await Bun.write(path, `${JSON.stringify(comparison, null, 2)}\n`);
+
+  return { path, comparison };
+}
+
+export async function findLatestBenchmarkLog(options: {
+  scenarioNumber: number;
+  model: string;
+  mode: BenchmarkMode;
+}) {
+  const modelLabel = sanitizeLabel(options.model);
+  const pattern = `results/${modelLabel}-scenario-${options.scenarioNumber}-${options.mode}-*.json`;
+
+  let latest: BenchmarkJsonLog | null = null;
+  let latestTs = 0;
+
+  const glob = new Bun.Glob(pattern);
+  for await (const path of glob.scan(".")) {
+    const file = Bun.file(path);
+    if (!(await file.exists())) continue;
+
+    try {
+      const parsed = (await file.json()) as BenchmarkJsonLog;
+      const ts = Date.parse(parsed.runFinishedAt ?? parsed.runStartedAt);
+      if (ts > latestTs) {
+        latestTs = ts;
+        latest = parsed;
+      }
+    } catch {
+      continue;
+    }
+  }
+
+  return latest;
+}

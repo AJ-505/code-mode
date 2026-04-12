@@ -1,32 +1,16 @@
 import { tool } from "@openrouter/agent";
-import { and, asc, eq, gte, ilike, lte, sql } from "drizzle-orm";
-import { drizzle } from "drizzle-orm/postgres-js";
-import postgres from "postgres";
 import { z } from "zod";
-import { env } from "../../env.js";
-import { customers, transactions } from "../../db/schema.js";
-
-const pool = postgres(env.DATABASE_URL, { max: 10 });
-const db = drizzle(pool, { schema: { customers, transactions } });
+import {
+  closeScenario1DbPool,
+  computeCustomerSpendStatsData,
+  getAllCustomersData,
+  listTransactionsInWindowData,
+  searchCustomersByNameData,
+} from "./data.js";
 
 export async function closeBenchmark1DbPool() {
-  await pool.end();
+  await closeScenario1DbPool();
 }
-
-const escapeLike = (value: string) =>
-  value.replaceAll("\\", "\\\\").replaceAll("%", "\\%").replaceAll("_", "\\_");
-
-const benchmarkObs = (event: string, data: Record<string, unknown>) => {
-  console.log(
-    JSON.stringify({
-      channel: "benchmark-observability",
-      benchmark: "1_customer_db_average_spend",
-      event,
-      ts: new Date().toISOString(),
-      ...data,
-    })
-  );
-};
 
 const withObservability = async <T>(
   toolName: string,
@@ -34,25 +18,25 @@ const withObservability = async <T>(
   input: Record<string, unknown>
 ) => {
   const startMs = Date.now();
-  benchmarkObs("tool_start", { toolName, input });
+  console.log(
+    `[tool:${toolName}] start input=${JSON.stringify(input)} at=${new Date().toISOString()}`
+  );
 
   try {
     const result = await operation();
-    benchmarkObs("tool_success", {
-      toolName,
-      durationMs: Date.now() - startMs,
-      resultSummary:
-        typeof result === "object" && result !== null
-          ? { keys: Object.keys(result as Record<string, unknown>) }
-          : { primitive: typeof result },
-    });
+    const resultSummary =
+      typeof result === "object" && result !== null
+        ? `keys=${Object.keys(result as Record<string, unknown>).join(",")}`
+        : `type=${typeof result}`;
+
+    console.log(
+      `[tool:${toolName}] success durationMs=${Date.now() - startMs} ${resultSummary}`
+    );
     return result;
   } catch (error) {
-    benchmarkObs("tool_error", {
-      toolName,
-      durationMs: Date.now() - startMs,
-      error: error instanceof Error ? error.message : String(error),
-    });
+    console.error(
+      `[tool:${toolName}] error durationMs=${Date.now() - startMs} message=${error instanceof Error ? error.message : String(error)}`
+    );
     throw error;
   }
 };
@@ -95,30 +79,14 @@ export const getAllCustomers = tool({
     withObservability(
       "get_all_customers",
       async () => {
-        const totalResult = await db
-          .select({ count: sql<number>`count(*)::int` })
-          .from(customers);
-
-        const rows = await db
-          .select({
-            id: customers.id,
-            name: customers.name,
-            email: customers.email,
-            createdAt: customers.createdAt,
-          })
-          .from(customers)
-          .orderBy(asc(customers.createdAt))
-          .limit(input.limit)
-          .offset(input.offset);
+        const rows = await getAllCustomersData({
+          limit: input.limit,
+          offset: input.offset,
+        });
 
         return {
-          customers: rows.map((row) => ({
-            id: row.id,
-            name: row.name,
-            email: row.email,
-            createdAt: row.createdAt.toISOString(),
-          })),
-          count: totalResult[0]?.count ?? 0,
+          customers: rows,
+          count: rows.length,
           returnedCount: rows.length,
         };
       },
@@ -142,33 +110,14 @@ export const searchCustomersByName = tool({
     withObservability(
       "search_customers_by_name",
       async () => {
-        const escapedQuery = escapeLike(input.query);
-
-        const totalResult = await db
-          .select({ count: sql<number>`count(*)::int` })
-          .from(customers)
-          .where(ilike(customers.name, `%${escapedQuery}%`));
-
-        const rows = await db
-          .select({
-            id: customers.id,
-            name: customers.name,
-            email: customers.email,
-            createdAt: customers.createdAt,
-          })
-          .from(customers)
-          .where(ilike(customers.name, `%${escapedQuery}%`))
-          .orderBy(asc(customers.name))
-          .limit(input.limit);
+        const rows = await searchCustomersByNameData({
+          query: input.query,
+          limit: input.limit,
+        });
 
         return {
-          customers: rows.map((row) => ({
-            id: row.id,
-            name: row.name,
-            email: row.email,
-            createdAt: row.createdAt.toISOString(),
-          })),
-          count: totalResult[0]?.count ?? 0,
+          customers: rows,
+          count: rows.length,
           returnedCount: rows.length,
         };
       },
@@ -195,41 +144,16 @@ export const listTransactionsInWindow = tool({
     withObservability(
       "list_transactions_in_window",
       async () => {
-        const from = new Date(input.fromIso);
-        const to = new Date(input.toIso);
-        const whereClause = input.customerId
-          ? and(
-              eq(transactions.customerId, input.customerId),
-              gte(transactions.createdAt, from),
-              lte(transactions.createdAt, to)
-            )
-          : and(gte(transactions.createdAt, from), lte(transactions.createdAt, to));
-
-        const totalResult = await db
-          .select({ count: sql<number>`count(*)::int` })
-          .from(transactions)
-          .where(whereClause);
-
-        const rows = await db
-          .select({
-            id: transactions.id,
-            customerId: transactions.customerId,
-            amount: transactions.amount,
-            createdAt: transactions.createdAt,
-          })
-          .from(transactions)
-          .where(whereClause)
-          .orderBy(asc(transactions.createdAt))
-          .limit(input.limit);
+        const rows = await listTransactionsInWindowData({
+          fromIso: input.fromIso,
+          toIso: input.toIso,
+          limit: input.limit,
+          ...(input.customerId ? { customerId: input.customerId } : {}),
+        });
 
         return {
-          transactions: rows.map((row) => ({
-            id: row.id,
-            customerId: row.customerId,
-            amount: Number(row.amount),
-            createdAt: row.createdAt.toISOString(),
-          })),
-          count: totalResult[0]?.count ?? 0,
+          transactions: rows,
+          count: rows.length,
           returnedCount: rows.length,
         };
       },
@@ -257,40 +181,7 @@ export const computeCustomerSpendStats = tool({
   execute: async (input) =>
     withObservability(
       "compute_customer_spend_stats",
-      async () => {
-        const from = new Date(input.fromIso);
-        const to = new Date(input.toIso);
-
-        const rows = await db
-          .select({
-            transactionCount: sql<number>`count(*)::int`,
-            totalSpend: sql<number>`coalesce(sum(${transactions.amount}), 0)::float8`,
-            averageSpend: sql<number>`coalesce(avg(${transactions.amount}), 0)::float8`,
-          })
-          .from(transactions)
-          .where(
-            and(
-              eq(transactions.customerId, input.customerId),
-              gte(transactions.createdAt, from),
-              lte(transactions.createdAt, to)
-            )
-          );
-
-        const stats = rows[0] ?? {
-          transactionCount: 0,
-          totalSpend: 0,
-          averageSpend: 0,
-        };
-
-        return {
-          customerId: input.customerId,
-          fromIso: input.fromIso,
-          toIso: input.toIso,
-          transactionCount: stats.transactionCount,
-          totalSpend: Number((stats.totalSpend ?? 0).toFixed(2)),
-          averageSpend: Number((stats.averageSpend ?? 0).toFixed(2)),
-        };
-      },
+      async () => computeCustomerSpendStatsData(input),
       input
     ),
 });

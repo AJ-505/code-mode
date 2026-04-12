@@ -8,6 +8,7 @@
     "start": "bun src/index.ts",
     "dev": "bun src/index.ts",
     "benchmark": "bun src/index.ts",
+    "seed:scenario1": "bun seed-scripts/scenario1-seed.ts",
     "typecheck": "bun tsc --noEmit",
     "db:generate": "bun drizzle-kit generate",
     "db:push": "bun drizzle-kit push",

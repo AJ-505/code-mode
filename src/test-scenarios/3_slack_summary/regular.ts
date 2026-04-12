@@ -14,28 +14,28 @@ import {
   registerProgressiveTools,
 } from "../../lib/progressive-tool-discovery.js";
 import { PROMPTS } from "../../lib/prompts.js";
-import { evaluateScenario2Run } from "./evaluation.js";
-import { defaultScenario2Model, scenario2BenchmarkId, scenario2Number } from "./shared.js";
-import { benchmark2Tools } from "./tools.js";
+import { evaluateScenario3Run } from "./evaluation.js";
+import { defaultScenario3Model, scenario3BenchmarkId, scenario3Number } from "./shared.js";
+import { benchmark3Tools } from "./tools.js";
 import { createRunId, modelCallTimeoutMs, withTimeout } from "../1_customer_db_average_spend/shared.js";
 
 const cleanToolName = (value: string) =>
   value.replace(/<\|[^|]+\|>\w*/g, "").trim();
 
-export async function runScenario2Regular(model: Model = defaultScenario2Model) {
-  registerProgressiveTools([...benchmark2Tools]);
+export async function runScenario3Regular(model: Model = defaultScenario3Model) {
+  registerProgressiveTools([...benchmark3Tools]);
 
   const runId = createRunId();
   const pairId = await getOrCreateBenchmarkPairId({
-    scenarioNumber: scenario2Number,
+    scenarioNumber: scenario3Number,
     model,
   });
 
   let state = createInitialState();
 
   const logger = new BenchmarkLogger({
-    benchmarkId: scenario2BenchmarkId,
-    scenarioNumber: scenario2Number,
+    benchmarkId: scenario3BenchmarkId,
+    scenarioNumber: scenario3Number,
     mode: "regular",
     model,
     pairId,
@@ -44,8 +44,8 @@ export async function runScenario2Regular(model: Model = defaultScenario2Model) 
   });
 
   try {
-    logger.info("run_start", "Scenario 2 regular benchmark started", {
-      benchmarkId: scenario2BenchmarkId,
+    logger.info("run_start", "Scenario 3 regular benchmark started", {
+      benchmarkId: scenario3BenchmarkId,
       model,
       modelCallTimeoutMs,
     });
@@ -55,9 +55,9 @@ export async function runScenario2Regular(model: Model = defaultScenario2Model) 
       input: [
         {
           role: "system",
-          content: `${PROMPTS.systemPrompt}\nDiscovery stage only: call discover_tools for audit_demo_site.`,
+          content: `${PROMPTS.systemPrompt}\nDiscovery stage only: call discover_tools for summarize_slack_channel.`,
         },
-        { role: "user", content: PROMPTS.scenario2 },
+        { role: "user", content: PROMPTS.scenario3 },
       ],
       tools: [discoverTools] as const,
       state: {
@@ -71,7 +71,7 @@ export async function runScenario2Regular(model: Model = defaultScenario2Model) 
     });
 
     const discoveryResponse = await withTimeout(
-      "scenario2 regular discovery response",
+      "scenario3 regular discovery response",
       discovery.getResponse(),
       modelCallTimeoutMs
     );
@@ -82,7 +82,7 @@ export async function runScenario2Regular(model: Model = defaultScenario2Model) 
     );
 
     const discoveryCallsRaw = await withTimeout(
-      "scenario2 regular discovery tool calls",
+      "scenario3 regular discovery tool calls",
       discovery.getToolCalls(),
       modelCallTimeoutMs
     );
@@ -93,16 +93,16 @@ export async function runScenario2Regular(model: Model = defaultScenario2Model) 
     }));
     logger.addToolCalls("discovery", discoveryCalls);
 
-    const unlocked = getProgressiveToolsByName(["audit_demo_site"]);
+    const unlocked = getProgressiveToolsByName(["summarize_slack_channel"]);
 
     const execution = openrouter.callModel({
       model,
       input: [
         {
           role: "system",
-          content: `${PROMPTS.systemPrompt}\nExecution stage only. Use audit_demo_site and return strict JSON.`,
+          content: `${PROMPTS.systemPrompt}\nExecution stage only. Use summarize_slack_channel and return strict JSON.`,
         },
-        { role: "user", content: PROMPTS.scenario2 },
+        { role: "user", content: PROMPTS.scenario3 },
       ],
       tools: unlocked,
       state: {
@@ -116,7 +116,7 @@ export async function runScenario2Regular(model: Model = defaultScenario2Model) 
     });
 
     const executionResponse = await withTimeout(
-      "scenario2 regular execution response",
+      "scenario3 regular execution response",
       execution.getResponse(),
       modelCallTimeoutMs
     );
@@ -124,7 +124,7 @@ export async function runScenario2Regular(model: Model = defaultScenario2Model) 
     logger.addModelResponse("execution", finalText, executionResponse.usage);
 
     const executionCallsRaw = await withTimeout(
-      "scenario2 regular execution tool calls",
+      "scenario3 regular execution tool calls",
       execution.getToolCalls(),
       modelCallTimeoutMs
     );
@@ -134,7 +134,7 @@ export async function runScenario2Regular(model: Model = defaultScenario2Model) 
     }));
     logger.addToolCalls("execution", executionCalls);
 
-    const evaluation = evaluateScenario2Run({
+    const evaluation = evaluateScenario3Run({
       mode: "regular",
       calledToolNames: [...discoveryCalls, ...executionCalls].map((call) => call.name),
       finalText,
@@ -143,8 +143,17 @@ export async function runScenario2Regular(model: Model = defaultScenario2Model) 
     logger.setEvaluation(evaluation as unknown as Record<string, unknown>);
     logger.finish({ didFailTest: !evaluation.overallPass });
 
+    const logPath = await logger.writeToFile();
+    await markBenchmarkPairLog({
+      scenarioNumber: scenario3Number,
+      model,
+      pairId,
+      mode: "regular",
+      logPath,
+    });
+
     const codeMode = await findPairedBenchmarkLog({
-      scenarioNumber: scenario2Number,
+      scenarioNumber: scenario3Number,
       model,
       pairId,
       mode: "code-mode",
@@ -152,8 +161,8 @@ export async function runScenario2Regular(model: Model = defaultScenario2Model) 
 
     if (codeMode) {
       const comparison = await writeScenarioFinalComparison({
-        benchmarkId: scenario2BenchmarkId,
-        scenarioNumber: scenario2Number,
+        benchmarkId: scenario3BenchmarkId,
+        scenarioNumber: scenario3Number,
         model,
         pairId,
         runId,
@@ -166,18 +175,9 @@ export async function runScenario2Regular(model: Model = defaultScenario2Model) 
       });
     }
 
-    const logPath = await logger.writeToFile();
-    await markBenchmarkPairLog({
-      scenarioNumber: scenario2Number,
-      model,
-      pairId,
-      mode: "regular",
-      logPath,
-    });
-
-    console.log(`scenario2_regular_log_file=${logPath}`);
+    console.log(`scenario3_regular_log_file=${logPath}`);
   } catch (error) {
-    logger.error("run_failed", "Scenario 2 regular benchmark failed", {
+    logger.error("run_failed", "Scenario 3 regular benchmark failed", {
       error: error instanceof Error ? error.message : String(error),
     });
     logger.finish({ didFailTest: true, error: error instanceof Error ? error.message : String(error) });
@@ -187,5 +187,5 @@ export async function runScenario2Regular(model: Model = defaultScenario2Model) 
 }
 
 if (import.meta.main) {
-  await runScenario2Regular();
+  await runScenario3Regular();
 }

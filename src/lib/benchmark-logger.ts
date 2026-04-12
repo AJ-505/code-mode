@@ -1,6 +1,7 @@
 import * as Bun from "bun";
 import { randomUUID } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { env } from "../env.js";
 
 type UsageLike = {
   inputTokens?: number;
@@ -10,6 +11,42 @@ type UsageLike = {
     cachedTokens?: number;
   };
 };
+
+function prettyLabel(key: string) {
+  return key
+    .replaceAll(/([a-z])([A-Z])/g, "$1 $2")
+    .replaceAll("_", " ")
+    .toLowerCase();
+}
+
+function indentBlock(value: string, spaces = 2) {
+  const prefix = " ".repeat(spaces);
+  return value
+    .split("\n")
+    .map((line) => `${prefix}${line}`)
+    .join("\n");
+}
+
+function formatHumanValue(value: unknown) {
+  if (typeof value === "string") {
+    if (value.includes("\n")) return `\n${indentBlock(value, 4)}`;
+    return value;
+  }
+
+  if (typeof value === "number" || typeof value === "boolean") {
+    return String(value);
+  }
+
+  if (value === null || value === undefined) {
+    return "(none)";
+  }
+
+  return `\n${indentBlock(JSON.stringify(value, null, 2), 4)}`;
+}
+
+function cleanToolName(value: string) {
+  return value.replace(/<\|[^|]+\|>\w*/g, "").trim();
+}
 
 export type BenchmarkMode = "regular" | "code-mode";
 
@@ -81,9 +118,9 @@ type LoggerConfig = {
 };
 
 const DEFAULT_PRICING: PricingConfig = {
-  inputPerMillionUsd: Number(Bun.env.INPUT_COST_PER_MILLION_USD ?? 0),
-  outputPerMillionUsd: Number(Bun.env.OUTPUT_COST_PER_MILLION_USD ?? 0),
-  cachedInputPerMillionUsd: Number(Bun.env.CACHED_INPUT_COST_PER_MILLION_USD ?? 0),
+  inputPerMillionUsd: env.INPUT_COST_PER_MILLION_USD,
+  outputPerMillionUsd: env.OUTPUT_COST_PER_MILLION_USD,
+  cachedInputPerMillionUsd: env.CACHED_INPUT_COST_PER_MILLION_USD,
 };
 
 function sanitizeLabel(value: string) {
@@ -160,8 +197,12 @@ export class BenchmarkLogger {
 
   info(event: string, message: string, data?: Record<string, unknown>) {
     const ts = new Date().toISOString();
-    const suffix = data ? ` | ${JSON.stringify(data)}` : "";
-    console.log(`[${ts}] [${this.log.mode}] ${event}: ${message}${suffix}`);
+    console.log(`[${ts}] [${this.log.mode}] ${message}`);
+    if (data) {
+      for (const [key, value] of Object.entries(data)) {
+        console.log(`  - ${prettyLabel(key)}: ${formatHumanValue(value)}`);
+      }
+    }
     this.log.events.push(
       data
         ? { ts, level: "info", event, message, data }
@@ -171,8 +212,12 @@ export class BenchmarkLogger {
 
   error(event: string, message: string, data?: Record<string, unknown>) {
     const ts = new Date().toISOString();
-    const suffix = data ? ` | ${JSON.stringify(data)}` : "";
-    console.error(`[${ts}] [${this.log.mode}] ${event}: ${message}${suffix}`);
+    console.error(`[${ts}] [${this.log.mode}] ${message}`);
+    if (data) {
+      for (const [key, value] of Object.entries(data)) {
+        console.error(`  - ${prettyLabel(key)}: ${formatHumanValue(value)}`);
+      }
+    }
     this.log.events.push(
       data
         ? { ts, level: "error", event, message, data }
@@ -180,16 +225,29 @@ export class BenchmarkLogger {
     );
   }
 
+  logPrompts(stage: string, prompts: { systemPrompt: string; userPrompt: string }) {
+    this.info("prompts", `Prompts for ${stage}`, {
+      systemPrompt: prompts.systemPrompt,
+      userPrompt: prompts.userPrompt,
+    });
+  }
+
+  logExpectedResult(expected: Record<string, unknown>) {
+    this.info("expected_result_human", "Expected result (from seeded DB)", expected);
+  }
+
   addModelResponse(
     stage: string,
     text: string,
-    usage: UsageLike | null | undefined
+    usage: UsageLike | null | undefined,
+    reasoning?: string
   ) {
     const snapshot = getUsageSnapshot(usage);
     const estimatedCostUsd = estimateCost(snapshot, this.log.pricing);
 
     this.info("model_response", `Model response captured for ${stage}`, {
       text,
+      reasoning: reasoning ?? "(not provided)",
       inputTokens: snapshot.inputTokens,
       outputTokens: snapshot.outputTokens,
       cachedTokens: snapshot.cachedTokens,
@@ -222,14 +280,28 @@ export class BenchmarkLogger {
 
   addToolCalls(stage: string, calls: Array<{ name: string; arguments: unknown }>) {
     for (const call of calls) {
-      this.info("tool_call", `Tool called: ${call.name}`, {
+      const normalizedName = cleanToolName(call.name);
+      this.info("tool_call", `Tool called in ${stage}: ${normalizedName}`, {
+        rawToolName: call.name,
         stage,
-        toolName: call.name,
+        toolName: normalizedName,
         arguments: call.arguments,
       });
+
+      if (
+        typeof call.arguments === "object" &&
+        call.arguments !== null &&
+        "typescript" in call.arguments &&
+        typeof (call.arguments as { typescript?: unknown }).typescript === "string"
+      ) {
+        this.info("tool_code", "Code passed to execute_scenario1_code", {
+          typescript: (call.arguments as { typescript: string }).typescript,
+        });
+      }
+
       this.log.toolCalls.push({
         stage,
-        name: call.name,
+        name: normalizedName,
         arguments: call.arguments,
       });
     }
@@ -237,6 +309,7 @@ export class BenchmarkLogger {
 
   setEvaluation(evaluation: Record<string, unknown>) {
     this.log.evaluation = evaluation;
+    this.info("evaluation_human", "Model result and evaluation", evaluation);
   }
 
   setExpectedResult(expectedResult: Record<string, unknown>) {
@@ -256,6 +329,9 @@ export class BenchmarkLogger {
     this.info("run_finished", "Benchmark run finished", {
       status: this.log.status,
       didFailTest: this.log.didFailTest,
+      inputTokens: this.log.usage.inputTokens,
+      outputTokens: this.log.usage.outputTokens,
+      cachedTokens: this.log.usage.cachedTokens,
       totalTokens: this.log.usage.totalTokens,
       estimatedCostUsd: this.log.usage.estimatedCostUsd,
     });

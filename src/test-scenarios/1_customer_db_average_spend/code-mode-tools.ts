@@ -61,12 +61,26 @@ type CodeModeApi = {
   }) => Promise<Awaited<ReturnType<typeof computeCustomerSpendStatsData>>>;
 };
 
+class ScenarioCodeExecutionError extends Error {
+  readonly stdout: string[];
+
+  constructor(message: string, stdout: string[]) {
+    super(message);
+    this.name = "ScenarioCodeExecutionError";
+    this.stdout = stdout;
+  }
+}
+
 function stripCodeFences(source: string) {
   const trimmed = source.trim();
   const fullBlockMatch = trimmed.match(
     /^```(?:ts|typescript|js|javascript)?\s*([\s\S]*?)\s*```$/i
   );
   return fullBlockMatch?.[1]?.trim() ?? trimmed;
+}
+
+function stripTopLevelReturn(source: string) {
+  return source.replace(/(^|\n)\s*return\s+/g, "$1");
 }
 
 function createCodeModeApi(): CodeModeApi {
@@ -114,7 +128,7 @@ function createCodeModeApi(): CodeModeApi {
 }
 
 async function runUserCode(typescript: string) {
-  const source = stripCodeFences(typescript);
+  const source = stripTopLevelReturn(stripCodeFences(typescript));
   const transpiler = new Bun.Transpiler({ loader: "ts" });
   const javascript = transpiler.transformSync(source);
   const stdout: string[] = [];
@@ -152,17 +166,31 @@ async function runUserCode(typescript: string) {
     filename: "scenario1_code_mode.generated.js",
   });
 
-  const executionResult = script.runInContext(context, { timeout: 10_000 });
+  try {
+    const executionResult = script.runInContext(context, { timeout: 10_000 });
 
-  const result = await Promise.race([
-    Promise.resolve(executionResult),
-    new Promise<never>((_, reject) => {
-      setTimeout(() => reject(new Error("Code execution timed out after 10s")), 10_000);
-    }),
-  ]);
+    let timeoutHandle: ReturnType<typeof setTimeout> | undefined;
+    const result = await Promise.race([
+      Promise.resolve(executionResult).then((value) => {
+        if (timeoutHandle) clearTimeout(timeoutHandle);
+        return value;
+      }),
+      new Promise<never>((_, reject) => {
+        timeoutHandle = setTimeout(
+          () => reject(new Error("Code execution timed out after 10s")),
+          10_000
+        );
+      }),
+    ]);
 
-  const parsed = codeModeAnswerSchema.parse(result);
-  return { parsed, stdout };
+    const parsed = codeModeAnswerSchema.parse(result);
+    return { parsed, stdout };
+  } catch (error) {
+    throw new ScenarioCodeExecutionError(
+      error instanceof Error ? error.message : String(error),
+      stdout
+    );
+  }
 }
 
 export const executeScenario1Code = tool({
@@ -190,12 +218,14 @@ export const executeScenario1Code = tool({
       };
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
+      const stdout =
+        error instanceof ScenarioCodeExecutionError ? error.stdout : [];
       console.error(
         `[tool:execute_scenario1_code] error durationMs=${Date.now() - startedAt} message=${message}`
       );
       return {
         ok: false,
-        stdout: [],
+        stdout,
         error: message,
       };
     }

@@ -57,6 +57,14 @@ export async function generateResponse({
   };
 }
 
-export async function callTool() {}
+export async function callTool(toolName?: string, args?: unknown) {
+  throw new Error(
+    `callTool not implemented (toolName=${toolName ?? "unknown"}, argsProvided=${args !== undefined})`
+  );
+}
 
-export async function executeCode() {}
+export async function executeCode(language?: string, code?: string) {
+  throw new Error(
+    `executeCode not implemented (language=${language ?? "unknown"}, codeLength=${typeof code === "string" ? code.length : 0})`
+  );
+}

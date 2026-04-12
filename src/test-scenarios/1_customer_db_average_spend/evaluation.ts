@@ -76,6 +76,7 @@ export const scenario1CodeModeEvaluationSpec: BenchmarkEvaluationSpec = {
       weight: 1,
     },
   ],
+  minNumericMentions: 0,
 };
 
 type ParsedScenario1Answer = {

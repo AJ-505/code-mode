@@ -1,14 +1,12 @@
-import * as Bun from "bun";
 import { randomUUID } from "node:crypto";
+import { env } from "../../env.js";
 import type { Model } from "../../lib/chat-generation.js";
 
 export const scenario1BenchmarkId = "1_customer_db_average_spend";
 export const scenario1Number = 1;
 export const defaultScenario1Model: Model = "openrouter/free";
 
-export const modelCallTimeoutMs = Number(
-  Bun.env.BENCHMARK_MODEL_TIMEOUT_MS ?? 120_000
-);
+export const modelCallTimeoutMs = env.BENCHMARK_MODEL_TIMEOUT_MS;
 
 export function createRunId() {
   return randomUUID().replaceAll("-", "").slice(0, 12);

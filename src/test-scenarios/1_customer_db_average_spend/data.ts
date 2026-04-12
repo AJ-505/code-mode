@@ -1,4 +1,4 @@
-import { and, asc, eq, gte, ilike, lte } from "drizzle-orm";
+import { and, asc, eq, gte, ilike, lte, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import { env } from "../../env.js";
@@ -69,6 +69,13 @@ export async function getAllCustomersData(input: { limit: number; offset: number
   }));
 }
 
+export async function getTotalCustomersCountData() {
+  const rows = await scenario1Db
+    .select({ count: sql<number>`count(*)::int` })
+    .from(customers);
+  return rows[0]?.count ?? 0;
+}
+
 export async function searchCustomersByNameData(input: {
   query: string;
   limit: number;
@@ -92,6 +99,15 @@ export async function searchCustomersByNameData(input: {
     email: row.email,
     createdAt: row.createdAt.toISOString(),
   }));
+}
+
+export async function countCustomersByNameData(input: { query: string }) {
+  const escapedQuery = escapeLike(input.query);
+  const rows = await scenario1Db
+    .select({ count: sql<number>`count(*)::int` })
+    .from(customers)
+    .where(ilike(customers.name, `%${escapedQuery}%`));
+  return rows[0]?.count ?? 0;
 }
 
 export async function listTransactionsInWindowData(input: {
@@ -131,6 +147,30 @@ export async function listTransactionsInWindowData(input: {
   }));
 }
 
+export async function countTransactionsInWindowData(input: {
+  fromIso: string;
+  toIso: string;
+  customerId?: string;
+}) {
+  const from = new Date(input.fromIso);
+  const to = new Date(input.toIso);
+
+  const whereClause = input.customerId
+    ? and(
+        eq(transactions.customerId, input.customerId),
+        gte(transactions.createdAt, from),
+        lte(transactions.createdAt, to)
+      )
+    : and(gte(transactions.createdAt, from), lte(transactions.createdAt, to));
+
+  const rows = await scenario1Db
+    .select({ count: sql<number>`count(*)::int` })
+    .from(transactions)
+    .where(whereClause);
+
+  return rows[0]?.count ?? 0;
+}
+
 export async function computeCustomerSpendStatsData(input: {
   customerId: string;
   fromIso: string;
@@ -163,7 +203,8 @@ export async function computeCustomerSpendStatsData(input: {
 }
 
 export async function computeScenario1ExpectedResult(
-  referenceNow = new Date()
+  referenceNow = new Date(),
+  scanLimit = 50_000
 ): Promise<Scenario1ExpectedResult> {
   const toIso = referenceNow.toISOString();
   const fromIso = new Date(
@@ -173,8 +214,14 @@ export async function computeScenario1ExpectedResult(
   const rows = await listTransactionsInWindowData({
     fromIso,
     toIso,
-    limit: 50_000,
+    limit: scanLimit,
   });
+
+  if (rows.length === scanLimit) {
+    throw new Error(
+      `Expected-result scan hit limit (${scanLimit}). Increase scanLimit to avoid truncation.`
+    );
+  }
 
   if (rows.length === 0) {
     throw new Error(

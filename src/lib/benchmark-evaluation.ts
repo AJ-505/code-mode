@@ -26,6 +26,12 @@ const normalize = (value: string) =>
     .replace(/\s+/g, " ")
     .trim();
 
+const normalizeToolName = (value: string) =>
+  value
+    .replace(/<\|[^|]+\|>\w*/g, "")
+    .replace(/\s+/g, "")
+    .trim();
+
 const countNumericMentions = (value: string) => {
   const matches = value.match(/\b\d+(?:\.\d+)?\b/g);
   return matches ? matches.length : 0;
@@ -35,7 +41,9 @@ export function evaluateExpectedTools(
   calledToolNames: string[],
   groups: ExpectedToolGroup[]
 ) {
-  const uniqueCalled = [...new Set(calledToolNames)];
+  const uniqueCalled = [
+    ...new Set(calledToolNames.map((name) => normalizeToolName(name))),
+  ];
 
   const details = groups.map((group) => {
     const matched = group.anyOf.filter((name) => uniqueCalled.includes(name));

@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "bun src/index.ts",
     "dev": "bun src/index.ts",
-    "benchmark": "bun src/index.ts",
+    "benchmark": "bun src/index.ts --scenario=1 --mode=regular",
     "benchmark:scenario1:regular": "bun src/test-scenarios/1_customer_db_average_spend/regular.ts",
     "benchmark:scenario1:code-mode": "bun src/test-scenarios/1_customer_db_average_spend/code-mode.ts",
     "seed:scenario1": "bun seed-scripts/scenario1-seed.ts",

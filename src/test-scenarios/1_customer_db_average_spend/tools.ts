@@ -1,9 +1,12 @@
 import { tool } from "@openrouter/agent";
 import { z } from "zod";
 import {
+  countCustomersByNameData,
+  countTransactionsInWindowData,
   closeScenario1DbPool,
   computeCustomerSpendStatsData,
   getAllCustomersData,
+  getTotalCustomersCountData,
   listTransactionsInWindowData,
   searchCustomersByNameData,
 } from "./data.js";
@@ -79,6 +82,7 @@ export const getAllCustomers = tool({
     withObservability(
       "get_all_customers",
       async () => {
+        const totalCount = await getTotalCustomersCountData();
         const rows = await getAllCustomersData({
           limit: input.limit,
           offset: input.offset,
@@ -86,7 +90,7 @@ export const getAllCustomers = tool({
 
         return {
           customers: rows,
-          count: rows.length,
+          count: totalCount,
           returnedCount: rows.length,
         };
       },
@@ -110,6 +114,7 @@ export const searchCustomersByName = tool({
     withObservability(
       "search_customers_by_name",
       async () => {
+        const totalCount = await countCustomersByNameData({ query: input.query });
         const rows = await searchCustomersByNameData({
           query: input.query,
           limit: input.limit,
@@ -117,7 +122,7 @@ export const searchCustomersByName = tool({
 
         return {
           customers: rows,
-          count: rows.length,
+          count: totalCount,
           returnedCount: rows.length,
         };
       },
@@ -144,6 +149,11 @@ export const listTransactionsInWindow = tool({
     withObservability(
       "list_transactions_in_window",
       async () => {
+        const totalCount = await countTransactionsInWindowData({
+          fromIso: input.fromIso,
+          toIso: input.toIso,
+          ...(input.customerId ? { customerId: input.customerId } : {}),
+        });
         const rows = await listTransactionsInWindowData({
           fromIso: input.fromIso,
           toIso: input.toIso,
@@ -153,7 +163,7 @@ export const listTransactionsInWindow = tool({
 
         return {
           transactions: rows,
-          count: rows.length,
+          count: totalCount,
           returnedCount: rows.length,
         };
       },

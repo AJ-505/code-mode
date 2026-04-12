@@ -7,7 +7,10 @@ import {
   writeScenarioFinalComparison,
 } from "../../lib/benchmark-logger.js";
 import { type Model, openrouter } from "../../lib/chat-generation.js";
-import { extractResponseText } from "../../lib/openrouter-response.js";
+import {
+  extractResponseReasoning,
+  extractResponseText,
+} from "../../lib/openrouter-response.js";
 import {
   discoverTools,
   getAllRegisteredProgressiveToolNames,
@@ -31,26 +34,26 @@ import {
 } from "./shared.js";
 import { benchmark1Tools } from "./tools.js";
 
-const model: Model = defaultScenario1Model;
-const runId = createRunId();
-const pairId = await getOrCreateBenchmarkPairId({
-  scenarioNumber: scenario1Number,
-  model,
-});
+export async function runRegularBenchmark(model: Model = defaultScenario1Model) {
+  const runId = createRunId();
+  const pairId = await getOrCreateBenchmarkPairId({
+    scenarioNumber: scenario1Number,
+    model,
+  });
 
-registerProgressiveTools([...benchmark1Tools]);
+  registerProgressiveTools([...benchmark1Tools]);
 
-const logger = new BenchmarkLogger({
-  benchmarkId: scenario1BenchmarkId,
-  scenarioNumber: scenario1Number,
-  mode: "regular",
-  model,
-  pairId,
-  runId,
-  pricing: BenchmarkLogger.getDefaultPricing(),
-});
+  const logger = new BenchmarkLogger({
+    benchmarkId: scenario1BenchmarkId,
+    scenarioNumber: scenario1Number,
+    mode: "regular",
+    model,
+    pairId,
+    runId,
+    pricing: BenchmarkLogger.getDefaultPricing(),
+  });
 
-try {
+  try {
   logger.info("run_start", "Scenario 1 regular benchmark started", {
     benchmarkId: scenario1BenchmarkId,
     model,
@@ -59,10 +62,20 @@ try {
 
   const expected = await computeScenario1ExpectedResult();
   logger.setExpectedResult(expected);
+  logger.logExpectedResult(expected as unknown as Record<string, unknown>);
   logger.info("expected_result", "Computed scenario expected result from DB seed", {
     topCustomerId: expected.topCustomerId,
     transactionCount: expected.transactionCount,
     averageSpend: expected.averageSpend,
+  });
+
+  const discoverySystemPrompt = `${PROMPTS.systemPrompt}\nDiscovery stage only. You have exactly one callable tool in this stage: discover_tools.\nCall discover_tools exactly once with these tool names: [\"get_current_datetime\", \"get_all_customers\", \"list_transactions_in_window\", \"compute_customer_spend_stats\"].\nDo not call any other tool in this stage.`;
+  const discoveryUserPrompt =
+    "Scenario 1: find the customer with most transactions in the last 7 days and their average spend. In this stage, only run discover_tools.";
+
+  logger.logPrompts("discovery", {
+    systemPrompt: discoverySystemPrompt,
+    userPrompt: discoveryUserPrompt,
   });
 
   const discoveryResult = openrouter.callModel({
@@ -70,12 +83,11 @@ try {
     input: [
       {
         role: "system",
-        content: `${PROMPTS.systemPrompt}\nDiscovery stage only. You have exactly one callable tool in this stage: discover_tools.\nCall discover_tools exactly once with these tool names: [\"get_current_datetime\", \"get_all_customers\", \"list_transactions_in_window\", \"compute_customer_spend_stats\"].\nDo not call any other tool in this stage.`,
+        content: discoverySystemPrompt,
       },
       {
         role: "user",
-        content:
-          "Scenario 1: find the customer with most transactions in the last 7 days and their average spend. In this stage, only run discover_tools.",
+        content: discoveryUserPrompt,
       },
     ],
     tools: [discoverTools] as const,
@@ -88,7 +100,13 @@ try {
     modelCallTimeoutMs
   );
   const discoveryText = extractResponseText(discoveryResponse);
-  logger.addModelResponse("discovery", discoveryText, discoveryResponse.usage);
+  const discoveryReasoning = extractResponseReasoning(discoveryResponse);
+  logger.addModelResponse(
+    "discovery",
+    discoveryText,
+    discoveryResponse.usage,
+    discoveryReasoning
+  );
 
   const discoveryCalls = await withTimeout(
     "regular discovery tool calls",
@@ -132,7 +150,13 @@ try {
       modelCallTimeoutMs
     );
     const retryText = extractResponseText(retryResponse);
-    logger.addModelResponse("discovery_retry", retryText, retryResponse.usage);
+    const retryReasoning = extractResponseReasoning(retryResponse);
+    logger.addModelResponse(
+      "discovery_retry",
+      retryText,
+      retryResponse.usage,
+      retryReasoning
+    );
 
     const retryCalls = await withTimeout(
       "regular retry discovery tool calls",
@@ -163,16 +187,24 @@ try {
       .map((tool) => tool.function.name),
   });
 
+  const executionSystemPrompt = `${PROMPTS.systemPrompt}\nExecution stage only.\nYou have these tools: get_current_datetime, get_all_customers, list_transactions_in_window, compute_customer_spend_stats, search_customers_by_name.\nUse this strategy:\n1) get_current_datetime\n2) list_transactions_in_window for last 7 days (no customerId)\n3) determine top customer by highest transaction count from that returned list\n4) compute_customer_spend_stats for that top customer and same date window\nReturn STRICT JSON only with keys: topCustomerId, topCustomerName, transactionCount, totalSpend, averageSpend, fromIso, toIso.\nNo markdown. No extra text.`;
+  const executionUserPrompt = PROMPTS.scenario1;
+
+  logger.logPrompts("execution", {
+    systemPrompt: executionSystemPrompt,
+    userPrompt: executionUserPrompt,
+  });
+
   const executionResult = openrouter.callModel({
     model,
     input: [
       {
         role: "system",
-        content: `${PROMPTS.systemPrompt}\nExecution stage only.\nYou have these tools: get_current_datetime, get_all_customers, list_transactions_in_window, compute_customer_spend_stats, search_customers_by_name.\nUse this strategy:\n1) get_current_datetime\n2) list_transactions_in_window for last 7 days (no customerId)\n3) determine top customer by highest transaction count from that returned list\n4) compute_customer_spend_stats for that top customer and same date window\nReturn STRICT JSON only with keys: topCustomerId, topCustomerName, transactionCount, totalSpend, averageSpend, fromIso, toIso.\nNo markdown. No extra text.`,
+        content: executionSystemPrompt,
       },
       {
         role: "user",
-        content: PROMPTS.scenario1,
+        content: executionUserPrompt,
       },
     ],
     tools: toolsForExecution,
@@ -185,7 +217,13 @@ try {
     modelCallTimeoutMs
   );
   const finalText = extractResponseText(executionResponse);
-  logger.addModelResponse("execution", finalText, executionResponse.usage);
+  const executionReasoning = extractResponseReasoning(executionResponse);
+  logger.addModelResponse(
+    "execution",
+    finalText,
+    executionResponse.usage,
+    executionReasoning
+  );
 
   const executionCalls = await withTimeout(
     "regular execution tool calls",
@@ -257,7 +295,7 @@ try {
   console.log(finalText);
   console.log(JSON.stringify(evaluation, null, 2));
   console.log(`regular_log_file=${logPath}`);
-} catch (error) {
+  } catch (error) {
   logger.error("run_failed", "Scenario 1 regular benchmark failed", {
     error: error instanceof Error ? error.message : String(error),
   });
@@ -267,6 +305,11 @@ try {
   });
   await logger.writeToFile();
   throw error;
-} finally {
-  await closeScenario1DbPool();
+  } finally {
+    await closeScenario1DbPool();
+  }
+}
+
+if (import.meta.main) {
+  await runRegularBenchmark();
 }

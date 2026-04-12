@@ -62,5 +62,6 @@ Then run:
 
 - `bun run db:generate`
 - `bun run db:push`
+- `bun run seed:scenario1` (populates scenario 1 customers + transactions test data; script is defined in `package.json`)
 
 Schema file: `src/db/schema.ts`

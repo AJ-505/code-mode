@@ -1,4 +1,4 @@
-import { createInitialState } from "@openrouter/agent";
+import { stepCountIs } from "@openrouter/agent";
 import {
   BenchmarkLogger,
   findLatestBenchmarkLog,
@@ -34,15 +34,6 @@ const runId = createRunId();
 
 registerProgressiveTools([...benchmark1Tools]);
 
-let inMemoryConversationState = createInitialState();
-
-const stateAccessor = {
-  load: async () => inMemoryConversationState,
-  save: async (nextState: typeof inMemoryConversationState) => {
-    inMemoryConversationState = nextState;
-  },
-};
-
 const logger = new BenchmarkLogger({
   benchmarkId: scenario1BenchmarkId,
   scenarioNumber: scenario1Number,
@@ -70,11 +61,18 @@ try {
   const discoveryResult = openrouter.callModel({
     model,
     input: [
-      { role: "system", content: PROMPTS.systemPrompt },
-      { role: "user", content: PROMPTS.scenario1 },
+      {
+        role: "system",
+        content: `${PROMPTS.systemPrompt}\nDiscovery stage only. You have exactly one callable tool in this stage: discover_tools.\nCall discover_tools exactly once with these tool names: [\"get_current_datetime\", \"get_all_customers\", \"list_transactions_in_window\", \"compute_customer_spend_stats\"].\nDo not call any other tool in this stage.`,
+      },
+      {
+        role: "user",
+        content:
+          "Scenario 1: find the customer with most transactions in the last 7 days and their average spend. In this stage, only run discover_tools.",
+      },
     ],
     tools: [discoverTools] as const,
-    state: stateAccessor,
+    stopWhen: stepCountIs(1),
   });
 
   const discoveryResponse = await withTimeout(
@@ -95,34 +93,83 @@ try {
     discoveryCalls.map((call) => ({ name: call.name, arguments: call.arguments }))
   );
 
-  const discovered = extractDiscoveredToolNames(discoveryCalls);
-  const unlocked = getProgressiveToolsByName(discovered);
+  let discovered = extractDiscoveredToolNames(discoveryCalls);
+  let unlocked = getProgressiveToolsByName(discovered);
+
+  if (unlocked.length === 0) {
+    logger.info(
+      "discovery_retry",
+      "No discover_tools call found in first attempt; retrying discovery once"
+    );
+
+    const retryDiscoveryResult = openrouter.callModel({
+      model,
+      input: [
+        {
+          role: "system",
+          content: `${PROMPTS.systemPrompt}\nMandatory action: call discover_tools now. No prose.`,
+        },
+        {
+          role: "user",
+          content:
+            "Call discover_tools with [\"get_current_datetime\", \"get_all_customers\", \"list_transactions_in_window\", \"compute_customer_spend_stats\"] right now.",
+        },
+      ],
+      tools: [discoverTools] as const,
+      stopWhen: stepCountIs(1),
+    });
+
+    const retryResponse = await withTimeout(
+      "regular retry discovery response",
+      retryDiscoveryResult.getResponse(),
+      modelCallTimeoutMs
+    );
+    const retryText = extractResponseText(retryResponse);
+    logger.addModelResponse("discovery_retry", retryText, retryResponse.usage);
+
+    const retryCalls = await withTimeout(
+      "regular retry discovery tool calls",
+      retryDiscoveryResult.getToolCalls(),
+      modelCallTimeoutMs
+    );
+    logger.addToolCalls(
+      "discovery_retry",
+      retryCalls.map((call) => ({ name: call.name, arguments: call.arguments }))
+    );
+
+    discoveryCalls.push(...retryCalls);
+    discovered = extractDiscoveredToolNames(discoveryCalls);
+    unlocked = getProgressiveToolsByName(discovered);
+  }
 
   const toolsForExecution =
     unlocked.length > 0
-      ? [discoverTools, ...unlocked]
-      : [
-          discoverTools,
-          ...getProgressiveToolsByName(getAllRegisteredProgressiveToolNames()),
-        ];
+      ? unlocked
+      : getProgressiveToolsByName(getAllRegisteredProgressiveToolNames());
 
   logger.info("execution_stage", "Starting regular execution stage", {
     discoveredTools: discovered,
     unlockedToolCount: unlocked.length,
     executionToolCount: toolsForExecution.length,
+    executionToolNames: toolsForExecution
+      .filter((tool) => tool.type === "function")
+      .map((tool) => tool.function.name),
   });
 
   const executionResult = openrouter.callModel({
     model,
     input: [
       {
+        role: "system",
+        content: `${PROMPTS.systemPrompt}\nExecution stage only.\nYou have these tools: get_current_datetime, get_all_customers, list_transactions_in_window, compute_customer_spend_stats, search_customers_by_name.\nUse this strategy:\n1) get_current_datetime\n2) list_transactions_in_window for last 7 days (no customerId)\n3) determine top customer by highest transaction count from that returned list\n4) compute_customer_spend_stats for that top customer and same date window\nReturn STRICT JSON only with keys: topCustomerId, topCustomerName, transactionCount, totalSpend, averageSpend, fromIso, toIso.\nNo markdown. No extra text.`,
+      },
+      {
         role: "user",
-        content:
-          "Continue from the previous step. Use the unlocked tools only. Return STRICT JSON with keys: topCustomerId, topCustomerName, transactionCount, totalSpend, averageSpend, fromIso, toIso.",
+        content: PROMPTS.scenario1,
       },
     ],
     tools: toolsForExecution,
-    state: stateAccessor,
+    stopWhen: stepCountIs(12),
   });
 
   const executionResponse = await withTimeout(

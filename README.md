@@ -65,3 +65,12 @@ Then run:
 - `bun run seed:scenario1` (populates scenario 1 customers + transactions test data; script is defined in `package.json`)
 
 Schema file: `src/db/schema.ts`
+
+## Upcoming Scenarios (2-5)
+
+Scaffold branches are created independently for the remaining scenarios so work can proceed in parallel:
+
+- `feat/scenario-2-playwright-ui-audit`
+- `feat/scenario-3-slack-summary`
+- `feat/scenario-4-drive-keyword-retrieval`
+- `feat/scenario-5-calendar-timezone-scheduling`

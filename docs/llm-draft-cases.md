@@ -10,3 +10,11 @@ MCP = Model Context Protocol => Standard developed by Anthropic to connect agent
 5. Check the user's calendar to see how their schedule is like, and schedule a hypothetical meeting with someone in Bolivia. This requires good time-zone understanding + correct usage of available tools.
 6. Use the GitHub MCP server to fetch a repository, make a specific change, and create a PR.
 7. Programmatically expose a GitHub client that provides the full GitHub API surface, or instead expose a smaller wrapper that only surfaces the specific endpoints the app needs.
+
+## Scenario status
+
+- Scenario 1: in progress and runnable
+- Scenario 2: scaffolded (branch `feat/scenario-2-playwright-ui-audit`)
+- Scenario 3: scaffolded (separate branch)
+- Scenario 4: scaffolded (separate branch)
+- Scenario 5: scaffolded (separate branch)

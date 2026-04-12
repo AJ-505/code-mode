@@ -1,7 +1,9 @@
 import { createInitialState } from "@openrouter/agent";
 import {
   BenchmarkLogger,
-  findLatestBenchmarkLog,
+  findPairedBenchmarkLog,
+  getOrCreateBenchmarkPairId,
+  markBenchmarkPairLog,
   writeScenarioFinalComparison,
 } from "../../lib/benchmark-logger.js";
 import { type Model, openrouter } from "../../lib/chat-generation.js";
@@ -24,6 +26,10 @@ import {
 
 const model: Model = defaultScenario1Model;
 const runId = createRunId();
+const pairId = await getOrCreateBenchmarkPairId({
+  scenarioNumber: scenario1Number,
+  model,
+});
 
 let inMemoryConversationState = createInitialState();
 
@@ -39,6 +45,7 @@ const logger = new BenchmarkLogger({
   scenarioNumber: scenario1Number,
   mode: "code-mode",
   model,
+  pairId,
   runId,
   pricing: BenchmarkLogger.getDefaultPricing(),
 });
@@ -99,9 +106,19 @@ try {
   logger.setEvaluation(evaluation as unknown as Record<string, unknown>);
   logger.finish({ didFailTest: !evaluation.overallPass });
 
-  const latestRegular = await findLatestBenchmarkLog({
+  const logPath = await logger.writeToFile();
+  await markBenchmarkPairLog({
     scenarioNumber: scenario1Number,
     model,
+    pairId,
+    mode: "code-mode",
+    logPath,
+  });
+
+  const latestRegular = await findPairedBenchmarkLog({
+    scenarioNumber: scenario1Number,
+    model,
+    pairId,
     mode: "regular",
   });
 
@@ -110,6 +127,7 @@ try {
       benchmarkId: scenario1BenchmarkId,
       scenarioNumber: scenario1Number,
       model,
+      pairId,
       runId,
       regular: latestRegular,
       codeMode: logger.toJSON(),
@@ -126,11 +144,9 @@ try {
   } else {
     logger.info(
       "comparison_skipped",
-      "No regular log found yet; final comparison file not written"
+      "No paired regular log found yet; final comparison file not written"
     );
   }
-
-  const logPath = await logger.writeToFile();
 
   console.log(finalText);
   console.log(JSON.stringify(evaluation, null, 2));

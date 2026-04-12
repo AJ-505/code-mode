@@ -1,5 +1,6 @@
 import * as Bun from "bun";
-import { mkdir } from "node:fs/promises";
+import { randomUUID } from "node:crypto";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 
 type UsageLike = {
   inputTokens?: number;
@@ -23,6 +24,7 @@ export type BenchmarkJsonLog = {
   scenarioNumber: number;
   mode: BenchmarkMode;
   model: string;
+  pairId: string;
   runId: string;
   runStartedAt: string;
   runFinishedAt?: string;
@@ -73,6 +75,7 @@ type LoggerConfig = {
   scenarioNumber: number;
   mode: BenchmarkMode;
   model: string;
+  pairId: string;
   runId: string;
   pricing: PricingConfig;
 };
@@ -94,7 +97,8 @@ export function toResultLabel(value: string) {
 function getResultsPath(log: BenchmarkJsonLog) {
   const modelLabel = sanitizeLabel(log.model);
   const dateLabel = sanitizeLabel(log.runStartedAt.replaceAll(":", "-"));
-  const fileName = `${modelLabel}-scenario-${log.scenarioNumber}-${log.mode}-${log.runId}-${dateLabel}.json`;
+  const pairLabel = sanitizeLabel(log.pairId);
+  const fileName = `${modelLabel}-scenario-${log.scenarioNumber}-${log.mode}-pair-${pairLabel}-${log.runId}-${dateLabel}.json`;
   return `results/${fileName}`;
 }
 
@@ -131,6 +135,7 @@ export class BenchmarkLogger {
       scenarioNumber: config.scenarioNumber,
       mode: config.mode,
       model: config.model,
+      pairId: config.pairId,
       runId: config.runId,
       runStartedAt: new Date().toISOString(),
       status: "failed",
@@ -273,6 +278,7 @@ export async function writeScenarioFinalComparison(options: {
   benchmarkId: string;
   scenarioNumber: number;
   model: string;
+  pairId: string;
   runId: string;
   regular: BenchmarkJsonLog;
   codeMode: BenchmarkJsonLog;
@@ -302,6 +308,7 @@ export async function writeScenarioFinalComparison(options: {
     benchmarkId: options.benchmarkId,
     scenarioNumber: options.scenarioNumber,
     model: options.model,
+    pairId: options.pairId,
     runId: options.runId,
     createdAt: new Date().toISOString(),
     winner,
@@ -319,11 +326,145 @@ export async function writeScenarioFinalComparison(options: {
   };
 
   const modelLabel = sanitizeLabel(options.model);
-  const fileName = `${modelLabel}-scenario-${options.scenarioNumber}-final-${options.runId}-${sanitizeLabel(comparison.createdAt.replaceAll(":", "-"))}.json`;
+  const pairLabel = sanitizeLabel(options.pairId);
+  const fileName = `${modelLabel}-scenario-${options.scenarioNumber}-final-pair-${pairLabel}-${options.runId}-${sanitizeLabel(comparison.createdAt.replaceAll(":", "-"))}.json`;
   const path = `results/${fileName}`;
   await Bun.write(path, `${JSON.stringify(comparison, null, 2)}\n`);
 
   return { path, comparison };
+}
+
+type PendingPairRecord = {
+  scenarioNumber: number;
+  model: string;
+  pairId: string;
+  regularLogPath?: string;
+  codeModeLogPath?: string;
+  updatedAt: string;
+};
+
+const pendingPairsPath = "results/.scenario-pairs.json";
+
+async function loadPendingPairs(): Promise<PendingPairRecord[]> {
+  try {
+    const raw = await readFile(pendingPairsPath, "utf8");
+    const parsed = JSON.parse(raw) as unknown;
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter(
+      (item): item is PendingPairRecord =>
+        typeof item === "object" &&
+        item !== null &&
+        typeof (item as { scenarioNumber?: unknown }).scenarioNumber === "number" &&
+        typeof (item as { model?: unknown }).model === "string" &&
+        typeof (item as { pairId?: unknown }).pairId === "string" &&
+        typeof (item as { updatedAt?: unknown }).updatedAt === "string"
+    );
+  } catch {
+    return [];
+  }
+}
+
+async function savePendingPairs(records: PendingPairRecord[]) {
+  await mkdir("results", { recursive: true });
+  await writeFile(pendingPairsPath, `${JSON.stringify(records, null, 2)}\n`, "utf8");
+}
+
+export async function getOrCreateBenchmarkPairId(options: {
+  scenarioNumber: number;
+  model: string;
+}) {
+  const records = await loadPendingPairs();
+  const matching = records
+    .filter(
+      (record) =>
+        record.scenarioNumber === options.scenarioNumber &&
+        record.model === options.model &&
+        !(record.regularLogPath && record.codeModeLogPath)
+    )
+    .sort(
+      (a, b) =>
+        Date.parse(b.updatedAt || "1970-01-01T00:00:00.000Z") -
+        Date.parse(a.updatedAt || "1970-01-01T00:00:00.000Z")
+    );
+
+  const openPair = matching[0];
+  if (openPair) {
+    return openPair.pairId;
+  }
+
+  const pairId = randomUUID().replaceAll("-", "").slice(0, 12);
+  records.push({
+    scenarioNumber: options.scenarioNumber,
+    model: options.model,
+    pairId,
+    updatedAt: new Date().toISOString(),
+  });
+  await savePendingPairs(records);
+  return pairId;
+}
+
+export async function markBenchmarkPairLog(options: {
+  scenarioNumber: number;
+  model: string;
+  pairId: string;
+  mode: BenchmarkMode;
+  logPath: string;
+}) {
+  const records = await loadPendingPairs();
+  const now = new Date().toISOString();
+
+  let record = records.find(
+    (entry) =>
+      entry.scenarioNumber === options.scenarioNumber &&
+      entry.model === options.model &&
+      entry.pairId === options.pairId
+  );
+
+  if (!record) {
+    record = {
+      scenarioNumber: options.scenarioNumber,
+      model: options.model,
+      pairId: options.pairId,
+      updatedAt: now,
+    };
+    records.push(record);
+  }
+
+  if (options.mode === "regular") {
+    record.regularLogPath = options.logPath;
+  } else {
+    record.codeModeLogPath = options.logPath;
+  }
+
+  record.updatedAt = now;
+  await savePendingPairs(records);
+}
+
+export async function findPairedBenchmarkLog(options: {
+  scenarioNumber: number;
+  model: string;
+  pairId: string;
+  mode: BenchmarkMode;
+}) {
+  const records = await loadPendingPairs();
+  const record = records.find(
+    (entry) =>
+      entry.scenarioNumber === options.scenarioNumber &&
+      entry.model === options.model &&
+      entry.pairId === options.pairId
+  );
+
+  if (!record) return null;
+
+  const path =
+    options.mode === "regular" ? record.regularLogPath : record.codeModeLogPath;
+  if (!path) return null;
+
+  try {
+    return (await Bun.file(path).json()) as BenchmarkJsonLog;
+  } catch {
+    return null;
+  }
 }
 
 export async function findLatestBenchmarkLog(options: {

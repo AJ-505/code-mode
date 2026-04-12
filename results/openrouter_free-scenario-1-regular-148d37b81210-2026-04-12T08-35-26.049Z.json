@@ -1,0 +1,60 @@
+{
+  "benchmarkId": "1_customer_db_average_spend",
+  "scenarioNumber": 1,
+  "mode": "regular",
+  "model": "openrouter/free",
+  "runId": "148d37b81210",
+  "runStartedAt": "2026-04-12T08:35:26.049Z",
+  "status": "failed",
+  "didFailTest": true,
+  "pricing": {
+    "inputPerMillionUsd": 0,
+    "outputPerMillionUsd": 0,
+    "cachedInputPerMillionUsd": 0
+  },
+  "usage": {
+    "inputTokens": 0,
+    "outputTokens": 0,
+    "cachedTokens": 0,
+    "totalTokens": 0,
+    "estimatedCostUsd": 0
+  },
+  "modelResponses": [],
+  "toolCalls": [],
+  "events": [
+    {
+      "ts": "2026-04-12T08:35:26.050Z",
+      "level": "info",
+      "event": "run_start",
+      "message": "Scenario 1 regular benchmark started",
+      "data": {
+        "benchmarkId": "1_customer_db_average_spend",
+        "model": "openrouter/free",
+        "modelCallTimeoutMs": 120000
+      }
+    },
+    {
+      "ts": "2026-04-12T08:35:31.676Z",
+      "level": "error",
+      "event": "run_failed",
+      "message": "Scenario 1 regular benchmark failed",
+      "data": {
+        "error": "No transactions found in the last 7 days. Run the seed script first."
+      }
+    },
+    {
+      "ts": "2026-04-12T08:35:31.676Z",
+      "level": "info",
+      "event": "run_finished",
+      "message": "Benchmark run finished",
+      "data": {
+        "status": "failed",
+        "didFailTest": true,
+        "totalTokens": 0,
+        "estimatedCostUsd": 0
+      }
+    }
+  ],
+  "runFinishedAt": "2026-04-12T08:35:31.676Z",
+  "error": "No transactions found in the last 7 days. Run the seed script first."
+}

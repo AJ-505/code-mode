@@ -1,0 +1,15 @@
+[
+  {
+    "scenarioNumber": 1,
+    "model": "openrouter/free",
+    "pairId": "481d00877fe7",
+    "updatedAt": "2026-04-12T11:05:15.178Z",
+    "codeModeLogPath": "results/openrouter_free-scenario-1-code-mode-pair-481d00877fe7-242bd6c48ca1-2026-04-12T11-04-21.256Z.json"
+  },
+  {
+    "scenarioNumber": 1,
+    "model": "google/gemma-4-26b-a4b-it:free",
+    "pairId": "d84ac1ea7660",
+    "updatedAt": "2026-04-12T11:01:52.667Z"
+  }
+]

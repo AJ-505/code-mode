@@ -1,20 +1,30 @@
-import { validateEnvironmentVariables } from "./env.js";
-import { generateResponse } from "./paradigms/code-mode.js";
-validateEnvironmentVariables();
+import * as Bun from "bun";
+import { runCodeModeBenchmark } from "./test-scenarios/1_customer_db_average_spend/code-mode.js";
+import { runRegularBenchmark } from "./test-scenarios/1_customer_db_average_spend/regular.js";
 
-const SYSTEM_PROMPT =
-	`You are a specialised agent built to take different tests on various tasks.
-You have access to the following tools:
+function parseArgs() {
+  const args = Bun.argv.slice(2);
+  const modeFlag = args.find((arg) => arg.startsWith("--mode="));
+  const scenarioFlag = args.find((arg) => arg.startsWith("--scenario="));
 
-# 1. Google Drive
-Available tools:
+  const mode = modeFlag?.split("=")[1] ?? "regular";
+  const scenario = scenarioFlag?.split("=")[1] ?? "1";
 
-`;
+  return { mode, scenario };
+}
 
-const initialResponse = await generateResponse({
-	model: "openRouter/free",
-	prompt: SYSTEM_PROMPT,
-	role: "user",
-});
+if (import.meta.main) {
+  const { mode, scenario } = parseArgs();
 
-console.log(initialResponse.choices[0]?.message);
+  if (scenario !== "1") {
+    throw new Error(`Unsupported scenario '${scenario}'. Only scenario 1 is wired.`);
+  }
+
+  if (mode === "code-mode") {
+    await runCodeModeBenchmark();
+  } else if (mode === "regular") {
+    await runRegularBenchmark();
+  } else {
+    throw new Error(`Unsupported mode '${mode}'. Use --mode=regular or --mode=code-mode.`);
+  }
+}

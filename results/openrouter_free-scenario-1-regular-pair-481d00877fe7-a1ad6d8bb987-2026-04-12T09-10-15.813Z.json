@@ -1,0 +1,173 @@
+{
+  "benchmarkId": "1_customer_db_average_spend",
+  "scenarioNumber": 1,
+  "mode": "regular",
+  "model": "openrouter/free",
+  "pairId": "481d00877fe7",
+  "runId": "a1ad6d8bb987",
+  "runStartedAt": "2026-04-12T09:10:15.813Z",
+  "status": "failed",
+  "didFailTest": true,
+  "pricing": {
+    "inputPerMillionUsd": 0,
+    "outputPerMillionUsd": 0,
+    "cachedInputPerMillionUsd": 0
+  },
+  "usage": {
+    "inputTokens": 2521,
+    "outputTokens": 129,
+    "cachedTokens": 80,
+    "totalTokens": 2650,
+    "estimatedCostUsd": 0
+  },
+  "modelResponses": [
+    {
+      "stage": "discovery",
+      "text": "We have tools now. Next we need to answer scenario. We'll compute.",
+      "usage": {
+        "inputTokens": 1289,
+        "outputTokens": 36,
+        "cachedTokens": 80,
+        "totalTokens": 1325,
+        "estimatedCostUsd": 0
+      }
+    },
+    {
+      "stage": "discovery_retry",
+      "text": "I now have access to the following tools:\n- get_current_datetime: Get the current ISO datetime to anchor time-window analysis.\n- get_all_customers: Fetch all customer rows with optional pagination.\n- list_transactions_in_window: List transaction rows in a date window. Optional customerId filter.\n- compute_customer_spend_stats: Compute transaction count, total spend, and average spend for a customer within a date window.\n\nWhat would you like me to help you with?",
+      "usage": {
+        "inputTokens": 1232,
+        "outputTokens": 93,
+        "cachedTokens": 0,
+        "totalTokens": 1325,
+        "estimatedCostUsd": 0
+      }
+    }
+  ],
+  "toolCalls": [
+    {
+      "stage": "discovery",
+      "name": "get_current_datetime",
+      "arguments": {}
+    }
+  ],
+  "events": [
+    {
+      "ts": "2026-04-12T09:10:15.813Z",
+      "level": "info",
+      "event": "run_start",
+      "message": "Scenario 1 regular benchmark started",
+      "data": {
+        "benchmarkId": "1_customer_db_average_spend",
+        "model": "openrouter/free",
+        "modelCallTimeoutMs": 120000
+      }
+    },
+    {
+      "ts": "2026-04-12T09:10:19.353Z",
+      "level": "info",
+      "event": "expected_result",
+      "message": "Computed scenario expected result from DB seed",
+      "data": {
+        "topCustomerId": "acce8ff9-a7f8-4d2f-bd87-b6142b189b08",
+        "transactionCount": 42,
+        "averageSpend": 254.64
+      }
+    },
+    {
+      "ts": "2026-04-12T09:10:32.669Z",
+      "level": "info",
+      "event": "model_response",
+      "message": "Model response captured for discovery",
+      "data": {
+        "text": "We have tools now. Next we need to answer scenario. We'll compute.",
+        "inputTokens": 1289,
+        "outputTokens": 36,
+        "cachedTokens": 80,
+        "totalTokens": 1325,
+        "estimatedCostUsd": 0
+      }
+    },
+    {
+      "ts": "2026-04-12T09:10:32.671Z",
+      "level": "info",
+      "event": "tool_call",
+      "message": "Tool called: get_current_datetime",
+      "data": {
+        "stage": "discovery",
+        "toolName": "get_current_datetime",
+        "arguments": {}
+      }
+    },
+    {
+      "ts": "2026-04-12T09:10:32.672Z",
+      "level": "info",
+      "event": "discovery_retry",
+      "message": "No discover_tools call found in first attempt; retrying discovery once"
+    },
+    {
+      "ts": "2026-04-12T09:10:49.470Z",
+      "level": "info",
+      "event": "model_response",
+      "message": "Model response captured for discovery_retry",
+      "data": {
+        "text": "I now have access to the following tools:\n- get_current_datetime: Get the current ISO datetime to anchor time-window analysis.\n- get_all_customers: Fetch all customer rows with optional pagination.\n- list_transactions_in_window: List transaction rows in a date window. Optional customerId filter.\n- compute_customer_spend_stats: Compute transaction count, total spend, and average spend for a customer within a date window.\n\nWhat would you like me to help you with?",
+        "inputTokens": 1232,
+        "outputTokens": 93,
+        "cachedTokens": 0,
+        "totalTokens": 1325,
+        "estimatedCostUsd": 0
+      }
+    },
+    {
+      "ts": "2026-04-12T09:10:49.471Z",
+      "level": "info",
+      "event": "execution_stage",
+      "message": "Starting regular execution stage",
+      "data": {
+        "discoveredTools": [],
+        "unlockedToolCount": 0,
+        "executionToolCount": 5,
+        "executionToolNames": [
+          "get_current_datetime",
+          "get_all_customers",
+          "search_customers_by_name",
+          "list_transactions_in_window",
+          "compute_customer_spend_stats"
+        ]
+      }
+    },
+    {
+      "ts": "2026-04-12T09:12:49.489Z",
+      "level": "error",
+      "event": "run_failed",
+      "message": "Scenario 1 regular benchmark failed",
+      "data": {
+        "error": "Timeout while waiting for regular execution response after 120000ms"
+      }
+    },
+    {
+      "ts": "2026-04-12T09:12:49.490Z",
+      "level": "info",
+      "event": "run_finished",
+      "message": "Benchmark run finished",
+      "data": {
+        "status": "failed",
+        "didFailTest": true,
+        "totalTokens": 2650,
+        "estimatedCostUsd": 0
+      }
+    }
+  ],
+  "expectedResult": {
+    "fromIso": "2026-04-05T09:10:15.816Z",
+    "toIso": "2026-04-12T09:10:15.816Z",
+    "topCustomerId": "acce8ff9-a7f8-4d2f-bd87-b6142b189b08",
+    "topCustomerName": "Avery Benchmark",
+    "transactionCount": 42,
+    "averageSpend": 254.64,
+    "totalSpend": 10694.71
+  },
+  "runFinishedAt": "2026-04-12T09:12:49.489Z",
+  "error": "Timeout while waiting for regular execution response after 120000ms"
+}

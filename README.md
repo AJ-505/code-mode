@@ -1,4 +1,5 @@
 # Code Mode
+
 This is a benchmark to test traditional tool-calling methods & MCP against 'Code Mode', a new paradigm gaining traction where the LLM directly writes code to achieve its outcomes. These tests are intentionally designed to mimic real-world LLM use cases.
 
 Ensure you have `bun` installed:
@@ -32,12 +33,14 @@ gh auth login
 ```
 
 And the Google Workspaces CLI:
+
 ```bash
 # For all platforms - install using npm
 npm install -g @googleworkspace/cli
 ```
 
 ... And, the Slack CLI:
+
 ```bash
 # MacOS/Linux
 curl -fsSL https://downloads.slack-edge.com/slack-cli/install.sh | bash
@@ -48,3 +51,17 @@ irm https://downloads.slack-edge.com/slack-cli/install-windows.ps1 | iex
 ```
 
 **NOTE**: This repo is still in its very early stages. Please contact the repo owner if things change drastically without being documented. PRs are welcome.
+
+## Benchmark 1 (Customer DB) setup
+
+Set a Postgres URL in your `.env`:
+
+`DATABASE_URL=postgres://user:password@host:5432/dbname`
+
+Then run:
+
+- `bun run db:generate`
+- `bun run db:push`
+- `bun run seed:scenario1` (populates scenario 1 customers + transactions test data; script is defined in `package.json`)
+
+Schema file: `src/db/schema.ts`

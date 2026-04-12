@@ -1,237 +1,150 @@
 import { createInitialState } from "@openrouter/agent";
 import {
-	type BenchmarkEvaluationSpec,
-	evaluateBenchmarkRun,
-	logBenchmarkEvent,
-} from "../../lib/benchmark-evaluation.js";
+  BenchmarkLogger,
+  findLatestBenchmarkLog,
+  writeScenarioFinalComparison,
+} from "../../lib/benchmark-logger.js";
 import { type Model, openrouter } from "../../lib/chat-generation.js";
-import {
-	discoverTools,
-	getAllRegisteredProgressiveToolNames,
-	getProgressiveToolsByName,
-	registerProgressiveTools,
-} from "../../lib/progressive-tool-discovery.js";
+import { extractResponseText } from "../../lib/openrouter-response.js";
 import { PROMPTS } from "../../lib/prompts.js";
-import { benchmark1Tools } from "./tools.js";
+import {
+  closeScenario1DbPool,
+  computeScenario1ExpectedResult,
+} from "./data.js";
+import { evaluateScenario1Run } from "./evaluation.js";
+import { executeScenario1Code } from "./code-mode-tools.js";
+import {
+  createRunId,
+  defaultScenario1Model,
+  modelCallTimeoutMs,
+  scenario1BenchmarkId,
+  scenario1Number,
+  withTimeout,
+} from "./shared.js";
 
-const model: Model = "openrouter/free";
-const modelCallTimeoutMs = Number(
-	process.env.BENCHMARK_MODEL_TIMEOUT_MS ?? 120_000,
-);
-
-registerProgressiveTools([...benchmark1Tools]);
-
-const evaluationSpec: BenchmarkEvaluationSpec = {
-	benchmarkId: "1_customer_db_average_spend",
-	expectedToolGroups: [
-		{
-			id: "progressive-discovery",
-			anyOf: ["discover_tools"],
-			required: true,
-			note: "Agent should discover hidden tools first.",
-		},
-		{
-			id: "customer-source",
-			anyOf: ["get_all_customers", "search_customers_by_name"],
-			required: true,
-			note: "Agent should query customer data through composable tools.",
-		},
-		{
-			id: "transaction-window",
-			anyOf: ["list_transactions_in_window"],
-			required: true,
-			note: "Agent should retrieve transaction rows within time window.",
-		},
-		{
-			id: "stats",
-			anyOf: ["compute_customer_spend_stats"],
-			required: true,
-			note: "Agent should compute spend stats from composable operation.",
-		},
-	],
-	fuzzyResponseChecks: [
-		{
-			id: "top-customer-mention",
-			terms: ["top customer", "most transactions", "highest transactions"],
-			minMatches: 1,
-			weight: 1,
-		},
-		{
-			id: "average-spend-mention",
-			terms: ["average spend", "avg spend", "mean spend"],
-			minMatches: 1,
-			weight: 1,
-		},
-	],
-	minNumericMentions: 2,
-};
+const model: Model = defaultScenario1Model;
+const runId = createRunId();
 
 let inMemoryConversationState = createInitialState();
 
 const stateAccessor = {
-	load: async () => inMemoryConversationState,
-	save: async (nextState: typeof inMemoryConversationState) => {
-		inMemoryConversationState = nextState;
-	},
+  load: async () => inMemoryConversationState,
+  save: async (nextState: typeof inMemoryConversationState) => {
+    inMemoryConversationState = nextState;
+  },
 };
 
-async function withTimeout<T>(
-	stage: string,
-	operation: Promise<T>,
-	timeoutMs: number,
-) {
-	let timeoutHandle: ReturnType<typeof setTimeout> | undefined;
-
-	const timeoutPromise = new Promise<never>((_, reject) => {
-		timeoutHandle = setTimeout(() => {
-			reject(
-				new Error(`Timeout while waiting for ${stage} after ${timeoutMs}ms`),
-			);
-		}, timeoutMs);
-	});
-
-	try {
-		return await Promise.race([operation, timeoutPromise]);
-	} finally {
-		if (timeoutHandle) clearTimeout(timeoutHandle);
-	}
-}
-
-logBenchmarkEvent("benchmark_run_started", {
-	benchmarkId: evaluationSpec.benchmarkId,
-	model,
-	modelCallTimeoutMs,
+const logger = new BenchmarkLogger({
+  benchmarkId: scenario1BenchmarkId,
+  scenarioNumber: scenario1Number,
+  mode: "code-mode",
+  model,
+  runId,
+  pricing: BenchmarkLogger.getDefaultPricing(),
 });
 
 try {
-	logBenchmarkEvent("discovery_stage_started", {
-		benchmarkId: evaluationSpec.benchmarkId,
-		model,
-	});
+  logger.info("run_start", "Scenario 1 code-mode benchmark started", {
+    benchmarkId: scenario1BenchmarkId,
+    model,
+    modelCallTimeoutMs,
+  });
 
-	const discoveryResult = openrouter.callModel({
-		model,
-		input: [
-			{ role: "system", content: PROMPTS.systemPrompt },
-			{ role: "user", content: PROMPTS.scenario1 },
-		],
-		tools: [discoverTools] as const,
-		state: stateAccessor,
-	});
+  const expected = await computeScenario1ExpectedResult();
+  logger.setExpectedResult(expected);
+  logger.info("expected_result", "Computed scenario expected result from DB seed", {
+    topCustomerId: expected.topCustomerId,
+    transactionCount: expected.transactionCount,
+    averageSpend: expected.averageSpend,
+  });
 
-	await withTimeout(
-		"discovery response",
-		discoveryResult.getResponse(),
-		modelCallTimeoutMs,
-	);
-	logBenchmarkEvent("discovery_stage_response_received", {
-		benchmarkId: evaluationSpec.benchmarkId,
-	});
+  const codeModePrompt = `${PROMPTS.systemPrompt}\n\nYou are now in code-mode.\nWrite TypeScript code that uses ONLY the provided tool execute_scenario1_code.\nWhen calling the tool, pass a full TS program string in input key \"typescript\".\nIn that program, use the provided global \"api\" methods:\n- await api.getCurrentDatetime()\n- await api.getAllCustomers({ limit, offset })\n- await api.searchCustomersByName({ query, limit })\n- await api.listTransactionsInWindow({ fromIso, toIso, customerId?, limit })\n- await api.computeCustomerSpendStats({ customerId, fromIso, toIso })\nThe TS program must return JSON object with keys:\n{ topCustomerId, topCustomerName, transactionCount, totalSpend, averageSpend, fromIso, toIso }\nDo not mention placeholders. Compute the real answer and return concise final JSON.`;
 
-	const discoveryCalls = await withTimeout(
-		"discovery tool calls",
-		discoveryResult.getToolCalls(),
-		modelCallTimeoutMs,
-	);
-	const discoveredNames = discoveryCalls
-		.filter((call) => call.name === "discover_tools")
-		.flatMap((call) => {
-			const args = call.arguments;
-			if (typeof args !== "object" || args === null || !("toolNames" in args)) {
-				return [];
-			}
+  const modelResult = openrouter.callModel({
+    model,
+    input: [
+      { role: "system", content: codeModePrompt },
+      { role: "user", content: PROMPTS.scenario1 },
+    ],
+    tools: [executeScenario1Code] as const,
+    state: stateAccessor,
+  });
 
-			const maybeToolNames = (args as { toolNames?: unknown }).toolNames;
-			return Array.isArray(maybeToolNames) ?
-				maybeToolNames.filter(
-					(name): name is string => typeof name === "string",
-				) :
-				[];
-		});
+  const response = await withTimeout(
+    "code-mode response",
+    modelResult.getResponse(),
+    modelCallTimeoutMs
+  );
+  const finalText = extractResponseText(response);
+  logger.addModelResponse("code_mode", finalText, response.usage);
 
-	const uniqueDiscovered = [...new Set(discoveredNames)];
-	const unlocked = getProgressiveToolsByName(uniqueDiscovered);
+  const toolCalls = await withTimeout(
+    "code-mode tool calls",
+    modelResult.getToolCalls(),
+    modelCallTimeoutMs
+  );
 
-	logBenchmarkEvent("discovery_stage_tools_unlocked", {
-		benchmarkId: evaluationSpec.benchmarkId,
-		discoveryCallCount: discoveryCalls.length,
-		discoveredToolNames: uniqueDiscovered,
-		unlockedCount: unlocked.length,
-	});
+  logger.addToolCalls(
+    "code_mode",
+    toolCalls.map((call) => ({ name: call.name, arguments: call.arguments }))
+  );
 
-	const toolsForExecution = unlocked.length > 0 ?
-		[discoverTools, ...unlocked] :
-		[
-			discoverTools,
-			...getProgressiveToolsByName(getAllRegisteredProgressiveToolNames()),
-		];
+  const evaluation = evaluateScenario1Run({
+    mode: "code-mode",
+    calledToolNames: toolCalls.map((call) => call.name),
+    finalText,
+    expected,
+  });
 
-	logBenchmarkEvent("execution_stage_started", {
-		benchmarkId: evaluationSpec.benchmarkId,
-		availableToolCount: toolsForExecution.length,
-		availableToolNames: toolsForExecution
-			.filter((tool) => tool.type === "function")
-			.map((tool) => tool.function.name),
-	});
+  logger.setEvaluation(evaluation as unknown as Record<string, unknown>);
+  logger.finish({ didFailTest: !evaluation.overallPass });
 
-	const executionResult = openrouter.callModel({
-		model,
-		input: [
-			{
-				role: "user",
-				content:
-					"Continue from the previous step. Use the unlocked tool(s), compute the answer, and return a concise result.",
-			},
-		],
-		tools: toolsForExecution,
-		state: stateAccessor,
-	});
+  const latestRegular = await findLatestBenchmarkLog({
+    scenarioNumber: scenario1Number,
+    model,
+    mode: "regular",
+  });
 
-	const finalText = await withTimeout(
-		"execution text",
-		executionResult.getText(),
-		modelCallTimeoutMs,
-	);
-	const executionCalls = await withTimeout(
-		"execution tool calls",
-		executionResult.getToolCalls(),
-		modelCallTimeoutMs,
-	);
+  if (latestRegular) {
+    const final = await writeScenarioFinalComparison({
+      benchmarkId: scenario1BenchmarkId,
+      scenarioNumber: scenario1Number,
+      model,
+      runId,
+      regular: latestRegular,
+      codeMode: logger.toJSON(),
+    });
+    logger.setComparison({
+      winner: final.comparison.winner,
+      reasons: final.comparison.reasons,
+    });
 
-	logBenchmarkEvent("execution_stage_completed", {
-		benchmarkId: evaluationSpec.benchmarkId,
-		executionCallCount: executionCalls.length,
-		executionToolNames: executionCalls.map((call) => call.name),
-		finalTextLength: finalText.length,
-	});
+    logger.info("comparison_written", "Wrote final regular vs code-mode comparison", {
+      path: final.path,
+      winner: final.comparison.winner,
+    });
+  } else {
+    logger.info(
+      "comparison_skipped",
+      "No regular log found yet; final comparison file not written"
+    );
+  }
 
-	const calledToolNames = [
-		...discoveryCalls.map((call) => call.name),
-		...executionCalls.map((call) => call.name),
-	];
+  const logPath = await logger.writeToFile();
 
-	const evaluation = evaluateBenchmarkRun({
-		calledToolNames,
-		finalText,
-		spec: evaluationSpec,
-	});
-
-	logBenchmarkEvent("benchmark_run_summary", {
-		benchmarkId: evaluationSpec.benchmarkId,
-		overallPass: evaluation.overallPass,
-		calledToolNames: evaluation.toolEval.calledToolNames,
-		toolEval: evaluation.toolEval,
-		fuzzyEval: evaluation.fuzzyEval,
-		numericMentions: evaluation.numericMentions,
-	});
-
-	console.log(finalText);
-	console.log(JSON.stringify(evaluation, null, 2));
+  console.log(finalText);
+  console.log(JSON.stringify(evaluation, null, 2));
+  console.log(`code_mode_log_file=${logPath}`);
 } catch (error) {
-	logBenchmarkEvent("benchmark_run_failed", {
-		benchmarkId: evaluationSpec.benchmarkId,
-		error: error instanceof Error ? error.message : String(error),
-	});
-
-	throw error;
+  logger.error("run_failed", "Scenario 1 code-mode benchmark failed", {
+    error: error instanceof Error ? error.message : String(error),
+  });
+  logger.finish({
+    didFailTest: true,
+    error: error instanceof Error ? error.message : String(error),
+  });
+  await logger.writeToFile();
+  throw error;
+} finally {
+  await closeScenario1DbPool();
 }

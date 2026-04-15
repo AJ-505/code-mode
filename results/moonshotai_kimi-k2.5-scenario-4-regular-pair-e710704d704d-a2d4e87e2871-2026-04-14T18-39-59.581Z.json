@@ -1,0 +1,64 @@
+{
+  "benchmarkId": "4_drive_keyword_retrieval",
+  "scenarioNumber": 4,
+  "mode": "regular",
+  "model": "moonshotai/kimi-k2.5",
+  "pairId": "e710704d704d",
+  "runId": "a2d4e87e2871",
+  "runStartedAt": "2026-04-14T18:39:59.581Z",
+  "status": "failed",
+  "didFailTest": true,
+  "pricing": {
+    "inputPerMillionUsd": 2.5,
+    "outputPerMillionUsd": 15,
+    "cachedInputPerMillionUsd": 0
+  },
+  "usage": {
+    "inputTokens": 0,
+    "outputTokens": 0,
+    "cachedTokens": 0,
+    "totalTokens": 0,
+    "estimatedCostUsd": 0
+  },
+  "modelResponses": [],
+  "toolCalls": [],
+  "events": [
+    {
+      "ts": "2026-04-14T18:39:59.582Z",
+      "level": "info",
+      "event": "run_start",
+      "message": "Scenario 4 regular benchmark started",
+      "data": {
+        "benchmarkId": "4_drive_keyword_retrieval",
+        "model": "moonshotai/kimi-k2.5",
+        "modelCallTimeoutMs": 120000
+      }
+    },
+    {
+      "ts": "2026-04-14T18:39:59.792Z",
+      "level": "error",
+      "event": "run_failed",
+      "message": "Scenario 4 regular benchmark failed",
+      "data": {
+        "error": "Unexpected HTTP client error: Error: Unable to connect. Is the computer able to access the url?"
+      }
+    },
+    {
+      "ts": "2026-04-14T18:39:59.792Z",
+      "level": "info",
+      "event": "run_finished",
+      "message": "Benchmark run finished",
+      "data": {
+        "status": "failed",
+        "didFailTest": true,
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "cachedTokens": 0,
+        "totalTokens": 0,
+        "estimatedCostUsd": 0
+      }
+    }
+  ],
+  "runFinishedAt": "2026-04-14T18:39:59.792Z",
+  "error": "Unexpected HTTP client error: Error: Unable to connect. Is the computer able to access the url?"
+}

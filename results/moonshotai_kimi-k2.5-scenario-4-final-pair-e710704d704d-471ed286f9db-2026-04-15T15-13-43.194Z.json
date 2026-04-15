@@ -1,0 +1,23 @@
+{
+  "benchmarkId": "4_drive_keyword_retrieval",
+  "scenarioNumber": 4,
+  "model": "moonshotai/kimi-k2.5",
+  "pairId": "e710704d704d",
+  "runId": "471ed286f9db",
+  "createdAt": "2026-04-15T15:13:43.194Z",
+  "winner": "code-mode",
+  "reasons": [
+    "regular: didFail=true, tokens=1506, costUsd=0.001147",
+    "code-mode: didFail=false, tokens=1215, costUsd=0.000535"
+  ],
+  "regular": {
+    "didFailTest": true,
+    "totalTokens": 1506,
+    "estimatedCostUsd": 0.001147
+  },
+  "codeMode": {
+    "didFailTest": false,
+    "totalTokens": 1215,
+    "estimatedCostUsd": 0.000535
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "benchmarkId": "1_customer_db_average_spend",
+  "scenarioNumber": 1,
+  "model": "google/gemini-3.1-pro-preview",
+  "pairId": "8b9a120be232",
+  "runId": "e7874ebc8faa",
+  "createdAt": "2026-04-14T18:31:34.709Z",
+  "winner": "code-mode",
+  "reasons": [
+    "regular: didFail=true, tokens=39794, costUsd=0.10591",
+    "code-mode: didFail=true, tokens=3457, costUsd=0.04098"
+  ],
+  "regular": {
+    "didFailTest": true,
+    "totalTokens": 39794,
+    "estimatedCostUsd": 0.10591
+  },
+  "codeMode": {
+    "didFailTest": true,
+    "totalTokens": 3457,
+    "estimatedCostUsd": 0.04098
+  }
+}

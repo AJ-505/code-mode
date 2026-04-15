@@ -1,6 +1,6 @@
 import type { Scenario2Result } from "./types.js";
 
-export const SCENARIO2_SITE_URL = "https://example.com";
+export const SCENARIO2_SITE_URL = "https://playwright.dev";
 
 export function getScenario2ExpectedResult(): Scenario2Result {
   return {

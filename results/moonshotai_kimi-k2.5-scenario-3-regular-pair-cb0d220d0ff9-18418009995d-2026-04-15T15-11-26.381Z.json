@@ -1,0 +1,226 @@
+{
+  "benchmarkId": "3_slack_summary",
+  "scenarioNumber": 3,
+  "mode": "regular",
+  "model": "moonshotai/kimi-k2.5",
+  "pairId": "cb0d220d0ff9",
+  "runId": "18418009995d",
+  "runStartedAt": "2026-04-15T15:11:26.381Z",
+  "status": "failed",
+  "didFailTest": true,
+  "pricing": {
+    "inputPerMillionUsd": 0.3827,
+    "outputPerMillionUsd": 1.72,
+    "cachedInputPerMillionUsd": 0
+  },
+  "usage": {
+    "inputTokens": 1375,
+    "outputTokens": 152,
+    "cachedTokens": 0,
+    "totalTokens": 1527,
+    "estimatedCostUsd": 0.000788
+  },
+  "modelResponses": [
+    {
+      "stage": "discovery",
+      "text": "The tool `summarize_slack_channel` has been discovered. However, I need to get the current datetime to calculate the past 24 hours window. Let me discover the `get_current_datetime` tool as well.",
+      "usage": {
+        "inputTokens": 545,
+        "outputTokens": 67,
+        "cachedTokens": 0,
+        "totalTokens": 612,
+        "estimatedCostUsd": 0.000324
+      }
+    },
+    {
+      "stage": "execution",
+      "text": "The user wants me to summarize Slack channel messages from the past 24 hours. I need to:\n\n1. First get the current datetime to calculate the past 24 hours\n2. Then call summarize_slack_channel with the appropriate time range\n\nLet me first discover if there's a get_current_datetime tool available.",
+      "usage": {
+        "inputTokens": 830,
+        "outputTokens": 85,
+        "cachedTokens": 0,
+        "totalTokens": 915,
+        "estimatedCostUsd": 0.000464
+      }
+    }
+  ],
+  "toolCalls": [
+    {
+      "stage": "discovery",
+      "name": "discover_tools",
+      "arguments": {
+        "toolNames": [
+          "get_current_datetime"
+        ]
+      }
+    },
+    {
+      "stage": "execution",
+      "name": "discover_tools",
+      "arguments": {
+        "toolNames": [
+          "get_current_datetime"
+        ]
+      }
+    }
+  ],
+  "events": [
+    {
+      "ts": "2026-04-15T15:11:26.381Z",
+      "level": "info",
+      "event": "run_start",
+      "message": "Scenario 3 regular benchmark started",
+      "data": {
+        "benchmarkId": "3_slack_summary",
+        "model": "moonshotai/kimi-k2.5",
+        "modelCallTimeoutMs": 120000
+      }
+    },
+    {
+      "ts": "2026-04-15T15:11:38.399Z",
+      "level": "info",
+      "event": "model_response",
+      "message": "Model response captured for discovery",
+      "data": {
+        "responsePreview": "The tool `summarize_slack_channel` has been discovered. However, I need to get the current datetime to calculate the past 24 hours window. Let me discover the `get_current_datetime` tool as well.",
+        "responseChars": 195,
+        "inputTokens": 545,
+        "outputTokens": 67,
+        "cachedTokens": 0,
+        "totalTokens": 612,
+        "estimatedCostUsd": 0.000324
+      }
+    },
+    {
+      "ts": "2026-04-15T15:11:38.404Z",
+      "level": "info",
+      "event": "tool_call",
+      "message": "Tool called in discovery: discover_tools",
+      "data": {
+        "stage": "discovery",
+        "toolName": "discover_tools",
+        "callDetails": "tool names=get_current_datetime"
+      }
+    },
+    {
+      "ts": "2026-04-15T15:11:42.434Z",
+      "level": "info",
+      "event": "model_response",
+      "message": "Model response captured for execution",
+      "data": {
+        "responsePreview": "The user wants me to summarize Slack channel messages from the past 24 hours. I need to: 1. First get the current datetime to calculate the past 24 hours 2. Then call summarize_slack_channel with the appropriate time range Let me first disc...",
+        "responseChars": 296,
+        "inputTokens": 830,
+        "outputTokens": 85,
+        "cachedTokens": 0,
+        "totalTokens": 915,
+        "estimatedCostUsd": 0.000464
+      }
+    },
+    {
+      "ts": "2026-04-15T15:11:42.436Z",
+      "level": "info",
+      "event": "tool_call",
+      "message": "Tool called in execution: discover_tools",
+      "data": {
+        "stage": "execution",
+        "toolName": "discover_tools",
+        "callDetails": "tool names=get_current_datetime"
+      }
+    },
+    {
+      "ts": "2026-04-15T15:11:42.442Z",
+      "level": "info",
+      "event": "model_result",
+      "message": "Model result (parsed)",
+      "data": {
+        "topCustomerId": "(missing)",
+        "topCustomerName": "(missing)",
+        "transactionCount": "(missing)",
+        "averageSpend": "(missing)",
+        "totalSpend": "(missing)",
+        "fromIso": "(missing)",
+        "toIso": "(missing)"
+      }
+    },
+    {
+      "ts": "2026-04-15T15:11:42.443Z",
+      "level": "info",
+      "event": "evaluation_human",
+      "message": "Evaluation summary",
+      "data": {
+        "overallPass": false,
+        "toolPass": false,
+        "expectedPass": false
+      }
+    },
+    {
+      "ts": "2026-04-15T15:11:42.444Z",
+      "level": "info",
+      "event": "run_finished",
+      "message": "Benchmark run finished",
+      "data": {
+        "status": "failed",
+        "didFailTest": true,
+        "inputTokens": 1375,
+        "outputTokens": 152,
+        "cachedTokens": 0,
+        "totalTokens": 1527,
+        "estimatedCostUsd": 0.000788
+      }
+    }
+  ],
+  "evaluation": {
+    "benchmarkId": "3_slack_summary",
+    "overallPass": false,
+    "toolEval": {
+      "pass": false,
+      "details": [
+        {
+          "groupId": "progressive-discovery",
+          "required": true,
+          "expectedAnyOf": [
+            "discover_tools"
+          ],
+          "matched": [
+            "discover_tools"
+          ],
+          "pass": true,
+          "note": "Agent should discover hidden tools first."
+        },
+        {
+          "groupId": "channel-summary",
+          "required": true,
+          "expectedAnyOf": [
+            "summarize_slack_channel"
+          ],
+          "matched": [],
+          "pass": false,
+          "note": "Agent should summarize channel messages in regular mode."
+        }
+      ],
+      "calledToolNames": [
+        "discover_tools"
+      ]
+    },
+    "fuzzyEval": {
+      "pass": false,
+      "score": 0,
+      "details": [
+        {
+          "checkId": "summary-fields",
+          "requiredMinMatches": 1,
+          "matchedCount": 0,
+          "matchedTerms": [],
+          "pass": false,
+          "weight": 1
+        }
+      ]
+    },
+    "numericMentions": 4,
+    "numericGatePass": true,
+    "schemaPass": false,
+    "parsed": null
+  },
+  "runFinishedAt": "2026-04-15T15:11:42.444Z"
+}

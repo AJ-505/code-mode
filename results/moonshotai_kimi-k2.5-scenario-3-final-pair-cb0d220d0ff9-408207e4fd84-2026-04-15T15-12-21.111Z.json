@@ -1,0 +1,23 @@
+{
+  "benchmarkId": "3_slack_summary",
+  "scenarioNumber": 3,
+  "model": "moonshotai/kimi-k2.5",
+  "pairId": "cb0d220d0ff9",
+  "runId": "408207e4fd84",
+  "createdAt": "2026-04-15T15:12:21.111Z",
+  "winner": "code-mode",
+  "reasons": [
+    "regular: didFail=true, tokens=1527, costUsd=0.000788",
+    "code-mode: didFail=false, tokens=1628, costUsd=0.000669"
+  ],
+  "regular": {
+    "didFailTest": true,
+    "totalTokens": 1527,
+    "estimatedCostUsd": 0.000788
+  },
+  "codeMode": {
+    "didFailTest": false,
+    "totalTokens": 1628,
+    "estimatedCostUsd": 0.000669
+  }
+}

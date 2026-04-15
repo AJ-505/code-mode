@@ -4,7 +4,7 @@ import type { Model } from "../../lib/chat-generation.js";
 
 export const scenario1BenchmarkId = "1_customer_db_average_spend";
 export const scenario1Number = 1;
-export const defaultScenario1Model: Model = "openrouter/free";
+export const defaultScenario1Model: Model = env.MODEL;
 
 export const modelCallTimeoutMs = env.BENCHMARK_MODEL_TIMEOUT_MS;
 

@@ -1,0 +1,23 @@
+{
+  "benchmarkId": "2_playwright_ui_audit",
+  "scenarioNumber": 2,
+  "model": "anthropic/claude-sonnet-4.6",
+  "pairId": "5cfcc329a8a4",
+  "runId": "47fa756824e3",
+  "createdAt": "2026-04-14T18:33:24.794Z",
+  "winner": "code-mode",
+  "reasons": [
+    "regular: didFail=true, tokens=3095, costUsd=0.01815",
+    "code-mode: didFail=false, tokens=2219, costUsd=0.01386"
+  ],
+  "regular": {
+    "didFailTest": true,
+    "totalTokens": 3095,
+    "estimatedCostUsd": 0.01815
+  },
+  "codeMode": {
+    "didFailTest": false,
+    "totalTokens": 2219,
+    "estimatedCostUsd": 0.01386
+  }
+}

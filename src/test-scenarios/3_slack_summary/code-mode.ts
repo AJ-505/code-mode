@@ -7,7 +7,7 @@ import {
   writeScenarioFinalComparison,
 } from "../../lib/benchmark-logger.js";
 import { type Model, openrouter } from "../../lib/chat-generation.js";
-import { extractResponseText } from "../../lib/openrouter-response.js";
+import { extractResponseText, isInvalidFinalResponseError } from "../../lib/openrouter-response.js";
 import { PROMPTS } from "../../lib/prompts.js";
 import { evaluateScenario3Run } from "./evaluation.js";
 import {
@@ -25,8 +25,11 @@ function hasValidResultShape(result: unknown) {
     typeof result === "object" &&
     result !== null &&
     typeof (result as { channelId?: unknown }).channelId === "string" &&
-    Array.isArray((result as { findings?: unknown }).findings) &&
-    typeof (result as { summary?: unknown }).summary === "string"
+    typeof (result as { fromIso?: unknown }).fromIso === "string" &&
+    typeof (result as { toIso?: unknown }).toIso === "string" &&
+    typeof (result as { summary?: unknown }).summary === "string" &&
+    Array.isArray((result as { topics?: unknown }).topics) &&
+    Array.isArray((result as { actionItems?: unknown }).actionItems)
   );
 }
 
@@ -96,14 +99,28 @@ export async function runScenario3CodeMode(model: Model = defaultScenario3Model)
         stopWhen: stepCountIs(4),
       });
 
-      const response = await withTimeout(
-        `${stage} response`,
-        result.getResponse(),
-        modelCallTimeoutMs
-      );
-      const finalText = extractResponseText(response);
+      let finalText = "";
+      let responseUsage: Parameters<BenchmarkLogger["addModelResponse"]>[2] = undefined;
+      try {
+        const response = await withTimeout(
+          `${stage} response`,
+          result.getResponse(),
+          modelCallTimeoutMs
+        );
+        finalText = extractResponseText(response);
+        responseUsage = response.usage;
+      } catch (error) {
+        if (!isInvalidFinalResponseError(error)) throw error;
+        logger.info(
+          "code_mode_response_empty",
+          `Model response had empty final output for ${stage}; continuing with tool execution output`,
+          {
+            error: error instanceof Error ? error.message : String(error),
+          }
+        );
+      }
       latestTextForEvaluation = finalText || latestTextForEvaluation;
-      logger.addModelResponse(stage, finalText, response.usage);
+      logger.addModelResponse(stage, finalText, responseUsage);
 
       const toolCallsRaw = await withTimeout(
         `${stage} tool calls`,
@@ -120,6 +137,15 @@ export async function runScenario3CodeMode(model: Model = defaultScenario3Model)
       const execution = consumeLastScenario3CodeExecution();
       if (execution?.ok && execution.result) {
         finalResultFromTool = execution.result as unknown as Record<string, unknown>;
+        const expectedToolName = "execute_scenario3_code";
+        if (!allToolCalls.some((call) => call.name === expectedToolName)) {
+          const syntheticCall = {
+            name: expectedToolName,
+            arguments: { synthetic: true, source: "tool_result_event" },
+          };
+          allToolCalls.push(syntheticCall);
+          logger.addToolCalls(stage, [syntheticCall]);
+        }
         logger.info("tool_result", "Code execution result from tool", {
           ...execution.result,
         });

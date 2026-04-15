@@ -18,7 +18,7 @@ export type OpenWeightModel =
 
 export type FreeModel = "openrouter/free" | "google/gemma-4-26b-a4b-it:free";
 
-export type Model = ProprietaryModel | OpenWeightModel | FreeModel;
+export type Model = ProprietaryModel | OpenWeightModel | FreeModel | (string & {});
 
 /**
 Prompt hierarchy - Determines order of priority

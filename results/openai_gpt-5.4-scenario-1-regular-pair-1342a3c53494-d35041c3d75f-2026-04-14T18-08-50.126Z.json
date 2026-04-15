@@ -1,0 +1,109 @@
+{
+  "benchmarkId": "1_customer_db_average_spend",
+  "scenarioNumber": 1,
+  "mode": "regular",
+  "model": "openai/gpt-5.4",
+  "pairId": "1342a3c53494",
+  "runId": "d35041c3d75f",
+  "runStartedAt": "2026-04-14T18:08:50.126Z",
+  "status": "failed",
+  "didFailTest": true,
+  "pricing": {
+    "inputPerMillionUsd": 2.5,
+    "outputPerMillionUsd": 15,
+    "cachedInputPerMillionUsd": 0
+  },
+  "usage": {
+    "inputTokens": 0,
+    "outputTokens": 0,
+    "cachedTokens": 0,
+    "totalTokens": 0,
+    "estimatedCostUsd": 0
+  },
+  "modelResponses": [],
+  "toolCalls": [],
+  "events": [
+    {
+      "ts": "2026-04-14T18:08:50.126Z",
+      "level": "info",
+      "event": "run_start",
+      "message": "Scenario 1 regular benchmark started",
+      "data": {
+        "benchmarkId": "1_customer_db_average_spend",
+        "model": "openai/gpt-5.4",
+        "modelCallTimeoutMs": 120000
+      }
+    },
+    {
+      "ts": "2026-04-14T18:09:07.444Z",
+      "level": "info",
+      "event": "expected_result_human",
+      "message": "Expected result (from seeded DB)",
+      "data": {
+        "fromIso": "2026-04-07T18:08:50.127Z",
+        "toIso": "2026-04-14T18:08:50.127Z",
+        "topCustomerId": "10dcdaa2-80af-438f-ac85-8404eea0ecc9",
+        "topCustomerName": "Avery Benchmark",
+        "transactionCount": 34,
+        "averageSpend": 253.85,
+        "totalSpend": 8630.84
+      }
+    },
+    {
+      "ts": "2026-04-14T18:09:07.445Z",
+      "level": "info",
+      "event": "expected_result",
+      "message": "Computed scenario expected result from DB seed",
+      "data": {
+        "topCustomerId": "10dcdaa2-80af-438f-ac85-8404eea0ecc9",
+        "transactionCount": 34,
+        "averageSpend": 253.85
+      }
+    },
+    {
+      "ts": "2026-04-14T18:09:07.446Z",
+      "level": "info",
+      "event": "prompts",
+      "message": "Prompts for discovery",
+      "data": {
+        "systemPrompt": "You are a specialised benchmark agent.\nUse progressive discovery when tools are hidden.\nIf the required tool is not directly available, call discover_tools with the exact tool names you need, then continue to solve the task.\n\nDiscovery stage only. You have exactly one callable tool in this stage: discover_tools.\nCall discover_tools exactly once with these tool names: [\"get_current_datetime\", \"get_all_customers\", \"list_transactions_in_window\", \"compute_customer_spend_stats\"].\nDo not call any other tool in this stage.",
+        "userPrompt": "Scenario 1: find the customer with most transactions in the last 7 days and their average spend. In this stage, only run discover_tools."
+      }
+    },
+    {
+      "ts": "2026-04-14T18:09:08.487Z",
+      "level": "error",
+      "event": "run_failed",
+      "message": "Scenario 1 regular benchmark failed",
+      "data": {
+        "error": "This request requires more credits, or fewer max_tokens. You requested up to 65536 tokens, but can only afford 2545. To increase, visit https://openrouter.ai/settings/credits and upgrade to a paid account"
+      }
+    },
+    {
+      "ts": "2026-04-14T18:09:08.488Z",
+      "level": "info",
+      "event": "run_finished",
+      "message": "Benchmark run finished",
+      "data": {
+        "status": "failed",
+        "didFailTest": true,
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "cachedTokens": 0,
+        "totalTokens": 0,
+        "estimatedCostUsd": 0
+      }
+    }
+  ],
+  "expectedResult": {
+    "fromIso": "2026-04-07T18:08:50.127Z",
+    "toIso": "2026-04-14T18:08:50.127Z",
+    "topCustomerId": "10dcdaa2-80af-438f-ac85-8404eea0ecc9",
+    "topCustomerName": "Avery Benchmark",
+    "transactionCount": 34,
+    "averageSpend": 253.85,
+    "totalSpend": 8630.84
+  },
+  "runFinishedAt": "2026-04-14T18:09:08.488Z",
+  "error": "This request requires more credits, or fewer max_tokens. You requested up to 65536 tokens, but can only afford 2545. To increase, visit https://openrouter.ai/settings/credits and upgrade to a paid account"
+}

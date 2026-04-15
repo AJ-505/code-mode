@@ -1,0 +1,23 @@
+{
+  "benchmarkId": "1_customer_db_average_spend",
+  "scenarioNumber": 1,
+  "model": "z-ai/glm-5.1",
+  "pairId": "bebec5f02598",
+  "runId": "ecb5e72a4311",
+  "createdAt": "2026-04-15T14:22:43.387Z",
+  "winner": "code-mode",
+  "reasons": [
+    "regular: didFail=true, tokens=36508, costUsd=0.015048",
+    "code-mode: didFail=false, tokens=5757, costUsd=0.002718"
+  ],
+  "regular": {
+    "didFailTest": true,
+    "totalTokens": 36508,
+    "estimatedCostUsd": 0.015048
+  },
+  "codeMode": {
+    "didFailTest": false,
+    "totalTokens": 5757,
+    "estimatedCostUsd": 0.002718
+  }
+}

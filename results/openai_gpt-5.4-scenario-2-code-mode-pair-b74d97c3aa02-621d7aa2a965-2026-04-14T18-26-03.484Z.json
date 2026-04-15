@@ -1,0 +1,227 @@
+{
+  "benchmarkId": "2_playwright_ui_audit",
+  "scenarioNumber": 2,
+  "mode": "code-mode",
+  "model": "openai/gpt-5.4",
+  "pairId": "b74d97c3aa02",
+  "runId": "621d7aa2a965",
+  "runStartedAt": "2026-04-14T18:26:03.484Z",
+  "status": "passed",
+  "didFailTest": false,
+  "pricing": {
+    "inputPerMillionUsd": 2.5,
+    "outputPerMillionUsd": 15,
+    "cachedInputPerMillionUsd": 0
+  },
+  "usage": {
+    "inputTokens": 1684,
+    "outputTokens": 7,
+    "cachedTokens": 1408,
+    "totalTokens": 1691,
+    "estimatedCostUsd": 0.004315
+  },
+  "modelResponses": [
+    {
+      "stage": "code_mode",
+      "text": "Audit completed.",
+      "usage": {
+        "inputTokens": 1684,
+        "outputTokens": 7,
+        "cachedTokens": 1408,
+        "totalTokens": 1691,
+        "estimatedCostUsd": 0.004315
+      }
+    }
+  ],
+  "toolCalls": [
+    {
+      "stage": "code_mode",
+      "name": "execute_scenario2_code",
+      "arguments": {
+        "synthetic": true,
+        "source": "json_backfill_tool_result"
+      }
+    }
+  ],
+  "events": [
+    {
+      "ts": "2026-04-14T18:26:03.485Z",
+      "level": "info",
+      "event": "run_start",
+      "message": "Scenario 2 code-mode benchmark started",
+      "data": {
+        "benchmarkId": "2_playwright_ui_audit",
+        "model": "openai/gpt-5.4",
+        "modelCallTimeoutMs": 120000
+      }
+    },
+    {
+      "ts": "2026-04-14T18:26:03.487Z",
+      "level": "info",
+      "event": "prompts",
+      "message": "Prompts for code_mode",
+      "data": {
+        "systemPrompt": "You are a specialised benchmark agent.\nUse progressive discovery when tools are hidden.\nIf the required tool is not directly available, call discover_tools with the exact tool names you need, then continue to solve the task.\n\nYou are now in code-mode.\nWrite TypeScript code that uses ONLY the provided tool execute_scenario2_code.\nWhen calling the tool, pass a full TS program string in input key \"typescript\".\nDo not explain your reasoning.\nDo not output long analysis.\nYour final assistant message must contain only a single short sentence confirming completion.\n\nIn the generated code, use only the provided global \"api\" methods.\nReturn a strict JSON object with keys:\n{ siteUrl, findings, summary }\n\nWhere findings is an array of:\n{ severity, title, description, location, suggestedFix }\n\nseverity must be one of: low, medium, high, critical.\n",
+        "userPrompt": "\nPlease audit a demo website for UI and UX issues.\nBrowse key pages and return a concise report with severity levels, reproducible steps, and suggested fixes.\n"
+      }
+    },
+    {
+      "ts": "2026-04-14T18:26:23.150Z",
+      "level": "info",
+      "event": "model_response",
+      "message": "Model response captured for code_mode",
+      "data": {
+        "responsePreview": "Audit completed.",
+        "responseChars": 16,
+        "inputTokens": 1684,
+        "outputTokens": 7,
+        "cachedTokens": 1408,
+        "totalTokens": 1691,
+        "estimatedCostUsd": 0.004315
+      }
+    },
+    {
+      "ts": "2026-04-14T18:26:23.153Z",
+      "level": "info",
+      "event": "tool_result",
+      "message": "Code execution result from tool",
+      "data": {
+        "siteUrl": "https://playwright.dev",
+        "findings": [
+          {
+            "severity": "medium",
+            "title": "Low visual hierarchy on hero section",
+            "description": "Primary heading and supporting text have similar weight and contrast, reducing scannability.",
+            "location": "/ hero",
+            "suggestedFix": "Increase heading size/weight and reduce secondary text prominence for clearer hierarchy."
+          },
+          {
+            "severity": "low",
+            "title": "No explicit keyboard focus styling",
+            "description": "Interactive elements rely on default browser focus outline with inconsistent visibility.",
+            "location": "Global interactive elements",
+            "suggestedFix": "Define a consistent, high-contrast focus ring across interactive components."
+          }
+        ],
+        "summary": "Site is usable but needs stronger information hierarchy and accessibility-focused interaction states."
+      }
+    },
+    {
+      "ts": "2026-04-14T18:26:23.155Z",
+      "level": "info",
+      "event": "tool_activity",
+      "message": "Tool calls captured",
+      "data": {
+        "count": 1,
+        "names": "execute_scenario2_code"
+      }
+    },
+    {
+      "ts": "2026-04-14T18:26:23.159Z",
+      "level": "info",
+      "event": "model_result",
+      "message": "Model result (parsed)",
+      "data": {
+        "topCustomerId": "(missing)",
+        "topCustomerName": "(missing)",
+        "transactionCount": "(missing)",
+        "averageSpend": "(missing)",
+        "totalSpend": "(missing)",
+        "fromIso": "(missing)",
+        "toIso": "(missing)"
+      }
+    },
+    {
+      "ts": "2026-04-14T18:26:23.159Z",
+      "level": "info",
+      "event": "evaluation_human",
+      "message": "Evaluation summary",
+      "data": {
+        "overallPass": true,
+        "toolPass": true,
+        "expectedPass": true
+      }
+    },
+    {
+      "ts": "2026-04-14T18:26:23.160Z",
+      "level": "info",
+      "event": "run_finished",
+      "message": "Benchmark run finished",
+      "data": {
+        "status": "passed",
+        "didFailTest": false,
+        "inputTokens": 1684,
+        "outputTokens": 7,
+        "cachedTokens": 1408,
+        "totalTokens": 1691,
+        "estimatedCostUsd": 0.004315
+      }
+    }
+  ],
+  "evaluation": {
+    "benchmarkId": "2_playwright_ui_audit",
+    "overallPass": true,
+    "toolEval": {
+      "pass": true,
+      "details": [
+        {
+          "groupId": "code-execution",
+          "required": true,
+          "expectedAnyOf": [
+            "execute_scenario2_code"
+          ],
+          "matched": [
+            "execute_scenario2_code"
+          ],
+          "pass": true,
+          "note": "Code mode must write and execute code."
+        }
+      ],
+      "calledToolNames": [
+        "execute_scenario2_code"
+      ]
+    },
+    "fuzzyEval": {
+      "pass": true,
+      "score": 1,
+      "details": [
+        {
+          "checkId": "finding-mention",
+          "requiredMinMatches": 1,
+          "matchedCount": 3,
+          "matchedTerms": [
+            "findings",
+            "severity",
+            "suggestedFix"
+          ],
+          "pass": true,
+          "weight": 1
+        }
+      ]
+    },
+    "numericMentions": 0,
+    "numericGatePass": true,
+    "schemaPass": true,
+    "parsed": {
+      "siteUrl": "https://playwright.dev",
+      "findings": [
+        {
+          "severity": "medium",
+          "title": "Low visual hierarchy on hero section",
+          "description": "Primary heading and supporting text have similar weight and contrast, reducing scannability.",
+          "location": "/ hero",
+          "suggestedFix": "Increase heading size/weight and reduce secondary text prominence for clearer hierarchy."
+        },
+        {
+          "severity": "low",
+          "title": "No explicit keyboard focus styling",
+          "description": "Interactive elements rely on default browser focus outline with inconsistent visibility.",
+          "location": "Global interactive elements",
+          "suggestedFix": "Define a consistent, high-contrast focus ring across interactive components."
+        }
+      ],
+      "summary": "Site is usable but needs stronger information hierarchy and accessibility-focused interaction states."
+    }
+  },
+  "runFinishedAt": "2026-04-14T18:26:23.160Z"
+}

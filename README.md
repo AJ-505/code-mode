@@ -1,67 +1,76 @@
 # Code Mode
 
-This is a benchmark to test traditional tool-calling methods & MCP against 'Code Mode', a new paradigm gaining traction where the LLM directly writes code to achieve its outcomes. These tests are intentionally designed to mimic real-world LLM use cases.
+This repository benchmarks traditional tool-calling (regular mode) vs code-execution workflows (code-mode) across realistic agent tasks.
 
-Ensure you have `bun` installed:
+## Prerequisites
 
-```bash
-# Install bun
-# For MacOS/Linux users, use the below script:
-curl -fsSL https://bun.com/install | bash
+Install:
 
-# For Windows users, use this instead:
-powershell -c "irm bun.sh/install.ps1|iex"
+1. `bun`
+2. `gh` (GitHub CLI)
+3. `@googleworkspace/cli`
+4. Slack CLI
 
-# Check bun version
-bun --version
-```
+## Environment
 
-You will also need the Github CLI:
+Create `.env` with:
 
 ```bash
-# For Windows users:
-winget install --id GitHub.cli
-
-# For MacOS users:
-brew install gh
-
-# For Linux users (Ubuntu/Debian):
-sudo apt update && sudo apt install gh -y
-
-# Open up a new terminal window and login to Github:
-gh auth login
+OPENROUTER_API_KEY=...
+DATABASE_URL=postgres://user:password@host:5432/dbname
+MODEL=openai/gpt-5.4
+BENCHMARK_MODEL_TIMEOUT_MS=240000
+INPUT_COST_PER_MILLION_USD=0
+OUTPUT_COST_PER_MILLION_USD=0
+CACHED_INPUT_COST_PER_MILLION_USD=0
 ```
 
-And the Google Workspaces CLI:
+## Scenario 1 DB setup
 
 ```bash
-# For all platforms - install using npm
-npm install -g @googleworkspace/cli
+bun run db:generate
+bun run db:push
+bun run seed:scenario1
 ```
 
-... And, the Slack CLI:
+## Run benchmarks
+
+### Run a single scenario/mode
 
 ```bash
-# MacOS/Linux
-curl -fsSL https://downloads.slack-edge.com/slack-cli/install.sh | bash
-
-# Windows
-# Run the following command in Powershell as Administrator:
-irm https://downloads.slack-edge.com/slack-cli/install-windows.ps1 | iex
+bun run benchmark:scenario2:regular
+bun run benchmark:scenario2:code-mode
 ```
 
-**NOTE**: This repo is still in its very early stages. Please contact the repo owner if things change drastically without being documented. PRs are welcome.
+### Run all scenarios via `script.sh`
 
-## Benchmark 1 (Customer DB) setup
+You can now override model and token pricing from CLI:
 
-Set a Postgres URL in your `.env`:
+```bash
+./script.sh --model openai/gpt-5.4 --input 2.5 --output 15
+```
 
-`DATABASE_URL=postgres://user:password@host:5432/dbname`
+Supported flags:
 
-Then run:
+- `--model <model-id>`
+- `--input <usd-per-1m-input-tokens>`
+- `--output <usd-per-1m-output-tokens>`
 
-- `bun run db:generate`
-- `bun run db:push`
-- `bun run seed:scenario1` (populates scenario 1 customers + transactions test data; script is defined in `package.json`)
+This runs scenarios 1-6 in both regular and code-mode.
 
-Schema file: `src/db/schema.ts`
+## Wired scenarios
+
+1. Customer DB average spend
+2. Playwright UI audit (target: `https://playwright.dev`)
+3. Slack channel summary
+4. Drive keyword retrieval
+5. Calendar timezone scheduling (simulated)
+6. GitHub repo change + PR (simulated)
+
+All run artifacts are written to `results/` as JSON logs plus paired final-comparison files.
+
+## Detailed implementation/process documentation
+
+For a full from-scratch build sequence (including recommended commit slices/messages), see:
+
+- `docs/build-from-scratch.md`

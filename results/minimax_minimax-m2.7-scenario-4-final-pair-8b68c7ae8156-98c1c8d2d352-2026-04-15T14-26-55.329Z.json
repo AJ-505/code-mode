@@ -1,0 +1,23 @@
+{
+  "benchmarkId": "4_drive_keyword_retrieval",
+  "scenarioNumber": 4,
+  "model": "minimax/minimax-m2.7",
+  "pairId": "8b68c7ae8156",
+  "runId": "98c1c8d2d352",
+  "createdAt": "2026-04-15T14:26:55.329Z",
+  "winner": "regular",
+  "reasons": [
+    "regular: didFail=true, tokens=2508, costUsd=0.001157",
+    "code-mode: didFail=true, tokens=5770, costUsd=0.002265"
+  ],
+  "regular": {
+    "didFailTest": true,
+    "totalTokens": 2508,
+    "estimatedCostUsd": 0.001157
+  },
+  "codeMode": {
+    "didFailTest": true,
+    "totalTokens": 5770,
+    "estimatedCostUsd": 0.002265
+  }
+}

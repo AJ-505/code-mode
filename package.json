@@ -16,6 +16,10 @@
     "benchmark:scenario3:code-mode": "bun src/test-scenarios/3_slack_summary/code-mode.ts",
     "benchmark:scenario4:regular": "bun src/test-scenarios/4_drive_keyword_retrieval/regular.ts",
     "benchmark:scenario4:code-mode": "bun src/test-scenarios/4_drive_keyword_retrieval/code-mode.ts",
+    "benchmark:scenario5:regular": "bun src/test-scenarios/5_calendar_timezone_scheduling/regular.ts",
+    "benchmark:scenario5:code-mode": "bun src/test-scenarios/5_calendar_timezone_scheduling/code-mode.ts",
+    "benchmark:scenario6:regular": "bun src/test-scenarios/6_github_repo_change_pr/regular.ts",
+    "benchmark:scenario6:code-mode": "bun src/test-scenarios/6_github_repo_change_pr/code-mode.ts",
     "seed:scenario1": "bun seed-scripts/scenario1-seed.ts",
     "typecheck": "bun tsc --noEmit",
     "db:generate": "bun drizzle-kit generate",
@@ -28,6 +32,7 @@
   "packageManager": "bun@1.3.3",
   "devDependencies": {
     "@types/bun": "^1.3.11",
+    "@types/node": "^25.6.0",
     "drizzle-kit": "^0.31.10",
     "typescript": "^6.0.2"
   },

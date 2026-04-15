@@ -1,15 +1,288 @@
 [
   {
     "scenarioNumber": 1,
-    "model": "openrouter/free",
-    "pairId": "481d00877fe7",
-    "updatedAt": "2026-04-12T11:05:15.178Z",
-    "codeModeLogPath": "results/openrouter_free-scenario-1-code-mode-pair-481d00877fe7-242bd6c48ca1-2026-04-12T11-04-21.256Z.json"
+    "model": "openai/gpt-5.4",
+    "pairId": "1342a3c53494",
+    "updatedAt": "2026-04-14T18:25:47.943Z",
+    "regularLogPath": "results/openai_gpt-5.4-scenario-1-regular-pair-1342a3c53494-1f30b7c1c549-2026-04-14T18-25-21.118Z.json"
+  },
+  {
+    "scenarioNumber": 2,
+    "model": "openai/gpt-5.4",
+    "pairId": "b74d97c3aa02",
+    "updatedAt": "2026-04-14T18:26:23.171Z",
+    "codeModeLogPath": "results/openai_gpt-5.4-scenario-2-code-mode-pair-b74d97c3aa02-621d7aa2a965-2026-04-14T18-26-03.484Z.json"
   },
   {
     "scenarioNumber": 1,
-    "model": "google/gemma-4-26b-a4b-it:free",
-    "pairId": "d84ac1ea7660",
-    "updatedAt": "2026-04-12T11:01:52.667Z"
+    "model": "anthropic/opus-4.99",
+    "pairId": "1d98208264ee",
+    "updatedAt": "2026-04-14T18:17:43.034Z"
+  },
+  {
+    "scenarioNumber": 2,
+    "model": "anthropic/opus-4.99",
+    "pairId": "be238b214d81",
+    "updatedAt": "2026-04-14T18:17:48.024Z"
+  },
+  {
+    "scenarioNumber": 1,
+    "model": "anthropic/opus-4.6",
+    "pairId": "6592f2211a44",
+    "updatedAt": "2026-04-14T18:19:23.285Z"
+  },
+  {
+    "scenarioNumber": 1,
+    "model": "anthropic/claude-opus-4.6",
+    "pairId": "6cebec045de6",
+    "updatedAt": "2026-04-14T18:22:28.836Z",
+    "regularLogPath": "results/anthropic_claude-opus-4.6-scenario-1-regular-pair-6cebec045de6-c4eb72d5ab7e-2026-04-14T18-19-45.486Z.json",
+    "codeModeLogPath": "results/anthropic_claude-opus-4.6-scenario-1-code-mode-pair-6cebec045de6-d876a6bea905-2026-04-14T18-21-15.876Z.json"
+  },
+  {
+    "scenarioNumber": 2,
+    "model": "anthropic/claude-opus-4.6",
+    "pairId": "8adf617e5971",
+    "updatedAt": "2026-04-14T18:23:30.565Z",
+    "regularLogPath": "results/anthropic_claude-opus-4.6-scenario-2-regular-pair-8adf617e5971-e9534c894715-2026-04-14T18-22-31.813Z.json",
+    "codeModeLogPath": "results/anthropic_claude-opus-4.6-scenario-2-code-mode-pair-8adf617e5971-565bb45bd09f-2026-04-14T18-23-05.251Z.json"
+  },
+  {
+    "scenarioNumber": 3,
+    "model": "anthropic/claude-opus-4.6",
+    "pairId": "e9b0f3e067ff",
+    "updatedAt": "2026-04-14T18:24:09.402Z",
+    "regularLogPath": "results/anthropic_claude-opus-4.6-scenario-3-regular-pair-e9b0f3e067ff-8ff11898ea7c-2026-04-14T18-23-32.518Z.json",
+    "codeModeLogPath": "results/anthropic_claude-opus-4.6-scenario-3-code-mode-pair-e9b0f3e067ff-91b45fbd428a-2026-04-14T18-23-55.041Z.json"
+  },
+  {
+    "scenarioNumber": 4,
+    "model": "anthropic/claude-opus-4.6",
+    "pairId": "dfb1b3549e8d",
+    "updatedAt": "2026-04-14T18:24:30.427Z",
+    "regularLogPath": "results/anthropic_claude-opus-4.6-scenario-4-regular-pair-dfb1b3549e8d-68f7ab1228fb-2026-04-14T18-24-11.307Z.json"
+  },
+  {
+    "scenarioNumber": 3,
+    "model": "openai/gpt-5.4",
+    "pairId": "391c3ca7451f",
+    "updatedAt": "2026-04-14T18:26:50.575Z",
+    "codeModeLogPath": "results/openai_gpt-5.4-scenario-3-code-mode-pair-391c3ca7451f-260e62d0c927-2026-04-14T18-26-34.376Z.json"
+  },
+  {
+    "scenarioNumber": 4,
+    "model": "openai/gpt-5.4",
+    "pairId": "c3b6cc5f3b40",
+    "updatedAt": "2026-04-14T18:26:59.040Z",
+    "regularLogPath": "results/openai_gpt-5.4-scenario-4-regular-pair-c3b6cc5f3b40-f51618e82fdb-2026-04-14T18-26-52.184Z.json"
+  },
+  {
+    "scenarioNumber": 1,
+    "model": "google/gemini-3.1-pro-preview",
+    "pairId": "8b9a120be232",
+    "updatedAt": "2026-04-14T18:31:34.698Z",
+    "regularLogPath": "results/google_gemini-3.1-pro-preview-scenario-1-regular-pair-8b9a120be232-5f5069b952d0-2026-04-14T18-29-13.761Z.json",
+    "codeModeLogPath": "results/google_gemini-3.1-pro-preview-scenario-1-code-mode-pair-8b9a120be232-e7874ebc8faa-2026-04-14T18-30-57.582Z.json"
+  },
+  {
+    "scenarioNumber": 2,
+    "model": "google/gemini-3.1-pro-preview",
+    "pairId": "d5f33071c10e",
+    "updatedAt": "2026-04-14T18:33:01.858Z",
+    "codeModeLogPath": "results/google_gemini-3.1-pro-preview-scenario-2-code-mode-pair-d5f33071c10e-a8dc4c693b9a-2026-04-14T18-32-10.972Z.json"
+  },
+  {
+    "scenarioNumber": 1,
+    "model": "anthropic/claude-sonnet-4.6",
+    "pairId": "be0a4a3aa3dd",
+    "updatedAt": "2026-04-14T18:32:30.612Z",
+    "codeModeLogPath": "results/anthropic_claude-sonnet-4.6-scenario-1-code-mode-pair-be0a4a3aa3dd-38fcb14cc25a-2026-04-14T18-31-49.747Z.json"
+  },
+  {
+    "scenarioNumber": 2,
+    "model": "anthropic/claude-sonnet-4.6",
+    "pairId": "5cfcc329a8a4",
+    "updatedAt": "2026-04-14T18:33:24.784Z",
+    "regularLogPath": "results/anthropic_claude-sonnet-4.6-scenario-2-regular-pair-5cfcc329a8a4-ee2d43fa7115-2026-04-14T18-32-38.671Z.json",
+    "codeModeLogPath": "results/anthropic_claude-sonnet-4.6-scenario-2-code-mode-pair-5cfcc329a8a4-47fa756824e3-2026-04-14T18-33-01.666Z.json"
+  },
+  {
+    "scenarioNumber": 3,
+    "model": "google/gemini-3.1-pro-preview",
+    "pairId": "876ef938025f",
+    "updatedAt": "2026-04-14T18:34:22.562Z",
+    "regularLogPath": "results/google_gemini-3.1-pro-preview-scenario-3-regular-pair-876ef938025f-46fdb382fc61-2026-04-14T18-33-03.307Z.json",
+    "codeModeLogPath": "results/google_gemini-3.1-pro-preview-scenario-3-code-mode-pair-876ef938025f-da80b3880ec7-2026-04-14T18-33-48.454Z.json"
+  },
+  {
+    "scenarioNumber": 3,
+    "model": "anthropic/claude-sonnet-4.6",
+    "pairId": "76af516f69b8",
+    "updatedAt": "2026-04-14T18:34:46.225Z",
+    "regularLogPath": "results/anthropic_claude-sonnet-4.6-scenario-3-regular-pair-76af516f69b8-967755ad43ce-2026-04-14T18-33-26.198Z.json",
+    "codeModeLogPath": "results/anthropic_claude-sonnet-4.6-scenario-3-code-mode-pair-76af516f69b8-b4ad1c34afdf-2026-04-14T18-34-07.990Z.json"
+  },
+  {
+    "scenarioNumber": 4,
+    "model": "google/gemini-3.1-pro-preview",
+    "pairId": "c351e31b64c3",
+    "updatedAt": "2026-04-14T18:35:05.880Z",
+    "regularLogPath": "results/google_gemini-3.1-pro-preview-scenario-4-regular-pair-c351e31b64c3-48c8b10b880f-2026-04-14T18-34-24.006Z.json"
+  },
+  {
+    "scenarioNumber": 4,
+    "model": "anthropic/claude-sonnet-4.6",
+    "pairId": "bc97b8ee62aa",
+    "updatedAt": "2026-04-14T18:35:05.702Z",
+    "regularLogPath": "results/anthropic_claude-sonnet-4.6-scenario-4-regular-pair-bc97b8ee62aa-a8a42a80579c-2026-04-14T18-34-50.564Z.json"
+  },
+  {
+    "scenarioNumber": 1,
+    "model": "moonshotai/kimi-k2.5",
+    "pairId": "0c7bb187ffe5",
+    "updatedAt": "2026-04-15T15:08:15.463Z",
+    "codeModeLogPath": "results/moonshotai_kimi-k2.5-scenario-1-code-mode-pair-0c7bb187ffe5-2c96d5821385-2026-04-15T15-06-43.826Z.json"
+  },
+  {
+    "scenarioNumber": 1,
+    "model": "moonshotai/kimi-k2.6",
+    "pairId": "59d63f0d2caf",
+    "updatedAt": "2026-04-14T18:35:35.072Z"
+  },
+  {
+    "scenarioNumber": 2,
+    "model": "moonshotai/kimi-k2.6",
+    "pairId": "0ec1af392161",
+    "updatedAt": "2026-04-14T18:35:46.829Z"
+  },
+  {
+    "scenarioNumber": 2,
+    "model": "moonshotai/kimi-k2.5",
+    "pairId": "8cc5aa870019",
+    "updatedAt": "2026-04-15T15:09:25.241Z",
+    "regularLogPath": "results/moonshotai_kimi-k2.5-scenario-2-regular-pair-8cc5aa870019-7d433a5ea31e-2026-04-15T15-08-16.182Z.json"
+  },
+  {
+    "scenarioNumber": 3,
+    "model": "moonshotai/kimi-k2.5",
+    "pairId": "cb0d220d0ff9",
+    "updatedAt": "2026-04-15T15:12:21.106Z",
+    "regularLogPath": "results/moonshotai_kimi-k2.5-scenario-3-regular-pair-cb0d220d0ff9-18418009995d-2026-04-15T15-11-26.381Z.json",
+    "codeModeLogPath": "results/moonshotai_kimi-k2.5-scenario-3-code-mode-pair-cb0d220d0ff9-408207e4fd84-2026-04-15T15-11-43.063Z.json"
+  },
+  {
+    "scenarioNumber": 4,
+    "model": "moonshotai/kimi-k2.5",
+    "pairId": "e710704d704d",
+    "updatedAt": "2026-04-15T15:13:43.179Z",
+    "regularLogPath": "results/moonshotai_kimi-k2.5-scenario-4-regular-pair-e710704d704d-f88bd0a1e39b-2026-04-15T15-12-21.680Z.json",
+    "codeModeLogPath": "results/moonshotai_kimi-k2.5-scenario-4-code-mode-pair-e710704d704d-471ed286f9db-2026-04-15T15-13-19.566Z.json"
+  },
+  {
+    "scenarioNumber": 1,
+    "model": "z-ai/glm-5.1",
+    "pairId": "bebec5f02598",
+    "updatedAt": "2026-04-15T14:22:43.370Z",
+    "regularLogPath": "results/z-ai_glm-5.1-scenario-1-regular-pair-bebec5f02598-84f5e392fb1c-2026-04-15T14-18-06.105Z.json",
+    "codeModeLogPath": "results/z-ai_glm-5.1-scenario-1-code-mode-pair-bebec5f02598-ecb5e72a4311-2026-04-15T14-20-43.423Z.json"
+  },
+  {
+    "scenarioNumber": 1,
+    "model": "minimax/minimax-m2.7",
+    "pairId": "48adce7d1a49",
+    "updatedAt": "2026-04-15T14:24:20.815Z",
+    "regularLogPath": "results/minimax_minimax-m2.7-scenario-1-regular-pair-48adce7d1a49-b388e599fdd2-2026-04-15T14-20-51.510Z.json",
+    "codeModeLogPath": "results/minimax_minimax-m2.7-scenario-1-code-mode-pair-48adce7d1a49-3a23913df297-2026-04-15T14-22-12.082Z.json"
+  },
+  {
+    "scenarioNumber": 2,
+    "model": "z-ai/glm-5.1",
+    "pairId": "d62a2c01e181",
+    "updatedAt": "2026-04-15T14:24:21.404Z",
+    "regularLogPath": "results/z-ai_glm-5.1-scenario-2-regular-pair-d62a2c01e181-234d028f6551-2026-04-15T14-22-44.355Z.json",
+    "codeModeLogPath": "results/z-ai_glm-5.1-scenario-2-code-mode-pair-d62a2c01e181-40a3a904260e-2026-04-15T14-23-26.893Z.json"
+  },
+  {
+    "scenarioNumber": 2,
+    "model": "minimax/minimax-m2.7",
+    "pairId": "150a99ee2c4a",
+    "updatedAt": "2026-04-15T14:25:08.690Z",
+    "codeModeLogPath": "results/minimax_minimax-m2.7-scenario-2-code-mode-pair-150a99ee2c4a-bff95853abf2-2026-04-15T14-24-36.507Z.json"
+  },
+  {
+    "scenarioNumber": 3,
+    "model": "z-ai/glm-5.1",
+    "pairId": "eb185f48038d",
+    "updatedAt": "2026-04-15T14:26:53.236Z",
+    "regularLogPath": "results/z-ai_glm-5.1-scenario-3-regular-pair-eb185f48038d-3b0d8dc47525-2026-04-15T14-24-22.047Z.json",
+    "codeModeLogPath": "results/z-ai_glm-5.1-scenario-3-code-mode-pair-eb185f48038d-644e90d6bf0c-2026-04-15T14-25-49.740Z.json"
+  },
+  {
+    "scenarioNumber": 3,
+    "model": "minimax/minimax-m2.7",
+    "pairId": "7b1bf4709086",
+    "updatedAt": "2026-04-15T14:25:49.623Z",
+    "codeModeLogPath": "results/minimax_minimax-m2.7-scenario-3-code-mode-pair-7b1bf4709086-a688ad9c3955-2026-04-15T14-25-25.719Z.json"
+  },
+  {
+    "scenarioNumber": 4,
+    "model": "minimax/minimax-m2.7",
+    "pairId": "8b68c7ae8156",
+    "updatedAt": "2026-04-15T14:26:55.323Z",
+    "regularLogPath": "results/minimax_minimax-m2.7-scenario-4-regular-pair-8b68c7ae8156-e09e258401c8-2026-04-15T14-25-50.215Z.json",
+    "codeModeLogPath": "results/minimax_minimax-m2.7-scenario-4-code-mode-pair-8b68c7ae8156-98c1c8d2d352-2026-04-15T14-26-08.450Z.json"
+  },
+  {
+    "scenarioNumber": 4,
+    "model": "z-ai/glm-5.1",
+    "pairId": "8701910ee0e5",
+    "updatedAt": "2026-04-15T14:29:03.665Z",
+    "regularLogPath": "results/z-ai_glm-5.1-scenario-4-regular-pair-8701910ee0e5-5bd2a66bfb91-2026-04-15T14-26-53.926Z.json",
+    "codeModeLogPath": "results/z-ai_glm-5.1-scenario-4-code-mode-pair-8701910ee0e5-539cd2785404-2026-04-15T14-28-00.268Z.json"
+  },
+  {
+    "scenarioNumber": 5,
+    "model": "minimax/minimax-m2.7",
+    "pairId": "50e1480540ba",
+    "updatedAt": "2026-04-15T14:28:27.412Z",
+    "regularLogPath": "results/minimax_minimax-m2.7-scenario-5-regular-pair-50e1480540ba-1b6badda7afc-2026-04-15T14-26-56.376Z.json",
+    "codeModeLogPath": "results/minimax_minimax-m2.7-scenario-5-code-mode-pair-50e1480540ba-25454460a896-2026-04-15T14-27-32.392Z.json"
+  },
+  {
+    "scenarioNumber": 6,
+    "model": "minimax/minimax-m2.7",
+    "pairId": "4362df918317",
+    "updatedAt": "2026-04-15T14:29:29.210Z",
+    "codeModeLogPath": "results/minimax_minimax-m2.7-scenario-6-code-mode-pair-4362df918317-4c330c247dc0-2026-04-15T14-28-47.665Z.json"
+  },
+  {
+    "scenarioNumber": 5,
+    "model": "z-ai/glm-5.1",
+    "pairId": "a02b3bd62400",
+    "updatedAt": "2026-04-15T14:31:57.224Z",
+    "regularLogPath": "results/z-ai_glm-5.1-scenario-5-regular-pair-a02b3bd62400-96c1b0148de1-2026-04-15T14-29-04.078Z.json",
+    "codeModeLogPath": "results/z-ai_glm-5.1-scenario-5-code-mode-pair-a02b3bd62400-79a26d35d3c6-2026-04-15T14-30-37.658Z.json"
+  },
+  {
+    "scenarioNumber": 6,
+    "model": "z-ai/glm-5.1",
+    "pairId": "25ed2d3b86ba",
+    "updatedAt": "2026-04-15T14:32:37.096Z",
+    "regularLogPath": "results/z-ai_glm-5.1-scenario-6-regular-pair-25ed2d3b86ba-42d845ddfbff-2026-04-15T14-31-57.897Z.json"
+  },
+  {
+    "scenarioNumber": 5,
+    "model": "moonshotai/kimi-k2.5",
+    "pairId": "3f534621e47d",
+    "updatedAt": "2026-04-15T15:14:18.413Z",
+    "regularLogPath": "results/moonshotai_kimi-k2.5-scenario-5-regular-pair-3f534621e47d-3053d73d02aa-2026-04-15T15-13-43.638Z.json"
+  },
+  {
+    "scenarioNumber": 6,
+    "model": "moonshotai/kimi-k2.5",
+    "pairId": "026220a336d6",
+    "updatedAt": "2026-04-15T15:19:07.931Z",
+    "regularLogPath": "results/moonshotai_kimi-k2.5-scenario-6-regular-pair-026220a336d6-51db58451cd4-2026-04-15T15-16-19.777Z.json",
+    "codeModeLogPath": "results/moonshotai_kimi-k2.5-scenario-6-code-mode-pair-026220a336d6-d0955e78ea1b-2026-04-15T15-16-45.740Z.json"
   }
 ]

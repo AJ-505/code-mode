@@ -1,13 +1,14 @@
 # Scenario 5 (Calendar Timezone Scheduling)
 
-Status: scaffolded placeholder for upcoming implementation.
+Status: wired and runnable (deterministic simulation).
 
-Planned benchmark:
+Run commands:
 
-- regular mode using constrained calendar/timezone tools
-- code-mode using restricted code execution with calendar wrapper APIs
+- `bun run benchmark:scenario5:regular`
+- `bun run benchmark:scenario5:code-mode`
 
-Goal:
+What it simulates:
 
-- inspect a user's schedule and propose a valid meeting slot with a participant in Bolivia
-- compare correctness, speed, token usage, and estimated cost
+- local + Bolivia timezone scheduling with working-hour constraints
+- conflict-aware slot proposal from deterministic scheduling context
+- strict JSON output + benchmark observability logs in `results/`

@@ -7,7 +7,7 @@ import {
   writeScenarioFinalComparison,
 } from "../../lib/benchmark-logger.js";
 import { type Model, openrouter } from "../../lib/chat-generation.js";
-import { extractResponseText } from "../../lib/openrouter-response.js";
+import { extractResponseText, isInvalidFinalResponseError } from "../../lib/openrouter-response.js";
 import { PROMPTS } from "../../lib/prompts.js";
 import { evaluateScenario2Run } from "./evaluation.js";
 import {
@@ -96,14 +96,28 @@ export async function runScenario2CodeMode(model: Model = defaultScenario2Model)
         stopWhen: stepCountIs(4),
       });
 
-      const response = await withTimeout(
-        `${stage} response`,
-        result.getResponse(),
-        modelCallTimeoutMs
-      );
-      const finalText = extractResponseText(response);
+      let finalText = "";
+      let responseUsage: Parameters<BenchmarkLogger["addModelResponse"]>[2] = undefined;
+      try {
+        const response = await withTimeout(
+          `${stage} response`,
+          result.getResponse(),
+          modelCallTimeoutMs
+        );
+        finalText = extractResponseText(response);
+        responseUsage = response.usage;
+      } catch (error) {
+        if (!isInvalidFinalResponseError(error)) throw error;
+        logger.info(
+          "code_mode_response_empty",
+          `Model response had empty final output for ${stage}; continuing with tool execution output`,
+          {
+            error: error instanceof Error ? error.message : String(error),
+          }
+        );
+      }
       latestTextForEvaluation = finalText || latestTextForEvaluation;
-      logger.addModelResponse(stage, finalText, response.usage);
+      logger.addModelResponse(stage, finalText, responseUsage);
 
       const toolCallsRaw = await withTimeout(
         `${stage} tool calls`,
@@ -120,6 +134,15 @@ export async function runScenario2CodeMode(model: Model = defaultScenario2Model)
       const execution = consumeLastScenario2CodeExecution();
       if (execution?.ok && execution.result) {
         finalResultFromTool = execution.result as unknown as Record<string, unknown>;
+        const expectedToolName = "execute_scenario2_code";
+        if (!allToolCalls.some((call) => call.name === expectedToolName)) {
+          const syntheticCall = {
+            name: expectedToolName,
+            arguments: { synthetic: true, source: "tool_result_event" },
+          };
+          allToolCalls.push(syntheticCall);
+          logger.addToolCalls(stage, [syntheticCall]);
+        }
         logger.info("tool_result", "Code execution result from tool", {
           ...execution.result,
         });

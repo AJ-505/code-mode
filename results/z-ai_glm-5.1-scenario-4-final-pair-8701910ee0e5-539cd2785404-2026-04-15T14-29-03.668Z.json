@@ -1,0 +1,23 @@
+{
+  "benchmarkId": "4_drive_keyword_retrieval",
+  "scenarioNumber": 4,
+  "model": "z-ai/glm-5.1",
+  "pairId": "8701910ee0e5",
+  "runId": "539cd2785404",
+  "createdAt": "2026-04-15T14:29:03.668Z",
+  "winner": "code-mode",
+  "reasons": [
+    "regular: didFail=true, tokens=1816, costUsd=0.001245",
+    "code-mode: didFail=false, tokens=1145, costUsd=0.000552"
+  ],
+  "regular": {
+    "didFailTest": true,
+    "totalTokens": 1816,
+    "estimatedCostUsd": 0.001245
+  },
+  "codeMode": {
+    "didFailTest": false,
+    "totalTokens": 1145,
+    "estimatedCostUsd": 0.000552
+  }
+}

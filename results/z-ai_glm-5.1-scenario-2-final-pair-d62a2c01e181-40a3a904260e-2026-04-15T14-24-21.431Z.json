@@ -1,0 +1,23 @@
+{
+  "benchmarkId": "2_playwright_ui_audit",
+  "scenarioNumber": 2,
+  "model": "z-ai/glm-5.1",
+  "pairId": "d62a2c01e181",
+  "runId": "40a3a904260e",
+  "createdAt": "2026-04-15T14:24:21.431Z",
+  "winner": "code-mode",
+  "reasons": [
+    "regular: didFail=true, tokens=1786, costUsd=0.001426",
+    "code-mode: didFail=false, tokens=1626, costUsd=0.000688"
+  ],
+  "regular": {
+    "didFailTest": true,
+    "totalTokens": 1786,
+    "estimatedCostUsd": 0.001426
+  },
+  "codeMode": {
+    "didFailTest": false,
+    "totalTokens": 1626,
+    "estimatedCostUsd": 0.000688
+  }
+}

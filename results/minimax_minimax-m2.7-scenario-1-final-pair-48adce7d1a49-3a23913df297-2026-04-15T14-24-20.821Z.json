@@ -1,0 +1,23 @@
+{
+  "benchmarkId": "1_customer_db_average_spend",
+  "scenarioNumber": 1,
+  "model": "minimax/minimax-m2.7",
+  "pairId": "48adce7d1a49",
+  "runId": "3a23913df297",
+  "createdAt": "2026-04-15T14:24:20.821Z",
+  "winner": "code-mode",
+  "reasons": [
+    "regular: didFail=true, tokens=36095, costUsd=0.011511",
+    "code-mode: didFail=false, tokens=12873, costUsd=0.004494"
+  ],
+  "regular": {
+    "didFailTest": true,
+    "totalTokens": 36095,
+    "estimatedCostUsd": 0.011511
+  },
+  "codeMode": {
+    "didFailTest": false,
+    "totalTokens": 12873,
+    "estimatedCostUsd": 0.004494
+  }
+}

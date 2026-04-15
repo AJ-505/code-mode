@@ -7,6 +7,10 @@ import { runScenario3CodeMode } from "./test-scenarios/3_slack_summary/code-mode
 import { runScenario3Regular } from "./test-scenarios/3_slack_summary/regular.js";
 import { runScenario4CodeMode } from "./test-scenarios/4_drive_keyword_retrieval/code-mode.js";
 import { runScenario4Regular } from "./test-scenarios/4_drive_keyword_retrieval/regular.js";
+import { runScenario5CodeMode } from "./test-scenarios/5_calendar_timezone_scheduling/code-mode.js";
+import { runScenario5Regular } from "./test-scenarios/5_calendar_timezone_scheduling/regular.js";
+import { runScenario6CodeMode } from "./test-scenarios/6_github_repo_change_pr/code-mode.js";
+import { runScenario6Regular } from "./test-scenarios/6_github_repo_change_pr/regular.js";
 
 function parseArgs() {
   const args = Bun.argv.slice(2);
@@ -62,5 +66,23 @@ if (import.meta.main) {
     process.exit(0);
   }
 
-  throw new Error(`Unsupported scenario '${scenario}'. Wired scenarios: 1, 2, 3, 4.`);
+  if (scenario === "5") {
+    if (mode === "code-mode") {
+      await runScenario5CodeMode();
+    } else {
+      await runScenario5Regular();
+    }
+    process.exit(0);
+  }
+
+  if (scenario === "6") {
+    if (mode === "code-mode") {
+      await runScenario6CodeMode();
+    } else {
+      await runScenario6Regular();
+    }
+    process.exit(0);
+  }
+
+  throw new Error(`Unsupported scenario '${scenario}'. Wired scenarios: 1, 2, 3, 4, 5, 6.`);
 }

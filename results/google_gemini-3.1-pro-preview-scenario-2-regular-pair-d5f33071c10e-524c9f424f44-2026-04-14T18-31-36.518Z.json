@@ -1,0 +1,108 @@
+{
+  "benchmarkId": "2_playwright_ui_audit",
+  "scenarioNumber": 2,
+  "mode": "regular",
+  "model": "google/gemini-3.1-pro-preview",
+  "pairId": "d5f33071c10e",
+  "runId": "524c9f424f44",
+  "runStartedAt": "2026-04-14T18:31:36.518Z",
+  "status": "failed",
+  "didFailTest": true,
+  "pricing": {
+    "inputPerMillionUsd": 2.5,
+    "outputPerMillionUsd": 15,
+    "cachedInputPerMillionUsd": 0
+  },
+  "usage": {
+    "inputTokens": 324,
+    "outputTokens": 117,
+    "cachedTokens": 0,
+    "totalTokens": 441,
+    "estimatedCostUsd": 0.002565
+  },
+  "modelResponses": [
+    {
+      "stage": "discovery",
+      "text": "**Commencing Website Audit**\n\nI'm initiating the UI/UX audit. The absence of a specific URL directs me to use the default; I'll proceed with this standard address. The `audit_demo_site` tool is ready, and I'm about to call it to start the evaluation.\n\n\n**Starting the Evaluation**\n\nOkay, I've confirmed that the `audit_demo_site` tool uses the default URL if none is specified, which is exactly the situation I'm in. Therefore, I can now proceed to execute the command without any parameters. I'm ready to observe the results.",
+      "usage": {
+        "inputTokens": 324,
+        "outputTokens": 117,
+        "cachedTokens": 0,
+        "totalTokens": 441,
+        "estimatedCostUsd": 0.002565
+      }
+    }
+  ],
+  "toolCalls": [
+    {
+      "stage": "discovery",
+      "name": "audit_demo_site",
+      "arguments": {}
+    }
+  ],
+  "events": [
+    {
+      "ts": "2026-04-14T18:31:36.519Z",
+      "level": "info",
+      "event": "run_start",
+      "message": "Scenario 2 regular benchmark started",
+      "data": {
+        "benchmarkId": "2_playwright_ui_audit",
+        "model": "google/gemini-3.1-pro-preview",
+        "modelCallTimeoutMs": 120000
+      }
+    },
+    {
+      "ts": "2026-04-14T18:31:58.453Z",
+      "level": "info",
+      "event": "model_response",
+      "message": "Model response captured for discovery",
+      "data": {
+        "responsePreview": "**Commencing Website Audit** I'm initiating the UI/UX audit. The absence of a specific URL directs me to use the default; I'll proceed with this standard address. The `audit_demo_site` tool is ready, and I'm about to call it to start the ev...",
+        "responseChars": 526,
+        "inputTokens": 324,
+        "outputTokens": 117,
+        "cachedTokens": 0,
+        "totalTokens": 441,
+        "estimatedCostUsd": 0.002565
+      }
+    },
+    {
+      "ts": "2026-04-14T18:31:58.456Z",
+      "level": "info",
+      "event": "tool_call",
+      "message": "Tool called in discovery: audit_demo_site",
+      "data": {
+        "stage": "discovery",
+        "toolName": "audit_demo_site",
+        "callDetails": ""
+      }
+    },
+    {
+      "ts": "2026-04-14T18:32:09.465Z",
+      "level": "error",
+      "event": "run_failed",
+      "message": "Scenario 2 regular benchmark failed",
+      "data": {
+        "error": "Response failed: {\"code\":\"server_error\",\"message\":\"internal stream ended unexpectedly\"}"
+      }
+    },
+    {
+      "ts": "2026-04-14T18:32:09.466Z",
+      "level": "info",
+      "event": "run_finished",
+      "message": "Benchmark run finished",
+      "data": {
+        "status": "failed",
+        "didFailTest": true,
+        "inputTokens": 324,
+        "outputTokens": 117,
+        "cachedTokens": 0,
+        "totalTokens": 441,
+        "estimatedCostUsd": 0.002565
+      }
+    }
+  ],
+  "runFinishedAt": "2026-04-14T18:32:09.466Z",
+  "error": "Response failed: {\"code\":\"server_error\",\"message\":\"internal stream ended unexpectedly\"}"
+}

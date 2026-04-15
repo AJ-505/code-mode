@@ -1,0 +1,202 @@
+{
+  "benchmarkId": "5_calendar_timezone_scheduling",
+  "scenarioNumber": 5,
+  "mode": "regular",
+  "model": "moonshotai/kimi-k2.5",
+  "pairId": "3f534621e47d",
+  "runId": "3053d73d02aa",
+  "runStartedAt": "2026-04-15T15:13:43.638Z",
+  "status": "failed",
+  "didFailTest": true,
+  "pricing": {
+    "inputPerMillionUsd": 0.3827,
+    "outputPerMillionUsd": 1.72,
+    "cachedInputPerMillionUsd": 0
+  },
+  "usage": {
+    "inputTokens": 1186,
+    "outputTokens": 311,
+    "cachedTokens": 0,
+    "totalTokens": 1497,
+    "estimatedCostUsd": 0.000989
+  },
+  "modelResponses": [
+    {
+      "stage": "discovery",
+      "text": "The tool `propose_cross_timezone_slot` has been discovered. It can propose a conflict-free meeting time between local timezone and Bolivia timezone within working hours. The tool has default values:\n- date: \"2026-04-16\"\n- localTimezone: \"America/Los_Angeles\"\n- boliviaTimezone: \"America/La_Paz\"\n\nI should call this tool to propose a meeting time. Since the user didn't specify a particular date or timezone, I'll use the defaults which seem reasonable.\n I've discovered the `propose_cross_timezone_slot` tool. Let me use it to propose a meeting time that works across time zones while respecting working hours and avoiding conflicts.",
+      "usage": {
+        "inputTokens": 518,
+        "outputTokens": 151,
+        "cachedTokens": 0,
+        "totalTokens": 669,
+        "estimatedCostUsd": 0.000458
+      }
+    },
+    {
+      "stage": "execution",
+      "text": "The function returned a proposed meeting time. Let me format this as a clear response for the user.\n Based on the calendar check, here is the proposed meeting time:\n\n**Proposed Meeting Time:**\n- **Date:** April 16, 2026\n- **Time:** 5:00 PM - 5:30 PM UTC\n- **Local Time (America/Los_Angeles):** 10:00 AM - 10:30 AM\n- **Bolivia Time (America/La_Paz):** 1:00 PM - 1:30 PM\n\n**Rationale:** This 30-minute slot was selected because it falls within standard working hours (9:00 AM - 5:00 PM) for both time zones and avoids any known calendar conflicts.",
+      "usage": {
+        "inputTokens": 668,
+        "outputTokens": 160,
+        "cachedTokens": 0,
+        "totalTokens": 828,
+        "estimatedCostUsd": 0.000531
+      }
+    }
+  ],
+  "toolCalls": [
+    {
+      "stage": "discovery",
+      "name": "propose_cross_timezone_slot",
+      "arguments": {}
+    }
+  ],
+  "events": [
+    {
+      "ts": "2026-04-15T15:13:43.638Z",
+      "level": "info",
+      "event": "run_start",
+      "message": "Scenario 5 regular benchmark started",
+      "data": {
+        "benchmarkId": "5_calendar_timezone_scheduling",
+        "model": "moonshotai/kimi-k2.5",
+        "modelCallTimeoutMs": 120000
+      }
+    },
+    {
+      "ts": "2026-04-15T15:13:59.988Z",
+      "level": "info",
+      "event": "model_response",
+      "message": "Model response captured for discovery",
+      "data": {
+        "responsePreview": "The tool `propose_cross_timezone_slot` has been discovered. It can propose a conflict-free meeting time between local timezone and Bolivia timezone within working hours. The tool has default values: - date: \"2026-04-16\" - localTimezone: \"Am...",
+        "responseChars": 633,
+        "inputTokens": 518,
+        "outputTokens": 151,
+        "cachedTokens": 0,
+        "totalTokens": 669,
+        "estimatedCostUsd": 0.000458
+      }
+    },
+    {
+      "ts": "2026-04-15T15:13:59.993Z",
+      "level": "info",
+      "event": "tool_call",
+      "message": "Tool called in discovery: propose_cross_timezone_slot",
+      "data": {
+        "stage": "discovery",
+        "toolName": "propose_cross_timezone_slot",
+        "callDetails": ""
+      }
+    },
+    {
+      "ts": "2026-04-15T15:14:18.398Z",
+      "level": "info",
+      "event": "model_response",
+      "message": "Model response captured for execution",
+      "data": {
+        "responsePreview": "The function returned a proposed meeting time. Let me format this as a clear response for the user. Based on the calendar check, here is the proposed meeting time: **Proposed Meeting Time:** - **Date:** April 16, 2026 - **Time:** 5:00 PM - ...",
+        "responseChars": 545,
+        "inputTokens": 668,
+        "outputTokens": 160,
+        "cachedTokens": 0,
+        "totalTokens": 828,
+        "estimatedCostUsd": 0.000531
+      }
+    },
+    {
+      "ts": "2026-04-15T15:14:18.404Z",
+      "level": "info",
+      "event": "model_result",
+      "message": "Model result (parsed)",
+      "data": {
+        "topCustomerId": "(missing)",
+        "topCustomerName": "(missing)",
+        "transactionCount": "(missing)",
+        "averageSpend": "(missing)",
+        "totalSpend": "(missing)",
+        "fromIso": "(missing)",
+        "toIso": "(missing)"
+      }
+    },
+    {
+      "ts": "2026-04-15T15:14:18.404Z",
+      "level": "info",
+      "event": "evaluation_human",
+      "message": "Evaluation summary",
+      "data": {
+        "overallPass": false,
+        "toolPass": false,
+        "expectedPass": false
+      }
+    },
+    {
+      "ts": "2026-04-15T15:14:18.405Z",
+      "level": "info",
+      "event": "run_finished",
+      "message": "Benchmark run finished",
+      "data": {
+        "status": "failed",
+        "didFailTest": true,
+        "inputTokens": 1186,
+        "outputTokens": 311,
+        "cachedTokens": 0,
+        "totalTokens": 1497,
+        "estimatedCostUsd": 0.000989
+      }
+    }
+  ],
+  "evaluation": {
+    "benchmarkId": "5_calendar_timezone_scheduling",
+    "overallPass": false,
+    "toolEval": {
+      "pass": false,
+      "details": [
+        {
+          "groupId": "progressive-discovery",
+          "required": true,
+          "expectedAnyOf": [
+            "discover_tools"
+          ],
+          "matched": [],
+          "pass": false,
+          "note": "Agent should discover hidden tools first."
+        },
+        {
+          "groupId": "slot-proposal",
+          "required": true,
+          "expectedAnyOf": [
+            "propose_cross_timezone_slot"
+          ],
+          "matched": [
+            "propose_cross_timezone_slot"
+          ],
+          "pass": true,
+          "note": "Agent should propose a timezone-safe meeting slot in regular mode."
+        }
+      ],
+      "calledToolNames": [
+        "propose_cross_timezone_slot"
+      ]
+    },
+    "fuzzyEval": {
+      "pass": false,
+      "score": 0,
+      "details": [
+        {
+          "checkId": "result-fields",
+          "requiredMinMatches": 1,
+          "matchedCount": 0,
+          "matchedTerms": [],
+          "pass": false,
+          "weight": 1
+        }
+      ]
+    },
+    "numericMentions": 19,
+    "numericGatePass": true,
+    "schemaPass": false,
+    "parsed": null
+  },
+  "runFinishedAt": "2026-04-15T15:14:18.405Z"
+}

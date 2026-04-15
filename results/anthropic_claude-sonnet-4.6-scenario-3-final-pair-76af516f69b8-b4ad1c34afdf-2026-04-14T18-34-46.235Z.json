@@ -1,0 +1,23 @@
+{
+  "benchmarkId": "3_slack_summary",
+  "scenarioNumber": 3,
+  "model": "anthropic/claude-sonnet-4.6",
+  "pairId": "76af516f69b8",
+  "runId": "b4ad1c34afdf",
+  "createdAt": "2026-04-14T18:34:46.235Z",
+  "winner": "regular",
+  "reasons": [
+    "regular: didFail=true, tokens=3799, costUsd=0.01721",
+    "code-mode: didFail=true, tokens=7830, costUsd=0.03265"
+  ],
+  "regular": {
+    "didFailTest": true,
+    "totalTokens": 3799,
+    "estimatedCostUsd": 0.01721
+  },
+  "codeMode": {
+    "didFailTest": true,
+    "totalTokens": 7830,
+    "estimatedCostUsd": 0.03265
+  }
+}

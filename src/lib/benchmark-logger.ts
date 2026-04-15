@@ -83,6 +83,32 @@ function previewModelText(text: string) {
   return `${compact.slice(0, 240)}...`;
 }
 
+function summarizeParsedResult(parsed: Record<string, unknown>) {
+  const preview: Record<string, unknown> = {};
+  const entries = Object.entries(parsed);
+  const previewEntries = entries.slice(0, 8);
+
+  for (const [key, value] of previewEntries) {
+    if (Array.isArray(value)) {
+      preview[key] = `${value.length} item(s)`;
+      continue;
+    }
+
+    if (typeof value === "object" && value !== null) {
+      preview[key] = `${Object.keys(value as Record<string, unknown>).length} field(s)`;
+      continue;
+    }
+
+    preview[key] = value;
+  }
+
+  if (entries.length > previewEntries.length) {
+    preview.omittedFieldCount = entries.length - previewEntries.length;
+  }
+
+  return preview;
+}
+
 export type BenchmarkMode = "regular" | "code-mode";
 
 export type PricingConfig = {
@@ -189,11 +215,8 @@ function estimateCost(snapshot: {
   outputTokens: number;
   cachedTokens: number;
 }, pricing: PricingConfig) {
-  const nonCachedInput = Math.max(snapshot.inputTokens - snapshot.cachedTokens, 0);
-
   const cost =
-    (nonCachedInput / 1_000_000) * pricing.inputPerMillionUsd +
-    (snapshot.cachedTokens / 1_000_000) * pricing.cachedInputPerMillionUsd +
+    (snapshot.inputTokens / 1_000_000) * pricing.inputPerMillionUsd +
     (snapshot.outputTokens / 1_000_000) * pricing.outputPerMillionUsd;
 
   return Number(cost.toFixed(6));
@@ -362,33 +385,53 @@ export class BenchmarkLogger {
       evaluation.expectedEval !== null
         ? (evaluation.expectedEval as Record<string, unknown>)
         : null;
-    const parsed =
+    const parsedFromExpected =
       expectedEval &&
       typeof expectedEval.parsed === "object" &&
       expectedEval.parsed !== null
         ? (expectedEval.parsed as Record<string, unknown>)
         : null;
+    const parsedFromSchema =
+      typeof evaluation.parsed === "object" && evaluation.parsed !== null
+        ? (evaluation.parsed as Record<string, unknown>)
+        : null;
+    const parsed = parsedFromExpected ?? parsedFromSchema;
 
-    this.info("model_result", "Model result (parsed)", {
-      topCustomerId: parsed?.topCustomerId ?? "(missing)",
-      topCustomerName: parsed?.topCustomerName ?? "(missing)",
-      transactionCount: parsed?.transactionCount ?? "(missing)",
-      averageSpend: parsed?.averageSpend ?? "(missing)",
-      totalSpend: parsed?.totalSpend ?? "(missing)",
-      fromIso: parsed?.fromIso ?? "(missing)",
-      toIso: parsed?.toIso ?? "(missing)",
-    });
+    this.info(
+      "model_result",
+      "Model result (parsed)",
+      parsed ? summarizeParsedResult(parsed) : { parsed: "(missing)" }
+    );
 
     const toolEval =
       typeof evaluation.toolEval === "object" && evaluation.toolEval !== null
         ? (evaluation.toolEval as Record<string, unknown>)
         : null;
+    const expectedPass =
+      expectedEval && typeof expectedEval.pass === "boolean"
+        ? (expectedEval.pass as boolean)
+        : null;
+    const schemaPass =
+      typeof evaluation.schemaPass === "boolean"
+        ? (evaluation.schemaPass as boolean)
+        : null;
 
-    this.info("evaluation_human", "Evaluation summary", {
+    const summary: Record<string, unknown> = {
       overallPass: evaluation.overallPass === true,
       toolPass: toolEval?.pass === true,
-      expectedPass: expectedEval?.pass === true,
-    });
+    };
+
+    if (expectedPass !== null) {
+      summary.outputValidation = "expected-result";
+      summary.outputPass = expectedPass;
+      summary.expectedPass = expectedPass;
+    } else if (schemaPass !== null) {
+      summary.outputValidation = "schema-parse";
+      summary.outputPass = schemaPass;
+      summary.schemaPass = schemaPass;
+    }
+
+    this.info("evaluation_human", "Evaluation summary", summary);
   }
 
   setExpectedResult(expectedResult: Record<string, unknown>) {

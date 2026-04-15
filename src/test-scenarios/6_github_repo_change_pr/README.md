@@ -1,13 +1,14 @@
 # Scenario 6 (GitHub Repo Change + PR)
 
-Status: scaffolded placeholder for upcoming implementation.
+Status: wired and runnable (deterministic simulation).
 
-Planned benchmark:
+Run commands:
 
-- regular mode using constrained GitHub actions/tools
-- code-mode using restricted code execution with a GitHub wrapper client
+- `bun run benchmark:scenario6:regular`
+- `bun run benchmark:scenario6:code-mode`
 
-Goal:
+What it simulates:
 
-- fetch a repository, make a specific change, and create a pull request
-- compare correctness, speed, token usage, and estimated cost
+- repository task intake and deterministic change application result
+- pull-request metadata generation with changed file summary
+- strict JSON output + benchmark observability logs in `results/`

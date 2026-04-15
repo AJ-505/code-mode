@@ -9,3 +9,5 @@ Run commands:
 
 The current implementation uses deterministic baseline findings to validate harness behavior,
 plus full observability logs in `results/` and paired regular/code-mode comparison output.
+
+Audit target URL baseline: `https://playwright.dev`

@@ -7,7 +7,7 @@ import {
   writeScenarioFinalComparison,
 } from "../../lib/benchmark-logger.js";
 import { type Model, openrouter } from "../../lib/chat-generation.js";
-import { extractResponseText } from "../../lib/openrouter-response.js";
+import { extractResponseText, isInvalidFinalResponseError } from "../../lib/openrouter-response.js";
 import { PROMPTS } from "../../lib/prompts.js";
 import {
   closeScenario1DbPool,
@@ -91,14 +91,27 @@ async function runCodeModeAttempt(options: {
     stopWhen: stepCountIs(4),
   });
 
-  const response = await withTimeout(
-    `${options.stage} response`,
-    modelResult.getResponse(),
-    modelCallTimeoutMs
-  );
-
-  const modelText = extractResponseText(response);
-  options.logger.addModelResponse(options.stage, modelText, response.usage);
+  let modelText = "";
+  let responseUsage: Parameters<BenchmarkLogger["addModelResponse"]>[2] = undefined;
+  try {
+    const response = await withTimeout(
+      `${options.stage} response`,
+      modelResult.getResponse(),
+      modelCallTimeoutMs
+    );
+    modelText = extractResponseText(response);
+    responseUsage = response.usage;
+  } catch (error) {
+    if (!isInvalidFinalResponseError(error)) throw error;
+    options.logger.info(
+      "code_mode_response_empty",
+      `Model response had empty final output for ${options.stage}; continuing with tool execution output`,
+      {
+        error: error instanceof Error ? error.message : String(error),
+      }
+    );
+  }
+  options.logger.addModelResponse(options.stage, modelText, responseUsage);
   options.logger.info("model_result_text", `Model final message (${options.stage})`, {
     message:
       modelText.length > 0
@@ -194,6 +207,15 @@ export async function runCodeModeBenchmark(model: Model = defaultScenario1Model)
 
       if (attempt.execution?.ok && attempt.execution.result) {
         finalResultFromTool = attempt.execution.result as unknown as Record<string, unknown>;
+        const expectedToolName = "execute_scenario1_code";
+        if (!allToolCalls.some((call) => call.name === expectedToolName)) {
+          const syntheticCall = {
+            name: expectedToolName,
+            arguments: { synthetic: true, source: "tool_result_event" },
+          };
+          allToolCalls.push(syntheticCall);
+          logger.addToolCalls(stage, [syntheticCall]);
+        }
         logger.info("tool_result", "Code execution result from tool", {
           ...attempt.execution.result,
         });

@@ -1,0 +1,23 @@
+{
+  "benchmarkId": "3_slack_summary",
+  "scenarioNumber": 3,
+  "model": "z-ai/glm-5.1",
+  "pairId": "eb185f48038d",
+  "runId": "644e90d6bf0c",
+  "createdAt": "2026-04-15T14:26:53.239Z",
+  "winner": "code-mode",
+  "reasons": [
+    "regular: didFail=true, tokens=2667, costUsd=0.001576",
+    "code-mode: didFail=false, tokens=895, costUsd=0.000519"
+  ],
+  "regular": {
+    "didFailTest": true,
+    "totalTokens": 2667,
+    "estimatedCostUsd": 0.001576
+  },
+  "codeMode": {
+    "didFailTest": false,
+    "totalTokens": 895,
+    "estimatedCostUsd": 0.000519
+  }
+}

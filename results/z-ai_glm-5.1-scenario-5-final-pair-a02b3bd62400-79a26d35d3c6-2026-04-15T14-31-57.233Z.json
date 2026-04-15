@@ -1,0 +1,23 @@
+{
+  "benchmarkId": "5_calendar_timezone_scheduling",
+  "scenarioNumber": 5,
+  "model": "z-ai/glm-5.1",
+  "pairId": "a02b3bd62400",
+  "runId": "79a26d35d3c6",
+  "createdAt": "2026-04-15T14:31:57.233Z",
+  "winner": "code-mode",
+  "reasons": [
+    "regular: didFail=true, tokens=2266, costUsd=0.00169",
+    "code-mode: didFail=false, tokens=1613, costUsd=0.000871"
+  ],
+  "regular": {
+    "didFailTest": true,
+    "totalTokens": 2266,
+    "estimatedCostUsd": 0.00169
+  },
+  "codeMode": {
+    "didFailTest": false,
+    "totalTokens": 1613,
+    "estimatedCostUsd": 0.000871
+  }
+}

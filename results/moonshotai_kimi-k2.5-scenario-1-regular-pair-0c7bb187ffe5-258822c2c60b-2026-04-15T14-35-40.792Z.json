@@ -1,0 +1,64 @@
+{
+  "benchmarkId": "1_customer_db_average_spend",
+  "scenarioNumber": 1,
+  "mode": "regular",
+  "model": "moonshotai/kimi-k2.5",
+  "pairId": "0c7bb187ffe5",
+  "runId": "258822c2c60b",
+  "runStartedAt": "2026-04-15T14:35:40.792Z",
+  "status": "failed",
+  "didFailTest": true,
+  "pricing": {
+    "inputPerMillionUsd": 0.3827,
+    "outputPerMillionUsd": 1.72,
+    "cachedInputPerMillionUsd": 0
+  },
+  "usage": {
+    "inputTokens": 0,
+    "outputTokens": 0,
+    "cachedTokens": 0,
+    "totalTokens": 0,
+    "estimatedCostUsd": 0
+  },
+  "modelResponses": [],
+  "toolCalls": [],
+  "events": [
+    {
+      "ts": "2026-04-15T14:35:40.792Z",
+      "level": "info",
+      "event": "run_start",
+      "message": "Scenario 1 regular benchmark started",
+      "data": {
+        "benchmarkId": "1_customer_db_average_spend",
+        "model": "moonshotai/kimi-k2.5",
+        "modelCallTimeoutMs": 120000
+      }
+    },
+    {
+      "ts": "2026-04-15T14:35:41.394Z",
+      "level": "error",
+      "event": "run_failed",
+      "message": "Scenario 1 regular benchmark failed",
+      "data": {
+        "error": "Failed query: select \"id\", \"customer_id\", \"amount\", \"created_at\" from \"transactions\" where (\"transactions\".\"created_at\" >= $1 and \"transactions\".\"created_at\" <= $2) order by \"transactions\".\"created_at\" asc limit $3\nparams: 2026-04-08T14:35:40.794Z,2026-04-15T14:35:40.794Z,50000"
+      }
+    },
+    {
+      "ts": "2026-04-15T14:35:41.395Z",
+      "level": "info",
+      "event": "run_finished",
+      "message": "Benchmark run finished",
+      "data": {
+        "status": "failed",
+        "didFailTest": true,
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "cachedTokens": 0,
+        "totalTokens": 0,
+        "estimatedCostUsd": 0
+      }
+    }
+  ],
+  "runFinishedAt": "2026-04-15T14:35:41.395Z",
+  "error": "Failed query: select \"id\", \"customer_id\", \"amount\", \"created_at\" from \"transactions\" where (\"transactions\".\"created_at\" >= $1 and \"transactions\".\"created_at\" <= $2) order by \"transactions\".\"created_at\" asc limit $3\nparams: 2026-04-08T14:35:40.794Z,2026-04-15T14:35:40.794Z,50000"
+}

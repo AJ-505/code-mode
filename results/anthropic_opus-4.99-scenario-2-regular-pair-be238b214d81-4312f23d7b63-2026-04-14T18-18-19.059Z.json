@@ -1,0 +1,64 @@
+{
+  "benchmarkId": "2_playwright_ui_audit",
+  "scenarioNumber": 2,
+  "mode": "regular",
+  "model": "anthropic/opus-4.99",
+  "pairId": "be238b214d81",
+  "runId": "4312f23d7b63",
+  "runStartedAt": "2026-04-14T18:18:19.059Z",
+  "status": "failed",
+  "didFailTest": true,
+  "pricing": {
+    "inputPerMillionUsd": 2.5,
+    "outputPerMillionUsd": 15,
+    "cachedInputPerMillionUsd": 0
+  },
+  "usage": {
+    "inputTokens": 0,
+    "outputTokens": 0,
+    "cachedTokens": 0,
+    "totalTokens": 0,
+    "estimatedCostUsd": 0
+  },
+  "modelResponses": [],
+  "toolCalls": [],
+  "events": [
+    {
+      "ts": "2026-04-14T18:18:19.059Z",
+      "level": "info",
+      "event": "run_start",
+      "message": "Scenario 2 regular benchmark started",
+      "data": {
+        "benchmarkId": "2_playwright_ui_audit",
+        "model": "anthropic/opus-4.99",
+        "modelCallTimeoutMs": 120000
+      }
+    },
+    {
+      "ts": "2026-04-14T18:18:20.475Z",
+      "level": "error",
+      "event": "run_failed",
+      "message": "Scenario 2 regular benchmark failed",
+      "data": {
+        "error": "anthropic/opus-4.99 is not a valid model ID"
+      }
+    },
+    {
+      "ts": "2026-04-14T18:18:20.475Z",
+      "level": "info",
+      "event": "run_finished",
+      "message": "Benchmark run finished",
+      "data": {
+        "status": "failed",
+        "didFailTest": true,
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "cachedTokens": 0,
+        "totalTokens": 0,
+        "estimatedCostUsd": 0
+      }
+    }
+  ],
+  "runFinishedAt": "2026-04-14T18:18:20.475Z",
+  "error": "anthropic/opus-4.99 is not a valid model ID"
+}

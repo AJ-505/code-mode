@@ -1,0 +1,212 @@
+{
+  "benchmarkId": "5_calendar_timezone_scheduling",
+  "scenarioNumber": 5,
+  "mode": "regular",
+  "model": "minimax/minimax-m2.7",
+  "pairId": "50e1480540ba",
+  "runId": "1b6badda7afc",
+  "runStartedAt": "2026-04-15T14:26:56.376Z",
+  "status": "failed",
+  "didFailTest": true,
+  "pricing": {
+    "inputPerMillionUsd": 0.3,
+    "outputPerMillionUsd": 1.2,
+    "cachedInputPerMillionUsd": 0
+  },
+  "usage": {
+    "inputTokens": 1198,
+    "outputTokens": 182,
+    "cachedTokens": 384,
+    "totalTokens": 1380,
+    "estimatedCostUsd": 0.000578
+  },
+  "modelResponses": [
+    {
+      "stage": "discovery",
+      "text": "The tools I tried to discover weren't found. Let me try other related tools that might be available for calendar and time management.",
+      "usage": {
+        "inputTokens": 623,
+        "outputTokens": 85,
+        "cachedTokens": 384,
+        "totalTokens": 708,
+        "estimatedCostUsd": 0.000289
+      }
+    },
+    {
+      "stage": "execution",
+      "text": "The user wants me to check their calendar and propose a meeting time with someone in Bolivia. Let me discover more tools to find calendar-related functions.\n<invoke name=\"discover_tools\">\n<parameter name=\"toolNames\">[\"check_calendar\", \"view_calendar\", \"calendar_events\", \"get_calendar\", \"get_events\", \"get_timezone\", \"get_user_info\", \"propose_cross_timezone_slot\"]</parameter>\n</invoke>\n</minimax:tool_call>",
+      "usage": {
+        "inputTokens": 575,
+        "outputTokens": 97,
+        "cachedTokens": 0,
+        "totalTokens": 672,
+        "estimatedCostUsd": 0.000289
+      }
+    }
+  ],
+  "toolCalls": [
+    {
+      "stage": "discovery",
+      "name": "discover_tools",
+      "arguments": {
+        "toolNames": [
+          "check_calendar",
+          "view_calendar",
+          "calendar_events",
+          "get_calendar",
+          "get_events",
+          "get_timezone",
+          "get_user_info"
+        ]
+      }
+    }
+  ],
+  "events": [
+    {
+      "ts": "2026-04-15T14:26:56.376Z",
+      "level": "info",
+      "event": "run_start",
+      "message": "Scenario 5 regular benchmark started",
+      "data": {
+        "benchmarkId": "5_calendar_timezone_scheduling",
+        "model": "minimax/minimax-m2.7",
+        "modelCallTimeoutMs": 120000
+      }
+    },
+    {
+      "ts": "2026-04-15T14:27:08.885Z",
+      "level": "info",
+      "event": "model_response",
+      "message": "Model response captured for discovery",
+      "data": {
+        "responsePreview": "The tools I tried to discover weren't found. Let me try other related tools that might be available for calendar and time management.",
+        "responseChars": 133,
+        "inputTokens": 623,
+        "outputTokens": 85,
+        "cachedTokens": 384,
+        "totalTokens": 708,
+        "estimatedCostUsd": 0.000289
+      }
+    },
+    {
+      "ts": "2026-04-15T14:27:08.888Z",
+      "level": "info",
+      "event": "tool_call",
+      "message": "Tool called in discovery: discover_tools",
+      "data": {
+        "stage": "discovery",
+        "toolName": "discover_tools",
+        "callDetails": "tool names=check_calendar, view_calendar, calendar_events, get_calendar, get_events, get_timezone, get_user_info"
+      }
+    },
+    {
+      "ts": "2026-04-15T14:27:31.753Z",
+      "level": "info",
+      "event": "model_response",
+      "message": "Model response captured for execution",
+      "data": {
+        "responsePreview": "The user wants me to check their calendar and propose a meeting time with someone in Bolivia. Let me discover more tools to find calendar-related functions. <invoke name=\"discover_tools\"> <parameter name=\"toolNames\">[\"check_calendar\", \"view...",
+        "responseChars": 407,
+        "inputTokens": 575,
+        "outputTokens": 97,
+        "cachedTokens": 0,
+        "totalTokens": 672,
+        "estimatedCostUsd": 0.000289
+      }
+    },
+    {
+      "ts": "2026-04-15T14:27:31.760Z",
+      "level": "info",
+      "event": "model_result",
+      "message": "Model result (parsed)",
+      "data": {
+        "topCustomerId": "(missing)",
+        "topCustomerName": "(missing)",
+        "transactionCount": "(missing)",
+        "averageSpend": "(missing)",
+        "totalSpend": "(missing)",
+        "fromIso": "(missing)",
+        "toIso": "(missing)"
+      }
+    },
+    {
+      "ts": "2026-04-15T14:27:31.760Z",
+      "level": "info",
+      "event": "evaluation_human",
+      "message": "Evaluation summary",
+      "data": {
+        "overallPass": false,
+        "toolPass": false,
+        "expectedPass": false
+      }
+    },
+    {
+      "ts": "2026-04-15T14:27:31.761Z",
+      "level": "info",
+      "event": "run_finished",
+      "message": "Benchmark run finished",
+      "data": {
+        "status": "failed",
+        "didFailTest": true,
+        "inputTokens": 1198,
+        "outputTokens": 182,
+        "cachedTokens": 384,
+        "totalTokens": 1380,
+        "estimatedCostUsd": 0.000578
+      }
+    }
+  ],
+  "evaluation": {
+    "benchmarkId": "5_calendar_timezone_scheduling",
+    "overallPass": false,
+    "toolEval": {
+      "pass": false,
+      "details": [
+        {
+          "groupId": "progressive-discovery",
+          "required": true,
+          "expectedAnyOf": [
+            "discover_tools"
+          ],
+          "matched": [
+            "discover_tools"
+          ],
+          "pass": true,
+          "note": "Agent should discover hidden tools first."
+        },
+        {
+          "groupId": "slot-proposal",
+          "required": true,
+          "expectedAnyOf": [
+            "propose_cross_timezone_slot"
+          ],
+          "matched": [],
+          "pass": false,
+          "note": "Agent should propose a timezone-safe meeting slot in regular mode."
+        }
+      ],
+      "calledToolNames": [
+        "discover_tools"
+      ]
+    },
+    "fuzzyEval": {
+      "pass": false,
+      "score": 0,
+      "details": [
+        {
+          "checkId": "result-fields",
+          "requiredMinMatches": 1,
+          "matchedCount": 0,
+          "matchedTerms": [],
+          "pass": false,
+          "weight": 1
+        }
+      ]
+    },
+    "numericMentions": 0,
+    "numericGatePass": true,
+    "schemaPass": false,
+    "parsed": null
+  },
+  "runFinishedAt": "2026-04-15T14:27:31.761Z"
+}

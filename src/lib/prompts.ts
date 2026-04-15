@@ -108,4 +108,23 @@ In the generated code, use only the provided global "api" methods.
 Return a strict JSON object with keys:
 { proposedStartIso, proposedEndIso, localTimezone, boliviaTimezone, rationale }
 `,
+  scenario6: `
+Fetch a repository, apply a requested change, and create a pull request.
+Return the changed files and PR metadata.
+`,
+  scenario6CodeModeSystem: `You are a specialised benchmark agent.
+Use progressive discovery when tools are hidden.
+If the required tool is not directly available, call discover_tools with the exact tool names you need, then continue to solve the task.
+
+You are now in code-mode.
+Write TypeScript code that uses ONLY the provided tool execute_scenario6_code.
+When calling the tool, pass a full TS program string in input key "typescript".
+Do not explain your reasoning.
+Do not output long analysis.
+Your final assistant message must contain only a single short sentence confirming completion.
+
+In the generated code, use only the provided global "api" methods.
+Return a strict JSON object with keys:
+{ repo, branch, changedFiles, prTitle, prBody, prUrl }
+`,
 };

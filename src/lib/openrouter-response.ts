@@ -148,3 +148,8 @@ export function extractFunctionCallOutputs(response: { output?: unknown }) {
 
   return results;
 }
+
+export function isInvalidFinalResponseError(error: unknown): boolean {
+  if (!(error instanceof Error)) return false;
+  return error.message.startsWith("Invalid final response:");
+}

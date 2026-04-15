@@ -1,0 +1,23 @@
+{
+  "benchmarkId": "5_calendar_timezone_scheduling",
+  "scenarioNumber": 5,
+  "model": "google/gemini-3.1-pro-preview",
+  "pairId": "7f31b9bb3c9d",
+  "runId": "e756a216e657",
+  "createdAt": "2026-04-15T22:43:33.511Z",
+  "winner": "regular",
+  "reasons": [
+    "regular: didFail=false, tokens=1590, costUsd=0.01057",
+    "code-mode: didFail=true, tokens=3012, costUsd=0.031844"
+  ],
+  "regular": {
+    "didFailTest": false,
+    "totalTokens": 1590,
+    "estimatedCostUsd": 0.01057
+  },
+  "codeMode": {
+    "didFailTest": true,
+    "totalTokens": 3012,
+    "estimatedCostUsd": 0.031844
+  }
+}

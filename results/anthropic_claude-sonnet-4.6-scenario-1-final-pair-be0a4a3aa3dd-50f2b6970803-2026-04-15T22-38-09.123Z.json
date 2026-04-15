@@ -1,0 +1,23 @@
+{
+  "benchmarkId": "1_customer_db_average_spend",
+  "scenarioNumber": 1,
+  "model": "anthropic/claude-sonnet-4.6",
+  "pairId": "be0a4a3aa3dd",
+  "runId": "50f2b6970803",
+  "createdAt": "2026-04-15T22:38:09.123Z",
+  "winner": "code-mode",
+  "reasons": [
+    "regular: didFail=false, tokens=34303, costUsd=0.110841",
+    "code-mode: didFail=false, tokens=2791, costUsd=0.00939"
+  ],
+  "regular": {
+    "didFailTest": false,
+    "totalTokens": 34303,
+    "estimatedCostUsd": 0.110841
+  },
+  "codeMode": {
+    "didFailTest": false,
+    "totalTokens": 2791,
+    "estimatedCostUsd": 0.00939
+  }
+}

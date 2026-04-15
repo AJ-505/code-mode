@@ -33,6 +33,23 @@ function hasValidResultShape(result: unknown) {
   );
 }
 
+function parseResultFromStdout(stdout: string[] | undefined) {
+  if (!stdout) return null;
+
+  for (const chunk of [...stdout].reverse()) {
+    try {
+      const parsed = JSON.parse(chunk) as unknown;
+      if (hasValidResultShape(parsed)) {
+        return parsed as Record<string, unknown>;
+      }
+    } catch {
+      continue;
+    }
+  }
+
+  return null;
+}
+
 export async function runScenario6CodeMode(model: Model = defaultScenario6Model) {
   const runId = createRunId();
   const pairId = await getOrCreateBenchmarkPairId({
@@ -135,19 +152,23 @@ export async function runScenario6CodeMode(model: Model = defaultScenario6Model)
       logger.addToolCalls(stage, toolCalls);
 
       const execution = consumeLastScenario6CodeExecution();
-      if (execution?.ok && execution.result) {
-        finalResultFromTool = execution.result as unknown as Record<string, unknown>;
+      const stdoutFallback = parseResultFromStdout(execution?.stdout);
+      if ((execution?.ok && execution.result) || stdoutFallback) {
+        finalResultFromTool = stdoutFallback ?? (execution?.result as unknown as Record<string, unknown>);
         const expectedToolName = "execute_scenario6_code";
         if (!allToolCalls.some((call) => call.name === expectedToolName)) {
           const syntheticCall = {
             name: expectedToolName,
-            arguments: { synthetic: true, source: "tool_result_event" },
+            arguments: {
+              synthetic: true,
+              source: stdoutFallback ? "stdout_result_event" : "tool_result_event",
+            },
           };
           allToolCalls.push(syntheticCall);
           logger.addToolCalls(stage, [syntheticCall]);
         }
         logger.info("tool_result", "Code execution result from tool", {
-          ...execution.result,
+          ...(finalResultFromTool ?? {}),
         });
         break;
       }

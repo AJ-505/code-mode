@@ -1,0 +1,23 @@
+{
+  "benchmarkId": "4_drive_keyword_retrieval",
+  "scenarioNumber": 4,
+  "model": "google/gemini-3.1-pro-preview",
+  "pairId": "c351e31b64c3",
+  "runId": "7ab2fb86204b",
+  "createdAt": "2026-04-15T22:42:09.872Z",
+  "winner": "code-mode",
+  "reasons": [
+    "regular: didFail=false, tokens=1244, costUsd=0.00906",
+    "code-mode: didFail=false, tokens=643, costUsd=0.001996"
+  ],
+  "regular": {
+    "didFailTest": false,
+    "totalTokens": 1244,
+    "estimatedCostUsd": 0.00906
+  },
+  "codeMode": {
+    "didFailTest": false,
+    "totalTokens": 643,
+    "estimatedCostUsd": 0.001996
+  }
+}

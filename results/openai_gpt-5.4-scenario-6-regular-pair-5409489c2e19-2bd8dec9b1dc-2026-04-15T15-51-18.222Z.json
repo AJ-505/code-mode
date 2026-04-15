@@ -1,0 +1,64 @@
+{
+  "benchmarkId": "6_github_repo_change_pr",
+  "scenarioNumber": 6,
+  "mode": "regular",
+  "model": "openai/gpt-5.4",
+  "pairId": "5409489c2e19",
+  "runId": "2bd8dec9b1dc",
+  "runStartedAt": "2026-04-15T15:51:18.222Z",
+  "status": "failed",
+  "didFailTest": true,
+  "pricing": {
+    "inputPerMillionUsd": 2.5,
+    "outputPerMillionUsd": 15,
+    "cachedInputPerMillionUsd": 0
+  },
+  "usage": {
+    "inputTokens": 0,
+    "outputTokens": 0,
+    "cachedTokens": 0,
+    "totalTokens": 0,
+    "estimatedCostUsd": 0
+  },
+  "modelResponses": [],
+  "toolCalls": [],
+  "events": [
+    {
+      "ts": "2026-04-15T15:51:18.222Z",
+      "level": "info",
+      "event": "run_start",
+      "message": "Scenario 6 regular benchmark started",
+      "data": {
+        "benchmarkId": "6_github_repo_change_pr",
+        "model": "openai/gpt-5.4",
+        "modelCallTimeoutMs": 120000
+      }
+    },
+    {
+      "ts": "2026-04-15T15:51:33.956Z",
+      "level": "error",
+      "event": "run_failed",
+      "message": "Scenario 6 regular benchmark failed",
+      "data": {
+        "error": "Unexpected HTTP client error: Error: unknown certificate verification error"
+      }
+    },
+    {
+      "ts": "2026-04-15T15:51:33.958Z",
+      "level": "info",
+      "event": "run_finished",
+      "message": "Benchmark run finished",
+      "data": {
+        "status": "failed",
+        "didFailTest": true,
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "cachedTokens": 0,
+        "totalTokens": 0,
+        "estimatedCostUsd": 0
+      }
+    }
+  ],
+  "runFinishedAt": "2026-04-15T15:51:33.958Z",
+  "error": "Unexpected HTTP client error: Error: unknown certificate verification error"
+}

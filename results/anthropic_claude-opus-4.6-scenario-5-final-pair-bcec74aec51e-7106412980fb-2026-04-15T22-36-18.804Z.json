@@ -1,0 +1,23 @@
+{
+  "benchmarkId": "5_calendar_timezone_scheduling",
+  "scenarioNumber": 5,
+  "model": "anthropic/claude-opus-4.6",
+  "pairId": "bcec74aec51e",
+  "runId": "7106412980fb",
+  "createdAt": "2026-04-15T22:36:18.804Z",
+  "winner": "code-mode",
+  "reasons": [
+    "regular: didFail=true, tokens=2698, costUsd=0.01787",
+    "code-mode: didFail=false, tokens=3280, costUsd=0.02592"
+  ],
+  "regular": {
+    "didFailTest": true,
+    "totalTokens": 2698,
+    "estimatedCostUsd": 0.01787
+  },
+  "codeMode": {
+    "didFailTest": false,
+    "totalTokens": 3280,
+    "estimatedCostUsd": 0.02592
+  }
+}

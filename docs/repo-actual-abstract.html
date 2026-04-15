@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Abstract - Code Mode Benchmark Harness</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 0.9in;
+    }
+
+    body {
+      font-family: "Liberation Serif", Georgia, serif;
+      color: #111;
+      line-height: 1.45;
+      font-size: 12pt;
+    }
+
+    h1 {
+      font-size: 16pt;
+      text-align: center;
+      margin: 0 0 0.35in 0;
+      font-weight: 700;
+    }
+
+    p {
+      text-align: justify;
+      margin: 0 0 0.14in 0;
+    }
+
+    .refs {
+      margin-top: 0.22in;
+      font-size: 10.5pt;
+    }
+
+    .refs p {
+      text-align: left;
+      margin: 0 0 0.08in 0;
+    }
+
+    .label {
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+  <h1>Abstract: Evaluative Benchmarking of Code Mode vs. Traditional Function-Calling in Agentic Workflows</h1>
+
+  <p>As agentic AI systems become more capable, the dominant interaction pattern remains conventional function-calling, in which models are guided through predefined tool schemas and structured invocation formats. While effective for many tasks, this pattern may impose avoidable overhead in complex workflows by expanding prompt context, constraining action selection, and increasing brittleness across multi-step reasoning loops. An alternative now gaining attention is code mode, where the model is allowed to generate executable code against a bounded interface rather than repeatedly selecting from static function definitions. This shift raises an important research question: can code mode improve the efficiency and reliability of agentic systems without sacrificing control, safety, or evaluability?</p>
+
+  <p>This study proposes a benchmark framework for comparing code mode against traditional function-calling across realistic agent workflows. The goal is not merely to compare outputs, but to measure how each interaction protocol shapes agent behavior under equivalent objectives and constraints. The benchmark will evaluate both paradigms on matched tasks using standardized interfaces, structured output requirements, and consistent scoring criteria. Particular attention will be given to token economy, latency, completion quality, and robustness under multi-step task execution. Where possible, the study will emphasize controlled conditions so that differences in performance can be attributed to the protocol itself rather than unrelated environmental variance.</p>
+
+  <p>The expected contribution is a practical and reproducible methodology for studying protocol choice in agent design. By framing code mode not simply as a product feature but as an experimental alternative to schema-heavy tool invocation, this work aims to clarify when executable-code interaction offers a meaningful advantage, where it introduces new risks, and how future agent architectures might balance flexibility with operational discipline.</p>
+
+  <div class="refs">
+    <p><span class="label">Selected References</span></p>
+    <p>Anthropic: https://www.anthropic.com/engineering/code-execution-with-mcp</p>
+    <p>Cloudflare: https://blog.cloudflare.com/code-mode/</p>
+  </div>
+</body>
+</html>

@@ -1,0 +1,23 @@
+{
+  "benchmarkId": "5_calendar_timezone_scheduling",
+  "scenarioNumber": 5,
+  "model": "anthropic/claude-sonnet-4.6",
+  "pairId": "7d4780dfd05e",
+  "runId": "d597b7150ddc",
+  "createdAt": "2026-04-15T22:39:25.869Z",
+  "winner": "code-mode",
+  "reasons": [
+    "regular: didFail=true, tokens=3114, costUsd=0.014442",
+    "code-mode: didFail=false, tokens=1589, costUsd=0.009651"
+  ],
+  "regular": {
+    "didFailTest": true,
+    "totalTokens": 3114,
+    "estimatedCostUsd": 0.014442
+  },
+  "codeMode": {
+    "didFailTest": false,
+    "totalTokens": 1589,
+    "estimatedCostUsd": 0.009651
+  }
+}

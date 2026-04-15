@@ -1,0 +1,232 @@
+{
+  "benchmarkId": "4_drive_keyword_retrieval",
+  "scenarioNumber": 4,
+  "mode": "code-mode",
+  "model": "google/gemini-3.1-pro-preview",
+  "pairId": "c351e31b64c3",
+  "runId": "7ab2fb86204b",
+  "runStartedAt": "2026-04-15T22:41:00.711Z",
+  "status": "passed",
+  "didFailTest": false,
+  "pricing": {
+    "inputPerMillionUsd": 2,
+    "outputPerMillionUsd": 12,
+    "cachedInputPerMillionUsd": 0
+  },
+  "usage": {
+    "inputTokens": 572,
+    "outputTokens": 71,
+    "cachedTokens": 0,
+    "totalTokens": 643,
+    "estimatedCostUsd": 0.001996
+  },
+  "modelResponses": [
+    {
+      "stage": "code_mode",
+      "text": "**Confirming Execution Results**\n\nI've got the successful execution confirmation. The JSON output, with the `query`, `speaker`, `date`, and `matches` keys, is exactly as expected. Ready to move on now.\n\n\n\nThe keyword search in the meeting notes has been successfully completed.",
+      "usage": {
+        "inputTokens": 572,
+        "outputTokens": 71,
+        "cachedTokens": 0,
+        "totalTokens": 643,
+        "estimatedCostUsd": 0.001996
+      }
+    }
+  ],
+  "toolCalls": [
+    {
+      "stage": "code_mode",
+      "name": "execute_scenario4_code",
+      "arguments": {
+        "synthetic": true,
+        "source": "tool_result_event"
+      }
+    }
+  ],
+  "events": [
+    {
+      "ts": "2026-04-15T22:41:00.711Z",
+      "level": "info",
+      "event": "run_start",
+      "message": "Scenario 4 code-mode benchmark started",
+      "data": {
+        "benchmarkId": "4_drive_keyword_retrieval",
+        "model": "google/gemini-3.1-pro-preview",
+        "modelCallTimeoutMs": 120000
+      }
+    },
+    {
+      "ts": "2026-04-15T22:41:00.712Z",
+      "level": "info",
+      "event": "prompts",
+      "message": "Prompts for code_mode",
+      "data": {
+        "systemPrompt": "You are a specialised benchmark agent.\nUse progressive discovery when tools are hidden.\nIf the required tool is not directly available, call discover_tools with the exact tool names you need, then continue to solve the task.\n\nYou are now in code-mode.\nWrite TypeScript code that uses ONLY the provided tool execute_scenario4_code.\nWhen calling the tool, pass a full TS program string in input key \"typescript\".\nDo not explain your reasoning.\nDo not output long analysis.\nYour final assistant message must contain only a single short sentence confirming completion.\n\nIn the generated code, use only the provided global \"api\" methods.\nReturn a strict JSON object with keys:\n{ query, speaker, date, matches }\n",
+        "userPrompt": "\nFind a specific keyword spoken by a specific person in meeting notes from a given day in Google Drive.\nReturn exact matching excerpts and source file metadata.\n"
+      }
+    },
+    {
+      "ts": "2026-04-15T22:42:09.835Z",
+      "level": "info",
+      "event": "model_response",
+      "message": "Model response captured for code_mode",
+      "data": {
+        "responsePreview": "**Confirming Execution Results** I've got the successful execution confirmation. The JSON output, with the `query`, `speaker`, `date`, and `matches` keys, is exactly as expected. Ready to move on now. The keyword search in the meeting notes...",
+        "responseChars": 277,
+        "inputTokens": 572,
+        "outputTokens": 71,
+        "cachedTokens": 0,
+        "totalTokens": 643,
+        "estimatedCostUsd": 0.001996
+      }
+    },
+    {
+      "ts": "2026-04-15T22:42:09.839Z",
+      "level": "info",
+      "event": "tool_call",
+      "message": "Tool called in code_mode: execute_scenario4_code",
+      "data": {
+        "stage": "code_mode",
+        "toolName": "execute_scenario4_code",
+        "callDetails": "synthetic=true; source=tool_result_event"
+      }
+    },
+    {
+      "ts": "2026-04-15T22:42:09.839Z",
+      "level": "info",
+      "event": "tool_result",
+      "message": "Code execution result from tool",
+      "data": {
+        "query": "rollback",
+        "speaker": "Avery",
+        "date": "2026-04-10",
+        "matches": [
+          {
+            "fileId": "drive-file-001",
+            "fileName": "Team Sync - 2026-04-10",
+            "excerpt": "Avery: If metrics degrade after deploy, we will rollback within 30 minutes."
+          },
+          {
+            "fileId": "drive-file-002",
+            "fileName": "Incident Review Notes",
+            "excerpt": "Avery: Document the rollback trigger and notify support before executing."
+          }
+        ]
+      }
+    },
+    {
+      "ts": "2026-04-15T22:42:09.840Z",
+      "level": "info",
+      "event": "tool_activity",
+      "message": "Tool calls captured",
+      "data": {
+        "count": 1,
+        "names": "execute_scenario4_code"
+      }
+    },
+    {
+      "ts": "2026-04-15T22:42:09.846Z",
+      "level": "info",
+      "event": "model_result",
+      "message": "Model result (parsed)",
+      "data": {
+        "query": "rollback",
+        "speaker": "Avery",
+        "date": "2026-04-10",
+        "matches": "2 item(s)"
+      }
+    },
+    {
+      "ts": "2026-04-15T22:42:09.846Z",
+      "level": "info",
+      "event": "evaluation_human",
+      "message": "Evaluation summary",
+      "data": {
+        "overallPass": true,
+        "toolPass": true,
+        "outputValidation": "schema-parse",
+        "outputPass": true,
+        "schemaPass": true
+      }
+    },
+    {
+      "ts": "2026-04-15T22:42:09.848Z",
+      "level": "info",
+      "event": "run_finished",
+      "message": "Benchmark run finished",
+      "data": {
+        "status": "passed",
+        "didFailTest": false,
+        "inputTokens": 572,
+        "outputTokens": 71,
+        "cachedTokens": 0,
+        "totalTokens": 643,
+        "estimatedCostUsd": 0.001996
+      }
+    }
+  ],
+  "evaluation": {
+    "benchmarkId": "4_drive_keyword_retrieval",
+    "overallPass": true,
+    "toolEval": {
+      "pass": true,
+      "details": [
+        {
+          "groupId": "code-execution",
+          "required": true,
+          "expectedAnyOf": [
+            "execute_scenario4_code"
+          ],
+          "matched": [
+            "execute_scenario4_code"
+          ],
+          "pass": true,
+          "note": "Code mode must write and execute code."
+        }
+      ],
+      "calledToolNames": [
+        "execute_scenario4_code"
+      ]
+    },
+    "fuzzyEval": {
+      "pass": true,
+      "score": 1,
+      "details": [
+        {
+          "checkId": "result-fields",
+          "requiredMinMatches": 1,
+          "matchedCount": 4,
+          "matchedTerms": [
+            "query",
+            "speaker",
+            "date",
+            "matches"
+          ],
+          "pass": true,
+          "weight": 1
+        }
+      ]
+    },
+    "numericMentions": 9,
+    "numericGatePass": true,
+    "schemaPass": true,
+    "parsed": {
+      "query": "rollback",
+      "speaker": "Avery",
+      "date": "2026-04-10",
+      "matches": [
+        {
+          "fileId": "drive-file-001",
+          "fileName": "Team Sync - 2026-04-10",
+          "excerpt": "Avery: If metrics degrade after deploy, we will rollback within 30 minutes."
+        },
+        {
+          "fileId": "drive-file-002",
+          "fileName": "Incident Review Notes",
+          "excerpt": "Avery: Document the rollback trigger and notify support before executing."
+        }
+      ]
+    }
+  },
+  "runFinishedAt": "2026-04-15T22:42:09.848Z"
+}

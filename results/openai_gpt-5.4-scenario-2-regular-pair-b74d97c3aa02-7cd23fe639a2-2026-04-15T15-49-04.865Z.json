@@ -1,0 +1,110 @@
+{
+  "benchmarkId": "2_playwright_ui_audit",
+  "scenarioNumber": 2,
+  "mode": "regular",
+  "model": "openai/gpt-5.4",
+  "pairId": "b74d97c3aa02",
+  "runId": "7cd23fe639a2",
+  "runStartedAt": "2026-04-15T15:49:04.865Z",
+  "status": "failed",
+  "didFailTest": true,
+  "pricing": {
+    "inputPerMillionUsd": 2.5,
+    "outputPerMillionUsd": 15,
+    "cachedInputPerMillionUsd": 0
+  },
+  "usage": {
+    "inputTokens": 375,
+    "outputTokens": 19,
+    "cachedTokens": 0,
+    "totalTokens": 394,
+    "estimatedCostUsd": 0.001223
+  },
+  "modelResponses": [
+    {
+      "stage": "discovery",
+      "text": "",
+      "usage": {
+        "inputTokens": 375,
+        "outputTokens": 19,
+        "cachedTokens": 0,
+        "totalTokens": 394,
+        "estimatedCostUsd": 0.001223
+      }
+    }
+  ],
+  "toolCalls": [
+    {
+      "stage": "discovery",
+      "name": "discover_tools",
+      "arguments": {
+        "toolNames": []
+      }
+    }
+  ],
+  "events": [
+    {
+      "ts": "2026-04-15T15:49:04.865Z",
+      "level": "info",
+      "event": "run_start",
+      "message": "Scenario 2 regular benchmark started",
+      "data": {
+        "benchmarkId": "2_playwright_ui_audit",
+        "model": "openai/gpt-5.4",
+        "modelCallTimeoutMs": 120000
+      }
+    },
+    {
+      "ts": "2026-04-15T15:49:10.244Z",
+      "level": "info",
+      "event": "model_response",
+      "message": "Model response captured for discovery",
+      "data": {
+        "responsePreview": "",
+        "responseChars": 0,
+        "inputTokens": 375,
+        "outputTokens": 19,
+        "cachedTokens": 0,
+        "totalTokens": 394,
+        "estimatedCostUsd": 0.001223
+      }
+    },
+    {
+      "ts": "2026-04-15T15:49:10.245Z",
+      "level": "info",
+      "event": "tool_call",
+      "message": "Tool called in discovery: discover_tools",
+      "data": {
+        "stage": "discovery",
+        "toolName": "discover_tools",
+        "callDetails": "tool names="
+      }
+    },
+    {
+      "ts": "2026-04-15T15:49:14.306Z",
+      "level": "error",
+      "event": "run_failed",
+      "message": "Scenario 2 regular benchmark failed",
+      "data": {
+        "error": "Provider returned error"
+      }
+    },
+    {
+      "ts": "2026-04-15T15:49:14.307Z",
+      "level": "info",
+      "event": "run_finished",
+      "message": "Benchmark run finished",
+      "data": {
+        "status": "failed",
+        "didFailTest": true,
+        "inputTokens": 375,
+        "outputTokens": 19,
+        "cachedTokens": 0,
+        "totalTokens": 394,
+        "estimatedCostUsd": 0.001223
+      }
+    }
+  ],
+  "runFinishedAt": "2026-04-15T15:49:14.307Z",
+  "error": "Provider returned error"
+}

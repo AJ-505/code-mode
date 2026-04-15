@@ -1,0 +1,64 @@
+{
+  "benchmarkId": "5_calendar_timezone_scheduling",
+  "scenarioNumber": 5,
+  "mode": "regular",
+  "model": "anthropic/claude-sonnet-4.6",
+  "pairId": "7d4780dfd05e",
+  "runId": "7e27c5df3ea0",
+  "runStartedAt": "2026-04-15T15:53:53.247Z",
+  "status": "failed",
+  "didFailTest": true,
+  "pricing": {
+    "inputPerMillionUsd": 3,
+    "outputPerMillionUsd": 15,
+    "cachedInputPerMillionUsd": 0
+  },
+  "usage": {
+    "inputTokens": 0,
+    "outputTokens": 0,
+    "cachedTokens": 0,
+    "totalTokens": 0,
+    "estimatedCostUsd": 0
+  },
+  "modelResponses": [],
+  "toolCalls": [],
+  "events": [
+    {
+      "ts": "2026-04-15T15:53:53.248Z",
+      "level": "info",
+      "event": "run_start",
+      "message": "Scenario 5 regular benchmark started",
+      "data": {
+        "benchmarkId": "5_calendar_timezone_scheduling",
+        "model": "anthropic/claude-sonnet-4.6",
+        "modelCallTimeoutMs": 120000
+      }
+    },
+    {
+      "ts": "2026-04-15T15:55:53.290Z",
+      "level": "error",
+      "event": "run_failed",
+      "message": "Scenario 5 regular benchmark failed",
+      "data": {
+        "error": "Timeout while waiting for scenario5 regular discovery response after 120000ms"
+      }
+    },
+    {
+      "ts": "2026-04-15T15:55:53.291Z",
+      "level": "info",
+      "event": "run_finished",
+      "message": "Benchmark run finished",
+      "data": {
+        "status": "failed",
+        "didFailTest": true,
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "cachedTokens": 0,
+        "totalTokens": 0,
+        "estimatedCostUsd": 0
+      }
+    }
+  ],
+  "runFinishedAt": "2026-04-15T15:55:53.291Z",
+  "error": "Timeout while waiting for scenario5 regular discovery response after 120000ms"
+}

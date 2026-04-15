@@ -1,0 +1,23 @@
+{
+  "benchmarkId": "2_playwright_ui_audit",
+  "scenarioNumber": 2,
+  "model": "google/gemini-3.1-pro-preview",
+  "pairId": "d5f33071c10e",
+  "runId": "e4f3f2e6d748",
+  "createdAt": "2026-04-15T22:41:00.089Z",
+  "winner": "regular",
+  "reasons": [
+    "regular: didFail=false, tokens=1443, costUsd=0.010356",
+    "code-mode: didFail=true, tokens=3896, costUsd=0.042152"
+  ],
+  "regular": {
+    "didFailTest": false,
+    "totalTokens": 1443,
+    "estimatedCostUsd": 0.010356
+  },
+  "codeMode": {
+    "didFailTest": true,
+    "totalTokens": 3896,
+    "estimatedCostUsd": 0.042152
+  }
+}

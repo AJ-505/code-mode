@@ -1,0 +1,23 @@
+{
+  "benchmarkId": "2_playwright_ui_audit",
+  "scenarioNumber": 2,
+  "model": "moonshotai/kimi-k2.5",
+  "pairId": "8cc5aa870019",
+  "runId": "2013be3cb02a",
+  "createdAt": "2026-04-15T15:39:47.124Z",
+  "winner": "regular",
+  "reasons": [
+    "regular: didFail=true, tokens=1348, costUsd=0.000967",
+    "code-mode: didFail=true, tokens=4124, costUsd=0.002101"
+  ],
+  "regular": {
+    "didFailTest": true,
+    "totalTokens": 1348,
+    "estimatedCostUsd": 0.000967
+  },
+  "codeMode": {
+    "didFailTest": true,
+    "totalTokens": 4124,
+    "estimatedCostUsd": 0.002101
+  }
+}

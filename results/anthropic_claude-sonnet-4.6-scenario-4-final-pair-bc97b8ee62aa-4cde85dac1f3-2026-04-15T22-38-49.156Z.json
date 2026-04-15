@@ -1,0 +1,23 @@
+{
+  "benchmarkId": "4_drive_keyword_retrieval",
+  "scenarioNumber": 4,
+  "model": "anthropic/claude-sonnet-4.6",
+  "pairId": "bc97b8ee62aa",
+  "runId": "4cde85dac1f3",
+  "createdAt": "2026-04-15T22:38:49.156Z",
+  "winner": "code-mode",
+  "reasons": [
+    "regular: didFail=true, tokens=2963, costUsd=0.01302",
+    "code-mode: didFail=false, tokens=10064, costUsd=0.045408"
+  ],
+  "regular": {
+    "didFailTest": true,
+    "totalTokens": 2963,
+    "estimatedCostUsd": 0.01302
+  },
+  "codeMode": {
+    "didFailTest": false,
+    "totalTokens": 10064,
+    "estimatedCostUsd": 0.045408
+  }
+}

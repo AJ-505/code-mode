@@ -1,0 +1,23 @@
+{
+  "benchmarkId": "6_github_repo_change_pr",
+  "scenarioNumber": 6,
+  "model": "openai/gpt-5.4",
+  "pairId": "5409489c2e19",
+  "runId": "0bc53b518aa2",
+  "createdAt": "2026-04-15T22:47:14.221Z",
+  "winner": "code-mode",
+  "reasons": [
+    "regular: didFail=true, tokens=1283, costUsd=0.005758",
+    "code-mode: didFail=false, tokens=537, costUsd=0.001418"
+  ],
+  "regular": {
+    "didFailTest": true,
+    "totalTokens": 1283,
+    "estimatedCostUsd": 0.005758
+  },
+  "codeMode": {
+    "didFailTest": false,
+    "totalTokens": 537,
+    "estimatedCostUsd": 0.001418
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "benchmarkId": "6_github_repo_change_pr",
+  "scenarioNumber": 6,
+  "model": "anthropic/claude-sonnet-4.6",
+  "pairId": "918d04f0e1a2",
+  "runId": "d18c88e17479",
+  "createdAt": "2026-04-15T22:40:29.757Z",
+  "winner": "regular",
+  "reasons": [
+    "regular: didFail=false, tokens=3000, costUsd=0.014676",
+    "code-mode: didFail=false, tokens=9344, costUsd=0.040404"
+  ],
+  "regular": {
+    "didFailTest": false,
+    "totalTokens": 3000,
+    "estimatedCostUsd": 0.014676
+  },
+  "codeMode": {
+    "didFailTest": false,
+    "totalTokens": 9344,
+    "estimatedCostUsd": 0.040404
+  }
+}

@@ -1,0 +1,198 @@
+{
+  "benchmarkId": "5_calendar_timezone_scheduling",
+  "scenarioNumber": 5,
+  "mode": "regular",
+  "model": "anthropic/claude-sonnet-4.6",
+  "pairId": "7d4780dfd05e",
+  "runId": "6507916bd866",
+  "runStartedAt": "2026-04-15T22:38:49.854Z",
+  "status": "failed",
+  "didFailTest": true,
+  "pricing": {
+    "inputPerMillionUsd": 3,
+    "outputPerMillionUsd": 15,
+    "cachedInputPerMillionUsd": 0
+  },
+  "usage": {
+    "inputTokens": 2689,
+    "outputTokens": 425,
+    "cachedTokens": 0,
+    "totalTokens": 3114,
+    "estimatedCostUsd": 0.014442
+  },
+  "modelResponses": [
+    {
+      "stage": "discovery",
+      "text": "Got it! Now I'll call `propose_cross_timezone_slot` with the default parameters to check the calendar and find a suitable meeting slot.",
+      "usage": {
+        "inputTokens": 1191,
+        "outputTokens": 72,
+        "cachedTokens": 0,
+        "totalTokens": 1263,
+        "estimatedCostUsd": 0.004653
+      }
+    },
+    {
+      "stage": "execution",
+      "text": "Here's the proposed meeting slot! 🗓️\n\n---\n\n## ✅ Proposed Meeting Time — April 16, 2026\n\n| Detail | Info |\n|---|---|\n| 📅 **Date** | Thursday, April 16, 2026 |\n| 🕙 **Your Time (Los Angeles, PT)** | **10:00 AM – 10:30 AM** |\n| 🕑 **Bolivia Time (La Paz, BOT)** | **2:00 PM – 2:30 PM** |\n| ⏱️ **Duration** | 30 minutes |\n| ✅ **Conflicts** | None detected |\n\n---\n\n### 🧠 Why This Slot Works:\n- ✅ **Within working hours** for both parties (9 AM–5 PM local time)\n- ✅ **No calendar conflicts** detected in either timezone\n- ✅ **Bolivia (UTC-4)** is **4 hours ahead** of Los Angeles (UTC-7 during PDT), making mid-morning LA time a perfect overlap\n- ✅ Avoids early mornings and late afternoons that can feel rushed\n\n---\n\n> 💡 **Tip:** Bolivia does **not** observe Daylight Saving Time, so the offset between La Paz and Los Angeles may shift slightly depending on the time of year. This slot accounts for that!\n\nWould you like to adjust the date, duration, or explore alternative time slots? 😊",
+      "usage": {
+        "inputTokens": 1498,
+        "outputTokens": 353,
+        "cachedTokens": 0,
+        "totalTokens": 1851,
+        "estimatedCostUsd": 0.009789
+      }
+    }
+  ],
+  "toolCalls": [
+    {
+      "stage": "discovery",
+      "name": "propose_cross_timezone_slot",
+      "arguments": {}
+    }
+  ],
+  "events": [
+    {
+      "ts": "2026-04-15T22:38:49.855Z",
+      "level": "info",
+      "event": "run_start",
+      "message": "Scenario 5 regular benchmark started",
+      "data": {
+        "benchmarkId": "5_calendar_timezone_scheduling",
+        "model": "anthropic/claude-sonnet-4.6",
+        "modelCallTimeoutMs": 120000
+      }
+    },
+    {
+      "ts": "2026-04-15T22:38:55.360Z",
+      "level": "info",
+      "event": "model_response",
+      "message": "Model response captured for discovery",
+      "data": {
+        "responsePreview": "Got it! Now I'll call `propose_cross_timezone_slot` with the default parameters to check the calendar and find a suitable meeting slot.",
+        "responseChars": 135,
+        "inputTokens": 1191,
+        "outputTokens": 72,
+        "cachedTokens": 0,
+        "totalTokens": 1263,
+        "estimatedCostUsd": 0.004653
+      }
+    },
+    {
+      "ts": "2026-04-15T22:38:55.365Z",
+      "level": "info",
+      "event": "tool_call",
+      "message": "Tool called in discovery: propose_cross_timezone_slot",
+      "data": {
+        "stage": "discovery",
+        "toolName": "propose_cross_timezone_slot",
+        "callDetails": ""
+      }
+    },
+    {
+      "ts": "2026-04-15T22:39:08.138Z",
+      "level": "info",
+      "event": "model_response",
+      "message": "Model response captured for execution",
+      "data": {
+        "responsePreview": "Here's the proposed meeting slot! 🗓️ --- ## ✅ Proposed Meeting Time — April 16, 2026 | Detail | Info | |---|---| | 📅 **Date** | Thursday, April 16, 2026 | | 🕙 **Your Time (Los Angeles, PT)** | **10:00 AM – 10:30 AM** | | 🕑 **Bolivia Tim...",
+        "responseChars": 987,
+        "inputTokens": 1498,
+        "outputTokens": 353,
+        "cachedTokens": 0,
+        "totalTokens": 1851,
+        "estimatedCostUsd": 0.009789
+      }
+    },
+    {
+      "ts": "2026-04-15T22:39:08.165Z",
+      "level": "info",
+      "event": "model_result",
+      "message": "Model result (parsed)",
+      "data": {
+        "parsed": "(missing)"
+      }
+    },
+    {
+      "ts": "2026-04-15T22:39:08.165Z",
+      "level": "info",
+      "event": "evaluation_human",
+      "message": "Evaluation summary",
+      "data": {
+        "overallPass": false,
+        "toolPass": false,
+        "outputValidation": "schema-parse",
+        "outputPass": false,
+        "schemaPass": false
+      }
+    },
+    {
+      "ts": "2026-04-15T22:39:08.166Z",
+      "level": "info",
+      "event": "run_finished",
+      "message": "Benchmark run finished",
+      "data": {
+        "status": "failed",
+        "didFailTest": true,
+        "inputTokens": 2689,
+        "outputTokens": 425,
+        "cachedTokens": 0,
+        "totalTokens": 3114,
+        "estimatedCostUsd": 0.014442
+      }
+    }
+  ],
+  "evaluation": {
+    "benchmarkId": "5_calendar_timezone_scheduling",
+    "overallPass": false,
+    "toolEval": {
+      "pass": false,
+      "details": [
+        {
+          "groupId": "progressive-discovery",
+          "required": true,
+          "expectedAnyOf": [
+            "discover_tools"
+          ],
+          "matched": [],
+          "pass": false,
+          "note": "Agent should discover hidden tools first."
+        },
+        {
+          "groupId": "slot-proposal",
+          "required": true,
+          "expectedAnyOf": [
+            "propose_cross_timezone_slot"
+          ],
+          "matched": [
+            "propose_cross_timezone_slot"
+          ],
+          "pass": true,
+          "note": "Agent should propose a timezone-safe meeting slot in regular mode."
+        }
+      ],
+      "calledToolNames": [
+        "propose_cross_timezone_slot"
+      ]
+    },
+    "fuzzyEval": {
+      "pass": false,
+      "score": 0,
+      "details": [
+        {
+          "checkId": "result-fields",
+          "requiredMinMatches": 1,
+          "matchedCount": 0,
+          "matchedTerms": [],
+          "pass": false,
+          "weight": 1
+        }
+      ]
+    },
+    "numericMentions": 18,
+    "numericGatePass": true,
+    "schemaPass": false,
+    "parsed": null
+  },
+  "runFinishedAt": "2026-04-15T22:39:08.166Z"
+}

@@ -1,0 +1,213 @@
+{
+  "benchmarkId": "5_calendar_timezone_scheduling",
+  "scenarioNumber": 5,
+  "mode": "code-mode",
+  "model": "openai/gpt-5.4",
+  "pairId": "26b62ad3840b",
+  "runId": "7a2153d29641",
+  "runStartedAt": "2026-04-15T22:46:42.166Z",
+  "status": "passed",
+  "didFailTest": false,
+  "pricing": {
+    "inputPerMillionUsd": 2.5,
+    "outputPerMillionUsd": 15,
+    "cachedInputPerMillionUsd": 0
+  },
+  "usage": {
+    "inputTokens": 2416,
+    "outputTokens": 6,
+    "cachedTokens": 2176,
+    "totalTokens": 2422,
+    "estimatedCostUsd": 0.00613
+  },
+  "modelResponses": [
+    {
+      "stage": "code_mode",
+      "text": "Done.",
+      "usage": {
+        "inputTokens": 2416,
+        "outputTokens": 6,
+        "cachedTokens": 2176,
+        "totalTokens": 2422,
+        "estimatedCostUsd": 0.00613
+      }
+    }
+  ],
+  "toolCalls": [
+    {
+      "stage": "code_mode",
+      "name": "execute_scenario5_code",
+      "arguments": {
+        "synthetic": true,
+        "source": "tool_result_event"
+      }
+    }
+  ],
+  "events": [
+    {
+      "ts": "2026-04-15T22:46:42.167Z",
+      "level": "info",
+      "event": "run_start",
+      "message": "Scenario 5 code-mode benchmark started",
+      "data": {
+        "benchmarkId": "5_calendar_timezone_scheduling",
+        "model": "openai/gpt-5.4",
+        "modelCallTimeoutMs": 120000
+      }
+    },
+    {
+      "ts": "2026-04-15T22:46:42.168Z",
+      "level": "info",
+      "event": "prompts",
+      "message": "Prompts for code_mode",
+      "data": {
+        "systemPrompt": "You are a specialised benchmark agent.\nUse progressive discovery when tools are hidden.\nIf the required tool is not directly available, call discover_tools with the exact tool names you need, then continue to solve the task.\n\nYou are now in code-mode.\nWrite TypeScript code that uses ONLY the provided tool execute_scenario5_code.\nWhen calling the tool, pass a full TS program string in input key \"typescript\".\nDo not explain your reasoning.\nDo not output long analysis.\nYour final assistant message must contain only a single short sentence confirming completion.\n\nIn the generated code, use only the provided global \"api\" methods.\nReturn a strict JSON object with keys:\n{ proposedStartIso, proposedEndIso, localTimezone, boliviaTimezone, rationale }\n",
+        "userPrompt": "\nCheck the user's calendar and propose a hypothetical meeting time with someone in Bolivia.\nRespect time zones, working hours, and avoid conflicts.\n"
+      }
+    },
+    {
+      "ts": "2026-04-15T22:46:57.533Z",
+      "level": "info",
+      "event": "model_response",
+      "message": "Model response captured for code_mode",
+      "data": {
+        "responsePreview": "Done.",
+        "responseChars": 5,
+        "inputTokens": 2416,
+        "outputTokens": 6,
+        "cachedTokens": 2176,
+        "totalTokens": 2422,
+        "estimatedCostUsd": 0.00613
+      }
+    },
+    {
+      "ts": "2026-04-15T22:46:57.535Z",
+      "level": "info",
+      "event": "tool_call",
+      "message": "Tool called in code_mode: execute_scenario5_code",
+      "data": {
+        "stage": "code_mode",
+        "toolName": "execute_scenario5_code",
+        "callDetails": "synthetic=true; source=tool_result_event"
+      }
+    },
+    {
+      "ts": "2026-04-15T22:46:57.536Z",
+      "level": "info",
+      "event": "tool_result",
+      "message": "Code execution result from tool",
+      "data": {
+        "proposedStartIso": "2026-04-16T17:00:00.000Z",
+        "proposedEndIso": "2026-04-16T17:30:00.000Z",
+        "localTimezone": "America/Los_Angeles",
+        "boliviaTimezone": "America/La_Paz",
+        "rationale": "Selected a 30-minute overlap that stays within 09:00-17:00 working hours in both time zones and avoids known busy slots."
+      }
+    },
+    {
+      "ts": "2026-04-15T22:46:57.537Z",
+      "level": "info",
+      "event": "tool_activity",
+      "message": "Tool calls captured",
+      "data": {
+        "count": 1,
+        "names": "execute_scenario5_code"
+      }
+    },
+    {
+      "ts": "2026-04-15T22:46:57.541Z",
+      "level": "info",
+      "event": "model_result",
+      "message": "Model result (parsed)",
+      "data": {
+        "proposedStartIso": "2026-04-16T17:00:00.000Z",
+        "proposedEndIso": "2026-04-16T17:30:00.000Z",
+        "localTimezone": "America/Los_Angeles",
+        "boliviaTimezone": "America/La_Paz",
+        "rationale": "Selected a 30-minute overlap that stays within 09:00-17:00 working hours in both time zones and avoids known busy slots."
+      }
+    },
+    {
+      "ts": "2026-04-15T22:46:57.541Z",
+      "level": "info",
+      "event": "evaluation_human",
+      "message": "Evaluation summary",
+      "data": {
+        "overallPass": true,
+        "toolPass": true,
+        "outputValidation": "schema-parse",
+        "outputPass": true,
+        "schemaPass": true
+      }
+    },
+    {
+      "ts": "2026-04-15T22:46:57.542Z",
+      "level": "info",
+      "event": "run_finished",
+      "message": "Benchmark run finished",
+      "data": {
+        "status": "passed",
+        "didFailTest": false,
+        "inputTokens": 2416,
+        "outputTokens": 6,
+        "cachedTokens": 2176,
+        "totalTokens": 2422,
+        "estimatedCostUsd": 0.00613
+      }
+    }
+  ],
+  "evaluation": {
+    "benchmarkId": "5_calendar_timezone_scheduling",
+    "overallPass": true,
+    "toolEval": {
+      "pass": true,
+      "details": [
+        {
+          "groupId": "code-execution",
+          "required": true,
+          "expectedAnyOf": [
+            "execute_scenario5_code"
+          ],
+          "matched": [
+            "execute_scenario5_code"
+          ],
+          "pass": true,
+          "note": "Code mode must write and execute code."
+        }
+      ],
+      "calledToolNames": [
+        "execute_scenario5_code"
+      ]
+    },
+    "fuzzyEval": {
+      "pass": true,
+      "score": 1,
+      "details": [
+        {
+          "checkId": "result-fields",
+          "requiredMinMatches": 1,
+          "matchedCount": 4,
+          "matchedTerms": [
+            "proposedStartIso",
+            "proposedEndIso",
+            "localTimezone",
+            "boliviaTimezone"
+          ],
+          "pass": true,
+          "weight": 1
+        }
+      ]
+    },
+    "numericMentions": 13,
+    "numericGatePass": true,
+    "schemaPass": true,
+    "parsed": {
+      "proposedStartIso": "2026-04-16T17:00:00.000Z",
+      "proposedEndIso": "2026-04-16T17:30:00.000Z",
+      "localTimezone": "America/Los_Angeles",
+      "boliviaTimezone": "America/La_Paz",
+      "rationale": "Selected a 30-minute overlap that stays within 09:00-17:00 working hours in both time zones and avoids known busy slots."
+    }
+  },
+  "runFinishedAt": "2026-04-15T22:46:57.542Z"
+}

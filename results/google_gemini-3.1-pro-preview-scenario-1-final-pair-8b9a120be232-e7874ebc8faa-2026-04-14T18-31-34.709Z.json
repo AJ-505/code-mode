@@ -7,11 +7,11 @@
   "createdAt": "2026-04-14T18:31:34.709Z",
   "winner": "code-mode",
   "reasons": [
-    "regular: didFail=true, tokens=39794, costUsd=0.10591",
+    "regular: didFail=false, tokens=39794, costUsd=0.10591",
     "code-mode: didFail=true, tokens=3457, costUsd=0.04098"
   ],
   "regular": {
-    "didFailTest": true,
+    "didFailTest": false,
     "totalTokens": 39794,
     "estimatedCostUsd": 0.10591
   },

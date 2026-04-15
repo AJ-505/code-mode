@@ -1,0 +1,23 @@
+{
+  "benchmarkId": "6_github_repo_change_pr",
+  "scenarioNumber": 6,
+  "model": "z-ai/glm-5.1",
+  "pairId": "25ed2d3b86ba",
+  "runId": "7bab04ed5987",
+  "createdAt": "2026-04-15T22:47:40.098Z",
+  "winner": "code-mode",
+  "reasons": [
+    "regular: didFail=false, tokens=1862, costUsd=0.00133",
+    "code-mode: didFail=false, tokens=768, costUsd=0.000889"
+  ],
+  "regular": {
+    "didFailTest": false,
+    "totalTokens": 1862,
+    "estimatedCostUsd": 0.00133
+  },
+  "codeMode": {
+    "didFailTest": false,
+    "totalTokens": 768,
+    "estimatedCostUsd": 0.000889
+  }
+}

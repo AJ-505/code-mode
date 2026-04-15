@@ -1,0 +1,64 @@
+{
+  "benchmarkId": "6_github_repo_change_pr",
+  "scenarioNumber": 6,
+  "mode": "regular",
+  "model": "google/gemini-3.1-pro-preview",
+  "pairId": "9dd9d6d2032e",
+  "runId": "b1c4bb40321e",
+  "runStartedAt": "2026-04-15T15:46:49.921Z",
+  "status": "failed",
+  "didFailTest": true,
+  "pricing": {
+    "inputPerMillionUsd": 2,
+    "outputPerMillionUsd": 12,
+    "cachedInputPerMillionUsd": 0
+  },
+  "usage": {
+    "inputTokens": 0,
+    "outputTokens": 0,
+    "cachedTokens": 0,
+    "totalTokens": 0,
+    "estimatedCostUsd": 0
+  },
+  "modelResponses": [],
+  "toolCalls": [],
+  "events": [
+    {
+      "ts": "2026-04-15T15:46:49.921Z",
+      "level": "info",
+      "event": "run_start",
+      "message": "Scenario 6 regular benchmark started",
+      "data": {
+        "benchmarkId": "6_github_repo_change_pr",
+        "model": "google/gemini-3.1-pro-preview",
+        "modelCallTimeoutMs": 120000
+      }
+    },
+    {
+      "ts": "2026-04-15T15:47:14.797Z",
+      "level": "error",
+      "event": "run_failed",
+      "message": "Scenario 6 regular benchmark failed",
+      "data": {
+        "error": "Unable to make request: Error: The socket connection was closed unexpectedly. For more information, pass `verbose: true` in the second argument to fetch()"
+      }
+    },
+    {
+      "ts": "2026-04-15T15:47:14.797Z",
+      "level": "info",
+      "event": "run_finished",
+      "message": "Benchmark run finished",
+      "data": {
+        "status": "failed",
+        "didFailTest": true,
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "cachedTokens": 0,
+        "totalTokens": 0,
+        "estimatedCostUsd": 0
+      }
+    }
+  ],
+  "runFinishedAt": "2026-04-15T15:47:14.797Z",
+  "error": "Unable to make request: Error: The socket connection was closed unexpectedly. For more information, pass `verbose: true` in the second argument to fetch()"
+}

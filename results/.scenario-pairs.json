@@ -59,22 +59,25 @@
     "scenarioNumber": 4,
     "model": "anthropic/claude-opus-4.6",
     "pairId": "dfb1b3549e8d",
-    "updatedAt": "2026-04-14T18:24:30.427Z",
-    "regularLogPath": "results/anthropic_claude-opus-4.6-scenario-4-regular-pair-dfb1b3549e8d-68f7ab1228fb-2026-04-14T18-24-11.307Z.json"
+    "updatedAt": "2026-04-15T22:35:23.739Z",
+    "regularLogPath": "results/anthropic_claude-opus-4.6-scenario-4-regular-pair-dfb1b3549e8d-68f7ab1228fb-2026-04-14T18-24-11.307Z.json",
+    "codeModeLogPath": "results/anthropic_claude-opus-4.6-scenario-4-code-mode-pair-dfb1b3549e8d-6113be576a44-2026-04-15T22-34-54.006Z.json"
   },
   {
     "scenarioNumber": 3,
     "model": "openai/gpt-5.4",
     "pairId": "391c3ca7451f",
-    "updatedAt": "2026-04-14T18:26:50.575Z",
-    "codeModeLogPath": "results/openai_gpt-5.4-scenario-3-code-mode-pair-391c3ca7451f-260e62d0c927-2026-04-14T18-26-34.376Z.json"
+    "updatedAt": "2026-04-15T15:49:30.059Z",
+    "codeModeLogPath": "results/openai_gpt-5.4-scenario-3-code-mode-pair-391c3ca7451f-260e62d0c927-2026-04-14T18-26-34.376Z.json",
+    "regularLogPath": "results/openai_gpt-5.4-scenario-3-regular-pair-391c3ca7451f-7bb29bd3af7d-2026-04-15T15-49-15.219Z.json"
   },
   {
     "scenarioNumber": 4,
     "model": "openai/gpt-5.4",
     "pairId": "c3b6cc5f3b40",
-    "updatedAt": "2026-04-14T18:26:59.040Z",
-    "regularLogPath": "results/openai_gpt-5.4-scenario-4-regular-pair-c3b6cc5f3b40-f51618e82fdb-2026-04-14T18-26-52.184Z.json"
+    "updatedAt": "2026-04-15T15:49:46.090Z",
+    "regularLogPath": "results/openai_gpt-5.4-scenario-4-regular-pair-c3b6cc5f3b40-f51618e82fdb-2026-04-14T18-26-52.184Z.json",
+    "codeModeLogPath": "results/openai_gpt-5.4-scenario-4-code-mode-pair-c3b6cc5f3b40-18412b6e67ea-2026-04-15T15-49-30.621Z.json"
   },
   {
     "scenarioNumber": 1,
@@ -88,15 +91,17 @@
     "scenarioNumber": 2,
     "model": "google/gemini-3.1-pro-preview",
     "pairId": "d5f33071c10e",
-    "updatedAt": "2026-04-14T18:33:01.858Z",
-    "codeModeLogPath": "results/google_gemini-3.1-pro-preview-scenario-2-code-mode-pair-d5f33071c10e-a8dc4c693b9a-2026-04-14T18-32-10.972Z.json"
+    "updatedAt": "2026-04-15T22:41:00.081Z",
+    "codeModeLogPath": "results/google_gemini-3.1-pro-preview-scenario-2-code-mode-pair-d5f33071c10e-a8dc4c693b9a-2026-04-14T18-32-10.972Z.json",
+    "regularLogPath": "results/google_gemini-3.1-pro-preview-scenario-2-regular-pair-d5f33071c10e-e4f3f2e6d748-2026-04-15T22-40-30.326Z.json"
   },
   {
     "scenarioNumber": 1,
     "model": "anthropic/claude-sonnet-4.6",
     "pairId": "be0a4a3aa3dd",
-    "updatedAt": "2026-04-14T18:32:30.612Z",
-    "codeModeLogPath": "results/anthropic_claude-sonnet-4.6-scenario-1-code-mode-pair-be0a4a3aa3dd-38fcb14cc25a-2026-04-14T18-31-49.747Z.json"
+    "updatedAt": "2026-04-15T22:38:09.113Z",
+    "codeModeLogPath": "results/anthropic_claude-sonnet-4.6-scenario-1-code-mode-pair-be0a4a3aa3dd-38fcb14cc25a-2026-04-14T18-31-49.747Z.json",
+    "regularLogPath": "results/anthropic_claude-sonnet-4.6-scenario-1-regular-pair-be0a4a3aa3dd-50f2b6970803-2026-04-15T22-37-05.638Z.json"
   },
   {
     "scenarioNumber": 2,
@@ -126,15 +131,17 @@
     "scenarioNumber": 4,
     "model": "google/gemini-3.1-pro-preview",
     "pairId": "c351e31b64c3",
-    "updatedAt": "2026-04-14T18:35:05.880Z",
-    "regularLogPath": "results/google_gemini-3.1-pro-preview-scenario-4-regular-pair-c351e31b64c3-48c8b10b880f-2026-04-14T18-34-24.006Z.json"
+    "updatedAt": "2026-04-15T22:42:09.862Z",
+    "regularLogPath": "results/google_gemini-3.1-pro-preview-scenario-4-regular-pair-c351e31b64c3-48c8b10b880f-2026-04-14T18-34-24.006Z.json",
+    "codeModeLogPath": "results/google_gemini-3.1-pro-preview-scenario-4-code-mode-pair-c351e31b64c3-7ab2fb86204b-2026-04-15T22-41-00.711Z.json"
   },
   {
     "scenarioNumber": 4,
     "model": "anthropic/claude-sonnet-4.6",
     "pairId": "bc97b8ee62aa",
-    "updatedAt": "2026-04-14T18:35:05.702Z",
-    "regularLogPath": "results/anthropic_claude-sonnet-4.6-scenario-4-regular-pair-bc97b8ee62aa-a8a42a80579c-2026-04-14T18-34-50.564Z.json"
+    "updatedAt": "2026-04-15T22:38:49.136Z",
+    "regularLogPath": "results/anthropic_claude-sonnet-4.6-scenario-4-regular-pair-bc97b8ee62aa-a8a42a80579c-2026-04-14T18-34-50.564Z.json",
+    "codeModeLogPath": "results/anthropic_claude-sonnet-4.6-scenario-4-code-mode-pair-bc97b8ee62aa-4cde85dac1f3-2026-04-15T22-38-09.971Z.json"
   },
   {
     "scenarioNumber": 1,
@@ -144,23 +151,12 @@
     "codeModeLogPath": "results/moonshotai_kimi-k2.5-scenario-1-code-mode-pair-0c7bb187ffe5-2c96d5821385-2026-04-15T15-06-43.826Z.json"
   },
   {
-    "scenarioNumber": 1,
-    "model": "moonshotai/kimi-k2.6",
-    "pairId": "59d63f0d2caf",
-    "updatedAt": "2026-04-14T18:35:35.072Z"
-  },
-  {
-    "scenarioNumber": 2,
-    "model": "moonshotai/kimi-k2.6",
-    "pairId": "0ec1af392161",
-    "updatedAt": "2026-04-14T18:35:46.829Z"
-  },
-  {
     "scenarioNumber": 2,
     "model": "moonshotai/kimi-k2.5",
     "pairId": "8cc5aa870019",
-    "updatedAt": "2026-04-15T15:09:25.241Z",
-    "regularLogPath": "results/moonshotai_kimi-k2.5-scenario-2-regular-pair-8cc5aa870019-7d433a5ea31e-2026-04-15T15-08-16.182Z.json"
+    "updatedAt": "2026-04-15T15:39:47.122Z",
+    "regularLogPath": "results/moonshotai_kimi-k2.5-scenario-2-regular-pair-8cc5aa870019-7d433a5ea31e-2026-04-15T15-08-16.182Z.json",
+    "codeModeLogPath": "results/moonshotai_kimi-k2.5-scenario-2-code-mode-pair-8cc5aa870019-2013be3cb02a-2026-04-15T15-35-57.518Z.json"
   },
   {
     "scenarioNumber": 3,
@@ -187,27 +183,12 @@
     "codeModeLogPath": "results/z-ai_glm-5.1-scenario-1-code-mode-pair-bebec5f02598-ecb5e72a4311-2026-04-15T14-20-43.423Z.json"
   },
   {
-    "scenarioNumber": 1,
-    "model": "minimax/minimax-m2.7",
-    "pairId": "48adce7d1a49",
-    "updatedAt": "2026-04-15T14:24:20.815Z",
-    "regularLogPath": "results/minimax_minimax-m2.7-scenario-1-regular-pair-48adce7d1a49-b388e599fdd2-2026-04-15T14-20-51.510Z.json",
-    "codeModeLogPath": "results/minimax_minimax-m2.7-scenario-1-code-mode-pair-48adce7d1a49-3a23913df297-2026-04-15T14-22-12.082Z.json"
-  },
-  {
     "scenarioNumber": 2,
     "model": "z-ai/glm-5.1",
     "pairId": "d62a2c01e181",
     "updatedAt": "2026-04-15T14:24:21.404Z",
     "regularLogPath": "results/z-ai_glm-5.1-scenario-2-regular-pair-d62a2c01e181-234d028f6551-2026-04-15T14-22-44.355Z.json",
     "codeModeLogPath": "results/z-ai_glm-5.1-scenario-2-code-mode-pair-d62a2c01e181-40a3a904260e-2026-04-15T14-23-26.893Z.json"
-  },
-  {
-    "scenarioNumber": 2,
-    "model": "minimax/minimax-m2.7",
-    "pairId": "150a99ee2c4a",
-    "updatedAt": "2026-04-15T14:25:08.690Z",
-    "codeModeLogPath": "results/minimax_minimax-m2.7-scenario-2-code-mode-pair-150a99ee2c4a-bff95853abf2-2026-04-15T14-24-36.507Z.json"
   },
   {
     "scenarioNumber": 3,
@@ -218,42 +199,12 @@
     "codeModeLogPath": "results/z-ai_glm-5.1-scenario-3-code-mode-pair-eb185f48038d-644e90d6bf0c-2026-04-15T14-25-49.740Z.json"
   },
   {
-    "scenarioNumber": 3,
-    "model": "minimax/minimax-m2.7",
-    "pairId": "7b1bf4709086",
-    "updatedAt": "2026-04-15T14:25:49.623Z",
-    "codeModeLogPath": "results/minimax_minimax-m2.7-scenario-3-code-mode-pair-7b1bf4709086-a688ad9c3955-2026-04-15T14-25-25.719Z.json"
-  },
-  {
-    "scenarioNumber": 4,
-    "model": "minimax/minimax-m2.7",
-    "pairId": "8b68c7ae8156",
-    "updatedAt": "2026-04-15T14:26:55.323Z",
-    "regularLogPath": "results/minimax_minimax-m2.7-scenario-4-regular-pair-8b68c7ae8156-e09e258401c8-2026-04-15T14-25-50.215Z.json",
-    "codeModeLogPath": "results/minimax_minimax-m2.7-scenario-4-code-mode-pair-8b68c7ae8156-98c1c8d2d352-2026-04-15T14-26-08.450Z.json"
-  },
-  {
     "scenarioNumber": 4,
     "model": "z-ai/glm-5.1",
     "pairId": "8701910ee0e5",
     "updatedAt": "2026-04-15T14:29:03.665Z",
     "regularLogPath": "results/z-ai_glm-5.1-scenario-4-regular-pair-8701910ee0e5-5bd2a66bfb91-2026-04-15T14-26-53.926Z.json",
     "codeModeLogPath": "results/z-ai_glm-5.1-scenario-4-code-mode-pair-8701910ee0e5-539cd2785404-2026-04-15T14-28-00.268Z.json"
-  },
-  {
-    "scenarioNumber": 5,
-    "model": "minimax/minimax-m2.7",
-    "pairId": "50e1480540ba",
-    "updatedAt": "2026-04-15T14:28:27.412Z",
-    "regularLogPath": "results/minimax_minimax-m2.7-scenario-5-regular-pair-50e1480540ba-1b6badda7afc-2026-04-15T14-26-56.376Z.json",
-    "codeModeLogPath": "results/minimax_minimax-m2.7-scenario-5-code-mode-pair-50e1480540ba-25454460a896-2026-04-15T14-27-32.392Z.json"
-  },
-  {
-    "scenarioNumber": 6,
-    "model": "minimax/minimax-m2.7",
-    "pairId": "4362df918317",
-    "updatedAt": "2026-04-15T14:29:29.210Z",
-    "codeModeLogPath": "results/minimax_minimax-m2.7-scenario-6-code-mode-pair-4362df918317-4c330c247dc0-2026-04-15T14-28-47.665Z.json"
   },
   {
     "scenarioNumber": 5,
@@ -267,15 +218,17 @@
     "scenarioNumber": 6,
     "model": "z-ai/glm-5.1",
     "pairId": "25ed2d3b86ba",
-    "updatedAt": "2026-04-15T14:32:37.096Z",
-    "regularLogPath": "results/z-ai_glm-5.1-scenario-6-regular-pair-25ed2d3b86ba-42d845ddfbff-2026-04-15T14-31-57.897Z.json"
+    "updatedAt": "2026-04-15T22:47:40.092Z",
+    "regularLogPath": "results/z-ai_glm-5.1-scenario-6-regular-pair-25ed2d3b86ba-42d845ddfbff-2026-04-15T14-31-57.897Z.json",
+    "codeModeLogPath": "results/z-ai_glm-5.1-scenario-6-code-mode-pair-25ed2d3b86ba-7bab04ed5987-2026-04-15T22-47-14.727Z.json"
   },
   {
     "scenarioNumber": 5,
     "model": "moonshotai/kimi-k2.5",
     "pairId": "3f534621e47d",
-    "updatedAt": "2026-04-15T15:14:18.413Z",
-    "regularLogPath": "results/moonshotai_kimi-k2.5-scenario-5-regular-pair-3f534621e47d-3053d73d02aa-2026-04-15T15-13-43.638Z.json"
+    "updatedAt": "2026-04-15T15:43:22.993Z",
+    "regularLogPath": "results/moonshotai_kimi-k2.5-scenario-5-regular-pair-3f534621e47d-3053d73d02aa-2026-04-15T15-13-43.638Z.json",
+    "codeModeLogPath": "results/moonshotai_kimi-k2.5-scenario-5-code-mode-pair-3f534621e47d-afae9e3c9855-2026-04-15T15-39-51.652Z.json"
   },
   {
     "scenarioNumber": 6,
@@ -284,5 +237,69 @@
     "updatedAt": "2026-04-15T15:19:07.931Z",
     "regularLogPath": "results/moonshotai_kimi-k2.5-scenario-6-regular-pair-026220a336d6-51db58451cd4-2026-04-15T15-16-19.777Z.json",
     "codeModeLogPath": "results/moonshotai_kimi-k2.5-scenario-6-code-mode-pair-026220a336d6-d0955e78ea1b-2026-04-15T15-16-45.740Z.json"
+  },
+  {
+    "scenarioNumber": 5,
+    "model": "google/gemini-3.1-pro-preview",
+    "pairId": "7f31b9bb3c9d",
+    "updatedAt": "2026-04-15T22:43:33.505Z",
+    "regularLogPath": "results/google_gemini-3.1-pro-preview-scenario-5-regular-pair-7f31b9bb3c9d-60a73725922d-2026-04-15T22-42-10.466Z.json",
+    "codeModeLogPath": "results/google_gemini-3.1-pro-preview-scenario-5-code-mode-pair-7f31b9bb3c9d-e756a216e657-2026-04-15T22-42-43.531Z.json"
+  },
+  {
+    "scenarioNumber": 6,
+    "model": "google/gemini-3.1-pro-preview",
+    "pairId": "9dd9d6d2032e",
+    "updatedAt": "2026-04-15T22:43:56.493Z",
+    "codeModeLogPath": "results/google_gemini-3.1-pro-preview-scenario-6-code-mode-pair-9dd9d6d2032e-40ff2b9a9415-2026-04-15T15-47-15.482Z.json",
+    "regularLogPath": "results/google_gemini-3.1-pro-preview-scenario-6-regular-pair-9dd9d6d2032e-f880c4c509e9-2026-04-15T22-43-34.225Z.json"
+  },
+  {
+    "scenarioNumber": 5,
+    "model": "openai/gpt-5.4",
+    "pairId": "26b62ad3840b",
+    "updatedAt": "2026-04-15T22:46:57.546Z",
+    "regularLogPath": "results/openai_gpt-5.4-scenario-5-regular-pair-26b62ad3840b-18c453da6c8d-2026-04-15T15-49-46.599Z.json",
+    "codeModeLogPath": "results/openai_gpt-5.4-scenario-5-code-mode-pair-26b62ad3840b-7a2153d29641-2026-04-15T22-46-42.166Z.json"
+  },
+  {
+    "scenarioNumber": 6,
+    "model": "openai/gpt-5.4",
+    "pairId": "5409489c2e19",
+    "updatedAt": "2026-04-15T22:47:14.214Z",
+    "regularLogPath": "results/openai_gpt-5.4-scenario-6-regular-pair-5409489c2e19-5643e8ae1937-2026-04-15T22-46-58.164Z.json",
+    "codeModeLogPath": "results/openai_gpt-5.4-scenario-6-code-mode-pair-5409489c2e19-0bc53b518aa2-2026-04-15T22-47-06.316Z.json"
+  },
+  {
+    "scenarioNumber": 5,
+    "model": "anthropic/claude-sonnet-4.6",
+    "pairId": "7d4780dfd05e",
+    "updatedAt": "2026-04-15T22:39:25.862Z",
+    "regularLogPath": "results/anthropic_claude-sonnet-4.6-scenario-5-regular-pair-7d4780dfd05e-6507916bd866-2026-04-15T22-38-49.854Z.json",
+    "codeModeLogPath": "results/anthropic_claude-sonnet-4.6-scenario-5-code-mode-pair-7d4780dfd05e-d597b7150ddc-2026-04-15T22-39-08.874Z.json"
+  },
+  {
+    "scenarioNumber": 6,
+    "model": "anthropic/claude-sonnet-4.6",
+    "pairId": "918d04f0e1a2",
+    "updatedAt": "2026-04-15T22:40:29.749Z",
+    "regularLogPath": "results/anthropic_claude-sonnet-4.6-scenario-6-regular-pair-918d04f0e1a2-f1a6512cbfb4-2026-04-15T22-39-26.571Z.json",
+    "codeModeLogPath": "results/anthropic_claude-sonnet-4.6-scenario-6-code-mode-pair-918d04f0e1a2-d18c88e17479-2026-04-15T22-39-49.987Z.json"
+  },
+  {
+    "scenarioNumber": 5,
+    "model": "anthropic/claude-opus-4.6",
+    "pairId": "bcec74aec51e",
+    "updatedAt": "2026-04-15T22:36:18.790Z",
+    "regularLogPath": "results/anthropic_claude-opus-4.6-scenario-5-regular-pair-bcec74aec51e-1adeb17adda7-2026-04-15T22-35-24.302Z.json",
+    "codeModeLogPath": "results/anthropic_claude-opus-4.6-scenario-5-code-mode-pair-bcec74aec51e-7106412980fb-2026-04-15T22-35-47.198Z.json"
+  },
+  {
+    "scenarioNumber": 6,
+    "model": "anthropic/claude-opus-4.6",
+    "pairId": "3b0383cfadec",
+    "updatedAt": "2026-04-15T22:37:04.536Z",
+    "regularLogPath": "results/anthropic_claude-opus-4.6-scenario-6-regular-pair-3b0383cfadec-6be9c9bc4f7d-2026-04-15T22-36-19.510Z.json",
+    "codeModeLogPath": "results/anthropic_claude-opus-4.6-scenario-6-code-mode-pair-3b0383cfadec-bb2976cdfc67-2026-04-15T22-36-56.932Z.json"
   }
 ]

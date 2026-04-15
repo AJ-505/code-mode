@@ -1,0 +1,108 @@
+{
+  "benchmarkId": "2_playwright_ui_audit",
+  "scenarioNumber": 2,
+  "mode": "regular",
+  "model": "google/gemini-3.1-pro-preview",
+  "pairId": "d5f33071c10e",
+  "runId": "0259e450bce0",
+  "runStartedAt": "2026-04-15T15:44:31.596Z",
+  "status": "failed",
+  "didFailTest": true,
+  "pricing": {
+    "inputPerMillionUsd": 2,
+    "outputPerMillionUsd": 12,
+    "cachedInputPerMillionUsd": 0
+  },
+  "usage": {
+    "inputTokens": 448,
+    "outputTokens": 91,
+    "cachedTokens": 0,
+    "totalTokens": 539,
+    "estimatedCostUsd": 0.001988
+  },
+  "modelResponses": [
+    {
+      "stage": "discovery",
+      "text": "",
+      "usage": {
+        "inputTokens": 448,
+        "outputTokens": 91,
+        "cachedTokens": 0,
+        "totalTokens": 539,
+        "estimatedCostUsd": 0.001988
+      }
+    }
+  ],
+  "toolCalls": [
+    {
+      "stage": "discovery",
+      "name": "audit_demo_site",
+      "arguments": {}
+    }
+  ],
+  "events": [
+    {
+      "ts": "2026-04-15T15:44:31.596Z",
+      "level": "info",
+      "event": "run_start",
+      "message": "Scenario 2 regular benchmark started",
+      "data": {
+        "benchmarkId": "2_playwright_ui_audit",
+        "model": "google/gemini-3.1-pro-preview",
+        "modelCallTimeoutMs": 120000
+      }
+    },
+    {
+      "ts": "2026-04-15T15:45:03.024Z",
+      "level": "info",
+      "event": "model_response",
+      "message": "Model response captured for discovery",
+      "data": {
+        "responsePreview": "",
+        "responseChars": 0,
+        "inputTokens": 448,
+        "outputTokens": 91,
+        "cachedTokens": 0,
+        "totalTokens": 539,
+        "estimatedCostUsd": 0.001988
+      }
+    },
+    {
+      "ts": "2026-04-15T15:45:03.027Z",
+      "level": "info",
+      "event": "tool_call",
+      "message": "Tool called in discovery: audit_demo_site",
+      "data": {
+        "stage": "discovery",
+        "toolName": "audit_demo_site",
+        "callDetails": ""
+      }
+    },
+    {
+      "ts": "2026-04-15T15:45:14.591Z",
+      "level": "error",
+      "event": "run_failed",
+      "message": "Scenario 2 regular benchmark failed",
+      "data": {
+        "error": "Response failed: {\"code\":\"server_error\",\"message\":\"internal stream ended unexpectedly\"}"
+      }
+    },
+    {
+      "ts": "2026-04-15T15:45:14.596Z",
+      "level": "info",
+      "event": "run_finished",
+      "message": "Benchmark run finished",
+      "data": {
+        "status": "failed",
+        "didFailTest": true,
+        "inputTokens": 448,
+        "outputTokens": 91,
+        "cachedTokens": 0,
+        "totalTokens": 539,
+        "estimatedCostUsd": 0.001988
+      }
+    }
+  ],
+  "runFinishedAt": "2026-04-15T15:45:14.596Z",
+  "error": "Response failed: {\"code\":\"server_error\",\"message\":\"internal stream ended unexpectedly\"}"
+}

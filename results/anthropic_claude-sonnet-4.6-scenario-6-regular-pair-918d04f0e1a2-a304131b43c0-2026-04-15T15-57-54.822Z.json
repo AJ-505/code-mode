@@ -1,0 +1,64 @@
+{
+  "benchmarkId": "6_github_repo_change_pr",
+  "scenarioNumber": 6,
+  "mode": "regular",
+  "model": "anthropic/claude-sonnet-4.6",
+  "pairId": "918d04f0e1a2",
+  "runId": "a304131b43c0",
+  "runStartedAt": "2026-04-15T15:57:54.822Z",
+  "status": "failed",
+  "didFailTest": true,
+  "pricing": {
+    "inputPerMillionUsd": 3,
+    "outputPerMillionUsd": 15,
+    "cachedInputPerMillionUsd": 0
+  },
+  "usage": {
+    "inputTokens": 0,
+    "outputTokens": 0,
+    "cachedTokens": 0,
+    "totalTokens": 0,
+    "estimatedCostUsd": 0
+  },
+  "modelResponses": [],
+  "toolCalls": [],
+  "events": [
+    {
+      "ts": "2026-04-15T15:57:54.822Z",
+      "level": "info",
+      "event": "run_start",
+      "message": "Scenario 6 regular benchmark started",
+      "data": {
+        "benchmarkId": "6_github_repo_change_pr",
+        "model": "anthropic/claude-sonnet-4.6",
+        "modelCallTimeoutMs": 120000
+      }
+    },
+    {
+      "ts": "2026-04-15T15:59:54.862Z",
+      "level": "error",
+      "event": "run_failed",
+      "message": "Scenario 6 regular benchmark failed",
+      "data": {
+        "error": "Timeout while waiting for scenario6 regular discovery response after 120000ms"
+      }
+    },
+    {
+      "ts": "2026-04-15T15:59:54.863Z",
+      "level": "info",
+      "event": "run_finished",
+      "message": "Benchmark run finished",
+      "data": {
+        "status": "failed",
+        "didFailTest": true,
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "cachedTokens": 0,
+        "totalTokens": 0,
+        "estimatedCostUsd": 0
+      }
+    }
+  ],
+  "runFinishedAt": "2026-04-15T15:59:54.863Z",
+  "error": "Timeout while waiting for scenario6 regular discovery response after 120000ms"
+}

@@ -1,0 +1,23 @@
+{
+  "benchmarkId": "4_drive_keyword_retrieval",
+  "scenarioNumber": 4,
+  "model": "openai/gpt-5.4",
+  "pairId": "c3b6cc5f3b40",
+  "runId": "18412b6e67ea",
+  "createdAt": "2026-04-15T15:49:46.092Z",
+  "winner": "code-mode",
+  "reasons": [
+    "regular: didFail=true, tokens=1045, costUsd=0.0036",
+    "code-mode: didFail=false, tokens=796, costUsd=0.002065"
+  ],
+  "regular": {
+    "didFailTest": true,
+    "totalTokens": 1045,
+    "estimatedCostUsd": 0.0036
+  },
+  "codeMode": {
+    "didFailTest": false,
+    "totalTokens": 796,
+    "estimatedCostUsd": 0.002065
+  }
+}

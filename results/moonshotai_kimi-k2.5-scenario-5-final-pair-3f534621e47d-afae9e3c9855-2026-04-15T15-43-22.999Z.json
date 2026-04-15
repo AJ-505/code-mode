@@ -1,0 +1,23 @@
+{
+  "benchmarkId": "5_calendar_timezone_scheduling",
+  "scenarioNumber": 5,
+  "model": "moonshotai/kimi-k2.5",
+  "pairId": "3f534621e47d",
+  "runId": "afae9e3c9855",
+  "createdAt": "2026-04-15T15:43:22.999Z",
+  "winner": "code-mode",
+  "reasons": [
+    "regular: didFail=true, tokens=1497, costUsd=0.000989",
+    "code-mode: didFail=false, tokens=4805, costUsd=0.002461"
+  ],
+  "regular": {
+    "didFailTest": true,
+    "totalTokens": 1497,
+    "estimatedCostUsd": 0.000989
+  },
+  "codeMode": {
+    "didFailTest": false,
+    "totalTokens": 4805,
+    "estimatedCostUsd": 0.002461
+  }
+}

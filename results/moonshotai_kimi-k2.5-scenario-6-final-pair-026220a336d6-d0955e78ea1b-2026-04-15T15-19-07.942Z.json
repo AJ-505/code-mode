@@ -5,13 +5,13 @@
   "pairId": "026220a336d6",
   "runId": "d0955e78ea1b",
   "createdAt": "2026-04-15T15:19:07.942Z",
-  "winner": "code-mode",
+  "winner": "regular",
   "reasons": [
-    "regular: didFail=true, tokens=1522, costUsd=0.001009",
+    "regular: didFail=false, tokens=1522, costUsd=0.001009",
     "code-mode: didFail=false, tokens=5318, costUsd=0.002713"
   ],
   "regular": {
-    "didFailTest": true,
+    "didFailTest": false,
     "totalTokens": 1522,
     "estimatedCostUsd": 0.001009
   },

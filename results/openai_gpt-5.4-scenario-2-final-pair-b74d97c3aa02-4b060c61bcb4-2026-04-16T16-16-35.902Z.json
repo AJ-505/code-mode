@@ -1,0 +1,23 @@
+{
+  "benchmarkId": "2_playwright_ui_audit",
+  "scenarioNumber": 2,
+  "model": "openai/gpt-5.4",
+  "pairId": "b74d97c3aa02",
+  "runId": "4b060c61bcb4",
+  "createdAt": "2026-04-16T16:16:35.902Z",
+  "winner": "code-mode",
+  "reasons": [
+    "regular: didFail=true, tokens=927, costUsd=0.005043",
+    "code-mode: didFail=false, tokens=1078, costUsd=0.002782"
+  ],
+  "regular": {
+    "didFailTest": true,
+    "totalTokens": 927,
+    "estimatedCostUsd": 0.005043
+  },
+  "codeMode": {
+    "didFailTest": false,
+    "totalTokens": 1078,
+    "estimatedCostUsd": 0.002782
+  }
+}

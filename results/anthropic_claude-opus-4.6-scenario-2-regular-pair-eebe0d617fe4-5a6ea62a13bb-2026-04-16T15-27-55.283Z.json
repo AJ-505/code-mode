@@ -1,0 +1,200 @@
+{
+  "benchmarkId": "2_playwright_ui_audit",
+  "scenarioNumber": 2,
+  "mode": "regular",
+  "model": "anthropic/claude-opus-4.6",
+  "pairId": "eebe0d617fe4",
+  "runId": "5a6ea62a13bb",
+  "runStartedAt": "2026-04-16T15:27:55.283Z",
+  "status": "failed",
+  "didFailTest": true,
+  "pricing": {
+    "inputPerMillionUsd": 2.5,
+    "outputPerMillionUsd": 15,
+    "cachedInputPerMillionUsd": 0
+  },
+  "usage": {
+    "inputTokens": 2338,
+    "outputTokens": 794,
+    "cachedTokens": 0,
+    "totalTokens": 3132,
+    "estimatedCostUsd": 0.017755
+  },
+  "modelResponses": [
+    {
+      "stage": "discovery",
+      "text": "The tool is discovered. Now let me run the audit on the demo website using the default URL.",
+      "usage": {
+        "inputTokens": 1067,
+        "outputTokens": 59,
+        "cachedTokens": 0,
+        "totalTokens": 1126,
+        "estimatedCostUsd": 0.003553
+      }
+    },
+    {
+      "stage": "execution",
+      "text": "Here is the structured **UI/UX Audit Report** for **https://playwright.dev**:\n\n---\n\n## 🔍 UI/UX Audit Report\n\n| Field | Value |\n|---|---|\n| **Target URL** | `https://playwright.dev` |\n| **Overall Summary** | The site is functional and generally usable, but would benefit from stronger visual information hierarchy and improved accessibility-focused interaction states. |\n\n---\n\n### Finding #1 — Low Visual Hierarchy on Hero Section\n\n| Attribute | Detail |\n|---|---|\n| **Severity** | 🟡 **Medium** |\n| **Location** | Homepage (`/`) — Hero section |\n| **Description** | The primary heading and supporting body text share similar font weight and contrast ratios, which reduces scannability and makes it harder for users to quickly parse the page's value proposition. |\n| **Steps to Reproduce** | 1. Navigate to `https://playwright.dev`. 2. Observe the hero section above the fold. 3. Compare the visual weight of the main heading vs. the subtitle/description text. |\n| **Suggested Fix** | • Increase the heading font size and/or weight (e.g., `font-weight: 800; font-size: 3.5rem`). • Reduce the prominence of secondary text (lighter color, smaller size) to create a clear typographic hierarchy. |\n\n---\n\n### Finding #2 — No Explicit Keyboard Focus Styling\n\n| Attribute | Detail |\n|---|---|\n| **Severity** | 🟢 **Low** |\n| **Location** | Global — All interactive elements (links, buttons, nav items) |\n| **Description** | Interactive elements rely on the browser's default focus outline, which has inconsistent visibility across browsers and may be invisible on certain background colors. This impacts keyboard and assistive-technology users. |\n| **Steps to Reproduce** | 1. Navigate to `https://playwright.dev`. 2. Press `Tab` repeatedly to cycle through interactive elements. 3. Observe that focus indicators are faint or inconsistent, especially on colored backgrounds. |\n| **Suggested Fix** | • Define a global, high-contrast custom focus ring (e.g., `outline: 2px solid #4A90D9; outline-offset: 2px;`). • Ensure focus styles meet **WCAG 2.2 SC 2.4.7 (Focus Visible)** at minimum AA contrast. • Test across Chrome, Firefox, and Safari for consistency. |\n\n---\n\n### 📊 Severity Summary\n\n| Severity | Count |\n|---|---|\n| 🔴 Critical | 0 |\n| 🟡 Medium | 1 |\n| 🟢 Low | 1 |\n\n### ✅ Recommendations Priority\n1. **First** — Address the hero section hierarchy (Medium) to improve first-impression clarity and conversion.\n2. **Second** — Implement consistent focus styling (Low) to strengthen accessibility compliance.\n\n---\n\n> **Verdict:** The site is in good shape overall. Two targeted improvements—better typographic hierarchy and explicit keyboard focus states—would meaningfully enhance both the user experience and accessibility posture.",
+      "usage": {
+        "inputTokens": 1271,
+        "outputTokens": 735,
+        "cachedTokens": 0,
+        "totalTokens": 2006,
+        "estimatedCostUsd": 0.014202
+      }
+    }
+  ],
+  "toolCalls": [
+    {
+      "stage": "discovery",
+      "name": "audit_demo_site",
+      "arguments": {}
+    }
+  ],
+  "events": [
+    {
+      "ts": "2026-04-16T15:27:55.283Z",
+      "level": "info",
+      "event": "run_start",
+      "message": "Scenario 2 regular benchmark started",
+      "data": {
+        "benchmarkId": "2_playwright_ui_audit",
+        "model": "anthropic/claude-opus-4.6",
+        "modelCallTimeoutMs": 120000
+      }
+    },
+    {
+      "ts": "2026-04-16T15:28:02.056Z",
+      "level": "info",
+      "event": "model_response",
+      "message": "Model response captured for discovery",
+      "data": {
+        "responsePreview": "The tool is discovered. Now let me run the audit on the demo website using the default URL.",
+        "responseChars": 91,
+        "inputTokens": 1067,
+        "outputTokens": 59,
+        "cachedTokens": 0,
+        "totalTokens": 1126,
+        "estimatedCostUsd": 0.003553
+      }
+    },
+    {
+      "ts": "2026-04-16T15:28:02.059Z",
+      "level": "info",
+      "event": "tool_call",
+      "message": "Tool called in discovery: audit_demo_site",
+      "data": {
+        "stage": "discovery",
+        "toolName": "audit_demo_site",
+        "callDetails": ""
+      }
+    },
+    {
+      "ts": "2026-04-16T15:28:21.718Z",
+      "level": "info",
+      "event": "model_response",
+      "message": "Model response captured for execution",
+      "data": {
+        "responsePreview": "Here is the structured **UI/UX Audit Report** for **https://playwright.dev**: --- ## 🔍 UI/UX Audit Report | Field | Value | |---|---| | **Target URL** | `https://playwright.dev` | | **Overall Summary** | The site is functional and generall...",
+        "responseChars": 2732,
+        "inputTokens": 1271,
+        "outputTokens": 735,
+        "cachedTokens": 0,
+        "totalTokens": 2006,
+        "estimatedCostUsd": 0.014202
+      }
+    },
+    {
+      "ts": "2026-04-16T15:28:21.736Z",
+      "level": "info",
+      "event": "model_result",
+      "message": "Model result (parsed)",
+      "data": {
+        "parsed": "(missing)"
+      }
+    },
+    {
+      "ts": "2026-04-16T15:28:21.737Z",
+      "level": "info",
+      "event": "evaluation_human",
+      "message": "Evaluation summary",
+      "data": {
+        "overallPass": false,
+        "toolPass": false,
+        "outputValidation": "schema-parse",
+        "outputPass": false,
+        "schemaPass": false
+      }
+    },
+    {
+      "ts": "2026-04-16T15:28:21.738Z",
+      "level": "info",
+      "event": "run_finished",
+      "message": "Benchmark run finished",
+      "data": {
+        "status": "failed",
+        "didFailTest": true,
+        "inputTokens": 2338,
+        "outputTokens": 794,
+        "cachedTokens": 0,
+        "totalTokens": 3132,
+        "estimatedCostUsd": 0.017755
+      }
+    }
+  ],
+  "evaluation": {
+    "benchmarkId": "2_playwright_ui_audit",
+    "overallPass": false,
+    "toolEval": {
+      "pass": false,
+      "details": [
+        {
+          "groupId": "progressive-discovery",
+          "required": true,
+          "expectedAnyOf": [
+            "discover_tools"
+          ],
+          "matched": [],
+          "pass": false,
+          "note": "Agent should discover hidden tools first."
+        },
+        {
+          "groupId": "site-inspection",
+          "required": true,
+          "expectedAnyOf": [
+            "audit_demo_site"
+          ],
+          "matched": [
+            "audit_demo_site"
+          ],
+          "pass": true,
+          "note": "Agent should run website audit tool in regular mode."
+        }
+      ],
+      "calledToolNames": [
+        "audit_demo_site"
+      ]
+    },
+    "fuzzyEval": {
+      "pass": true,
+      "score": 1,
+      "details": [
+        {
+          "checkId": "finding-mention",
+          "requiredMinMatches": 1,
+          "matchedCount": 1,
+          "matchedTerms": [
+            "severity"
+          ],
+          "pass": true,
+          "weight": 1
+        }
+      ]
+    },
+    "numericMentions": 18,
+    "numericGatePass": true,
+    "schemaPass": false,
+    "parsed": null
+  },
+  "runFinishedAt": "2026-04-16T15:28:21.738Z"
+}

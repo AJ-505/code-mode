@@ -1,0 +1,288 @@
+{
+  "benchmarkId": "1_customer_db_average_spend",
+  "scenarioNumber": 1,
+  "mode": "code-mode",
+  "model": "openai/gpt-5.4",
+  "pairId": "1342a3c53494",
+  "runId": "41c3f248d42e",
+  "runStartedAt": "2026-04-16T15:20:25.938Z",
+  "status": "passed",
+  "didFailTest": false,
+  "pricing": {
+    "inputPerMillionUsd": 2.5,
+    "outputPerMillionUsd": 15,
+    "cachedInputPerMillionUsd": 0
+  },
+  "usage": {
+    "inputTokens": 2291,
+    "outputTokens": 6,
+    "cachedTokens": 2048,
+    "totalTokens": 2297,
+    "estimatedCostUsd": 0.005817
+  },
+  "modelResponses": [
+    {
+      "stage": "code_mode",
+      "text": "Done.",
+      "usage": {
+        "inputTokens": 2291,
+        "outputTokens": 6,
+        "cachedTokens": 2048,
+        "totalTokens": 2297,
+        "estimatedCostUsd": 0.005817
+      }
+    }
+  ],
+  "toolCalls": [
+    {
+      "stage": "code_mode",
+      "name": "execute_scenario1_code",
+      "arguments": {
+        "synthetic": true,
+        "source": "tool_result_event"
+      }
+    }
+  ],
+  "events": [
+    {
+      "ts": "2026-04-16T15:20:25.938Z",
+      "level": "info",
+      "event": "run_start",
+      "message": "Scenario 1 code-mode benchmark started",
+      "data": {
+        "benchmarkId": "1_customer_db_average_spend",
+        "model": "openai/gpt-5.4",
+        "modelCallTimeoutMs": 120000
+      }
+    },
+    {
+      "ts": "2026-04-16T15:20:31.471Z",
+      "level": "info",
+      "event": "expected_result_human",
+      "message": "Expected result (from seeded DB)",
+      "data": {
+        "fromIso": "2026-04-09T15:20:25.939Z",
+        "toIso": "2026-04-16T15:20:25.939Z",
+        "topCustomerId": "10dcdaa2-80af-438f-ac85-8404eea0ecc9",
+        "topCustomerName": "Avery Benchmark",
+        "transactionCount": 25,
+        "averageSpend": 240.96,
+        "totalSpend": 6024.02
+      }
+    },
+    {
+      "ts": "2026-04-16T15:20:31.473Z",
+      "level": "info",
+      "event": "expected_result",
+      "message": "Computed scenario expected result from DB seed",
+      "data": {
+        "topCustomerId": "10dcdaa2-80af-438f-ac85-8404eea0ecc9",
+        "transactionCount": 25,
+        "averageSpend": 240.96
+      }
+    },
+    {
+      "ts": "2026-04-16T15:20:31.476Z",
+      "level": "info",
+      "event": "prompts",
+      "message": "Prompts for code_mode",
+      "data": {
+        "systemPrompt": "You are a specialised benchmark agent.\nUse progressive discovery when tools are hidden.\nIf the required tool is not directly available, call discover_tools with the exact tool names you need, then continue to solve the task.\n\nYou are now in code-mode.\nWrite TypeScript code that uses ONLY the provided tool execute_scenario1_code.\nWhen calling the tool, pass a full TS program string in input key \"typescript\".\nDo not explain your reasoning.\nDo not output long analysis.\nYour code must return a plain object as the last expression.\nDo not wrap code in markdown fences.\nYour final assistant message must contain only a single short sentence confirming completion.\nIn that program, use the provided global \"api\" methods:\n- await api.getCurrentDatetime()\n- await api.getAllCustomers({ limit, offset })\n- await api.searchCustomersByName({ query, limit })\n- await api.listTransactionsInWindow({ fromIso, toIso, customerId?, limit })\n- await api.computeCustomerSpendStats({ customerId, fromIso, toIso })\nThe TS program must return JSON object with keys:\n{ topCustomerId, topCustomerName, transactionCount, totalSpend, averageSpend, fromIso, toIso }\nDo not mention placeholders. Compute the real answer and return concise final JSON.",
+        "userPrompt": "\nCan you find the customer who made the most transactions in the past week, as well as their average spend in that time?\n"
+      }
+    },
+    {
+      "ts": "2026-04-16T15:21:06.911Z",
+      "level": "info",
+      "event": "model_response",
+      "message": "Model response captured for code_mode",
+      "data": {
+        "responsePreview": "Done.",
+        "responseChars": 5,
+        "inputTokens": 2291,
+        "outputTokens": 6,
+        "cachedTokens": 2048,
+        "totalTokens": 2297,
+        "estimatedCostUsd": 0.005817
+      }
+    },
+    {
+      "ts": "2026-04-16T15:21:06.912Z",
+      "level": "info",
+      "event": "model_result_text",
+      "message": "Model final message (code_mode)",
+      "data": {
+        "message": "Done."
+      }
+    },
+    {
+      "ts": "2026-04-16T15:21:06.914Z",
+      "level": "info",
+      "event": "tool_call",
+      "message": "Tool called in code_mode: execute_scenario1_code",
+      "data": {
+        "stage": "code_mode",
+        "toolName": "execute_scenario1_code",
+        "callDetails": "TypeScript code provided (see code block below)"
+      }
+    },
+    {
+      "ts": "2026-04-16T15:21:06.915Z",
+      "level": "info",
+      "event": "tool_result",
+      "message": "Code execution result from tool",
+      "data": {
+        "topCustomerId": "10dcdaa2-80af-438f-ac85-8404eea0ecc9",
+        "topCustomerName": "Avery Benchmark",
+        "transactionCount": 25,
+        "totalSpend": 6024.02,
+        "averageSpend": 240.96,
+        "fromIso": "2026-04-09T15:21:02.208Z",
+        "toIso": "2026-04-16T15:21:02.208Z"
+      }
+    },
+    {
+      "ts": "2026-04-16T15:21:06.915Z",
+      "level": "info",
+      "event": "tool_activity",
+      "message": "Tool calls captured",
+      "data": {
+        "count": 1,
+        "names": "execute_scenario1_code"
+      }
+    },
+    {
+      "ts": "2026-04-16T15:21:06.921Z",
+      "level": "info",
+      "event": "model_result",
+      "message": "Model result (parsed)",
+      "data": {
+        "topCustomerId": "10dcdaa2-80af-438f-ac85-8404eea0ecc9",
+        "topCustomerName": "Avery Benchmark",
+        "transactionCount": 25,
+        "averageSpend": 240.96,
+        "totalSpend": 6024.02,
+        "fromIso": "2026-04-09T15:21:02.208Z",
+        "toIso": "2026-04-16T15:21:02.208Z"
+      }
+    },
+    {
+      "ts": "2026-04-16T15:21:06.922Z",
+      "level": "info",
+      "event": "evaluation_human",
+      "message": "Evaluation summary",
+      "data": {
+        "overallPass": true,
+        "toolPass": true,
+        "outputValidation": "expected-result",
+        "outputPass": true,
+        "expectedPass": true
+      }
+    },
+    {
+      "ts": "2026-04-16T15:21:06.922Z",
+      "level": "info",
+      "event": "run_finished",
+      "message": "Benchmark run finished",
+      "data": {
+        "status": "passed",
+        "didFailTest": false,
+        "inputTokens": 2291,
+        "outputTokens": 6,
+        "cachedTokens": 2048,
+        "totalTokens": 2297,
+        "estimatedCostUsd": 0.005817
+      }
+    }
+  ],
+  "expectedResult": {
+    "fromIso": "2026-04-09T15:20:25.939Z",
+    "toIso": "2026-04-16T15:20:25.939Z",
+    "topCustomerId": "10dcdaa2-80af-438f-ac85-8404eea0ecc9",
+    "topCustomerName": "Avery Benchmark",
+    "transactionCount": 25,
+    "averageSpend": 240.96,
+    "totalSpend": 6024.02
+  },
+  "evaluation": {
+    "benchmarkId": "1_customer_db_average_spend",
+    "overallPass": true,
+    "toolEval": {
+      "pass": true,
+      "details": [
+        {
+          "groupId": "code-execution",
+          "required": true,
+          "expectedAnyOf": [
+            "execute_scenario1_code"
+          ],
+          "matched": [
+            "execute_scenario1_code"
+          ],
+          "pass": true,
+          "note": "Code mode must write and execute code."
+        }
+      ],
+      "calledToolNames": [
+        "execute_scenario1_code"
+      ]
+    },
+    "fuzzyEval": {
+      "pass": true,
+      "score": 1,
+      "details": [
+        {
+          "checkId": "top-customer-json-key",
+          "requiredMinMatches": 1,
+          "matchedCount": 2,
+          "matchedTerms": [
+            "topCustomerId",
+            "topCustomerName"
+          ],
+          "pass": true,
+          "weight": 1
+        },
+        {
+          "checkId": "average-spend-json-key",
+          "requiredMinMatches": 1,
+          "matchedCount": 1,
+          "matchedTerms": [
+            "averageSpend"
+          ],
+          "pass": true,
+          "weight": 1
+        }
+      ]
+    },
+    "numericMentions": 11,
+    "numericGatePass": true,
+    "expectedEval": {
+      "pass": true,
+      "parsed": {
+        "topCustomerId": "10dcdaa2-80af-438f-ac85-8404eea0ecc9",
+        "topCustomerName": "Avery Benchmark",
+        "transactionCount": 25,
+        "averageSpend": 240.96,
+        "totalSpend": 6024.02,
+        "fromIso": "2026-04-09T15:21:02.208Z",
+        "toIso": "2026-04-16T15:21:02.208Z"
+      },
+      "details": {
+        "topCustomerPass": true,
+        "transactionCountPass": true,
+        "averageSpendPass": true,
+        "totalSpendPass": true,
+        "expected": {
+          "fromIso": "2026-04-09T15:20:25.939Z",
+          "toIso": "2026-04-16T15:20:25.939Z",
+          "topCustomerId": "10dcdaa2-80af-438f-ac85-8404eea0ecc9",
+          "topCustomerName": "Avery Benchmark",
+          "transactionCount": 25,
+          "averageSpend": 240.96,
+          "totalSpend": 6024.02
+        }
+      }
+    }
+  },
+  "runFinishedAt": "2026-04-16T15:21:06.922Z"
+}

@@ -67,6 +67,36 @@ function extractJsonObject(text: string): Record<string, unknown> | null {
   return null;
 }
 
+function normalizeScenario3ResultShape(value: Record<string, unknown>) {
+  const fromIso =
+    typeof value.fromIso === "string"
+      ? value.fromIso
+      : typeof (value.timeWindow as { fromIso?: unknown } | undefined)?.fromIso ===
+            "string"
+        ? ((value.timeWindow as { fromIso?: string }).fromIso ?? "")
+        : "";
+
+  const toIso =
+    typeof value.toIso === "string"
+      ? value.toIso
+      : typeof (value.timeWindow as { toIso?: unknown } | undefined)?.toIso === "string"
+        ? ((value.timeWindow as { toIso?: string }).toIso ?? "")
+        : "";
+
+  const topics = Array.isArray(value.topics)
+    ? value.topics
+    : Array.isArray(value.majorTopics)
+      ? value.majorTopics
+      : [];
+
+  return {
+    ...value,
+    fromIso,
+    toIso,
+    topics,
+  };
+}
+
 export function evaluateScenario3Run(options: {
   mode: "regular" | "code-mode";
   calledToolNames: string[];
@@ -84,7 +114,10 @@ export function evaluateScenario3Run(options: {
   });
 
   const parsed = extractJsonObject(options.finalText);
-  const schemaResult = parsed ? scenario3ResultSchema.safeParse(parsed) : null;
+  const normalized = parsed ? normalizeScenario3ResultShape(parsed) : null;
+  const schemaResult = normalized
+    ? scenario3ResultSchema.safeParse(normalized)
+    : null;
 
   return {
     ...base,

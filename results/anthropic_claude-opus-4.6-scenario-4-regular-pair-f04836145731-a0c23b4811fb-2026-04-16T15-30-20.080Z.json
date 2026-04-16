@@ -1,0 +1,226 @@
+{
+  "benchmarkId": "4_drive_keyword_retrieval",
+  "scenarioNumber": 4,
+  "mode": "regular",
+  "model": "anthropic/claude-opus-4.6",
+  "pairId": "f04836145731",
+  "runId": "a0c23b4811fb",
+  "runStartedAt": "2026-04-16T15:30:20.080Z",
+  "status": "failed",
+  "didFailTest": true,
+  "pricing": {
+    "inputPerMillionUsd": 2.5,
+    "outputPerMillionUsd": 15,
+    "cachedInputPerMillionUsd": 0
+  },
+  "usage": {
+    "inputTokens": 2721,
+    "outputTokens": 507,
+    "cachedTokens": 0,
+    "totalTokens": 3228,
+    "estimatedCostUsd": 0.014408
+  },
+  "modelResponses": [
+    {
+      "stage": "discovery",
+      "text": "The tool has been discovered. I can see it accepts three parameters with default values:\n\n- **query** (keyword): defaults to `\"rollback\"`\n- **speaker**: defaults to `\"Avery\"`\n- **date**: defaults to `\"2026-04-10\"`\n\nLet me now execute the search using these defaults to find the matching meeting note excerpts.",
+      "usage": {
+        "inputTokens": 1168,
+        "outputTokens": 178,
+        "cachedTokens": 0,
+        "totalTokens": 1346,
+        "estimatedCostUsd": 0.00559
+      }
+    },
+    {
+      "stage": "execution",
+      "text": "Here are the results in strict JSON:\n\n```json\n{\n  \"query\": \"rollback\",\n  \"speaker\": \"Avery\",\n  \"date\": \"2026-04-10\",\n  \"matches\": [\n    {\n      \"fileId\": \"drive-file-001\",\n      \"fileName\": \"Team Sync - 2026-04-10\",\n      \"excerpt\": \"Avery: If metrics degrade after deploy, we will rollback within 30 minutes.\"\n    },\n    {\n      \"fileId\": \"drive-file-002\",\n      \"fileName\": \"Incident Review Notes\",\n      \"excerpt\": \"Avery: Document the rollback trigger and notify support before executing.\"\n    }\n  ]\n}\n```\n\n### Summary\n\n| # | Source File | File ID | Excerpt |\n|---|-------------|---------|---------|\n| 1 | **Team Sync - 2026-04-10** | `drive-file-001` | *\"If metrics degrade after deploy, we will **rollback** within 30 minutes.\"* |\n| 2 | **Incident Review Notes** | `drive-file-002` | *\"Document the **rollback** trigger and notify support before executing.\"* |\n\n**2 exact matches** were found across two meeting-note files where **Avery** spoke the keyword **\"rollback\"** on **2026-04-10**.",
+      "usage": {
+        "inputTokens": 1553,
+        "outputTokens": 329,
+        "cachedTokens": 0,
+        "totalTokens": 1882,
+        "estimatedCostUsd": 0.008817
+      }
+    }
+  ],
+  "toolCalls": [
+    {
+      "stage": "discovery",
+      "name": "retrieve_drive_keyword",
+      "arguments": {
+        "query": "rollback",
+        "speaker": "Avery",
+        "date": "2026-04-10"
+      }
+    }
+  ],
+  "events": [
+    {
+      "ts": "2026-04-16T15:30:20.080Z",
+      "level": "info",
+      "event": "run_start",
+      "message": "Scenario 4 regular benchmark started",
+      "data": {
+        "benchmarkId": "4_drive_keyword_retrieval",
+        "model": "anthropic/claude-opus-4.6",
+        "modelCallTimeoutMs": 120000
+      }
+    },
+    {
+      "ts": "2026-04-16T15:30:28.215Z",
+      "level": "info",
+      "event": "model_response",
+      "message": "Model response captured for discovery",
+      "data": {
+        "responsePreview": "The tool has been discovered. I can see it accepts three parameters with default values: - **query** (keyword): defaults to `\"rollback\"` - **speaker**: defaults to `\"Avery\"` - **date**: defaults to `\"2026-04-10\"` Let me now execute the sear...",
+        "responseChars": 309,
+        "inputTokens": 1168,
+        "outputTokens": 178,
+        "cachedTokens": 0,
+        "totalTokens": 1346,
+        "estimatedCostUsd": 0.00559
+      }
+    },
+    {
+      "ts": "2026-04-16T15:30:28.219Z",
+      "level": "info",
+      "event": "tool_call",
+      "message": "Tool called in discovery: retrieve_drive_keyword",
+      "data": {
+        "stage": "discovery",
+        "toolName": "retrieve_drive_keyword",
+        "callDetails": "query=rollback; speaker=Avery; date=2026-04-10"
+      }
+    },
+    {
+      "ts": "2026-04-16T15:30:42.118Z",
+      "level": "info",
+      "event": "model_response",
+      "message": "Model response captured for execution",
+      "data": {
+        "responsePreview": "Here are the results in strict JSON: ```json { \"query\": \"rollback\", \"speaker\": \"Avery\", \"date\": \"2026-04-10\", \"matches\": [ { \"fileId\": \"drive-file-001\", \"fileName\": \"Team Sync - 2026-04-10\", \"excerpt\": \"Avery: If metrics degrade after deplo...",
+        "responseChars": 996,
+        "inputTokens": 1553,
+        "outputTokens": 329,
+        "cachedTokens": 0,
+        "totalTokens": 1882,
+        "estimatedCostUsd": 0.008817
+      }
+    },
+    {
+      "ts": "2026-04-16T15:30:42.127Z",
+      "level": "info",
+      "event": "model_result",
+      "message": "Model result (parsed)",
+      "data": {
+        "query": "rollback",
+        "speaker": "Avery",
+        "date": "2026-04-10",
+        "matches": "2 item(s)"
+      }
+    },
+    {
+      "ts": "2026-04-16T15:30:42.128Z",
+      "level": "info",
+      "event": "evaluation_human",
+      "message": "Evaluation summary",
+      "data": {
+        "overallPass": false,
+        "toolPass": false,
+        "outputValidation": "schema-parse",
+        "outputPass": true,
+        "schemaPass": true
+      }
+    },
+    {
+      "ts": "2026-04-16T15:30:42.128Z",
+      "level": "info",
+      "event": "run_finished",
+      "message": "Benchmark run finished",
+      "data": {
+        "status": "failed",
+        "didFailTest": true,
+        "inputTokens": 2721,
+        "outputTokens": 507,
+        "cachedTokens": 0,
+        "totalTokens": 3228,
+        "estimatedCostUsd": 0.014408
+      }
+    }
+  ],
+  "evaluation": {
+    "benchmarkId": "4_drive_keyword_retrieval",
+    "overallPass": false,
+    "toolEval": {
+      "pass": false,
+      "details": [
+        {
+          "groupId": "progressive-discovery",
+          "required": true,
+          "expectedAnyOf": [
+            "discover_tools"
+          ],
+          "matched": [],
+          "pass": false,
+          "note": "Agent should discover hidden tools first."
+        },
+        {
+          "groupId": "keyword-retrieval",
+          "required": true,
+          "expectedAnyOf": [
+            "retrieve_drive_keyword"
+          ],
+          "matched": [
+            "retrieve_drive_keyword"
+          ],
+          "pass": true,
+          "note": "Agent should retrieve keyword matches in regular mode."
+        }
+      ],
+      "calledToolNames": [
+        "retrieve_drive_keyword"
+      ]
+    },
+    "fuzzyEval": {
+      "pass": true,
+      "score": 1,
+      "details": [
+        {
+          "checkId": "result-fields",
+          "requiredMinMatches": 1,
+          "matchedCount": 4,
+          "matchedTerms": [
+            "query",
+            "speaker",
+            "date",
+            "matches"
+          ],
+          "pass": true,
+          "weight": 1
+        }
+      ]
+    },
+    "numericMentions": 21,
+    "numericGatePass": true,
+    "schemaPass": true,
+    "parsed": {
+      "query": "rollback",
+      "speaker": "Avery",
+      "date": "2026-04-10",
+      "matches": [
+        {
+          "fileId": "drive-file-001",
+          "fileName": "Team Sync - 2026-04-10",
+          "excerpt": "Avery: If metrics degrade after deploy, we will rollback within 30 minutes."
+        },
+        {
+          "fileId": "drive-file-002",
+          "fileName": "Incident Review Notes",
+          "excerpt": "Avery: Document the rollback trigger and notify support before executing."
+        }
+      ]
+    }
+  },
+  "runFinishedAt": "2026-04-16T15:30:42.128Z"
+}

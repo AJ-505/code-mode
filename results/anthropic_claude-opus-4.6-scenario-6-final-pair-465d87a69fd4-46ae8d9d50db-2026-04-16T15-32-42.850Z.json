@@ -1,0 +1,23 @@
+{
+  "benchmarkId": "6_github_repo_change_pr",
+  "scenarioNumber": 6,
+  "model": "anthropic/claude-opus-4.6",
+  "pairId": "465d87a69fd4",
+  "runId": "46ae8d9d50db",
+  "createdAt": "2026-04-16T15:32:42.850Z",
+  "winner": "code-mode",
+  "reasons": [
+    "regular: didFail=true, tokens=3108, costUsd=0.013895",
+    "code-mode: didFail=false, tokens=1538, costUsd=0.004508"
+  ],
+  "regular": {
+    "didFailTest": true,
+    "totalTokens": 3108,
+    "estimatedCostUsd": 0.013895
+  },
+  "codeMode": {
+    "didFailTest": false,
+    "totalTokens": 1538,
+    "estimatedCostUsd": 0.004508
+  }
+}

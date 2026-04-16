@@ -1,0 +1,23 @@
+{
+  "benchmarkId": "3_slack_summary",
+  "scenarioNumber": 3,
+  "model": "anthropic/claude-opus-4.6",
+  "pairId": "ba34e868d18b",
+  "runId": "7b065fe3325b",
+  "createdAt": "2026-04-16T15:30:19.445Z",
+  "winner": "code-mode",
+  "reasons": [
+    "regular: didFail=true, tokens=3962, costUsd=0.017905",
+    "code-mode: didFail=false, tokens=1595, costUsd=0.00805"
+  ],
+  "regular": {
+    "didFailTest": true,
+    "totalTokens": 3962,
+    "estimatedCostUsd": 0.017905
+  },
+  "codeMode": {
+    "didFailTest": false,
+    "totalTokens": 1595,
+    "estimatedCostUsd": 0.00805
+  }
+}

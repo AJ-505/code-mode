@@ -1,0 +1,23 @@
+{
+  "benchmarkId": "4_drive_keyword_retrieval",
+  "scenarioNumber": 4,
+  "model": "anthropic/claude-opus-4.6",
+  "pairId": "f04836145731",
+  "runId": "dafa1023e714",
+  "createdAt": "2026-04-16T15:31:06.982Z",
+  "winner": "code-mode",
+  "reasons": [
+    "regular: didFail=true, tokens=3228, costUsd=0.014408",
+    "code-mode: didFail=false, tokens=2962, costUsd=0.009468"
+  ],
+  "regular": {
+    "didFailTest": true,
+    "totalTokens": 3228,
+    "estimatedCostUsd": 0.014408
+  },
+  "codeMode": {
+    "didFailTest": false,
+    "totalTokens": 2962,
+    "estimatedCostUsd": 0.009468
+  }
+}

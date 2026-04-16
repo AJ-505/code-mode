@@ -1,0 +1,23 @@
+{
+  "benchmarkId": "2_playwright_ui_audit",
+  "scenarioNumber": 2,
+  "model": "anthropic/claude-opus-4.6",
+  "pairId": "eebe0d617fe4",
+  "runId": "99e252722f96",
+  "createdAt": "2026-04-16T15:29:08.208Z",
+  "winner": "code-mode",
+  "reasons": [
+    "regular: didFail=true, tokens=3132, costUsd=0.017755",
+    "code-mode: didFail=false, tokens=3809, costUsd=0.020772"
+  ],
+  "regular": {
+    "didFailTest": true,
+    "totalTokens": 3132,
+    "estimatedCostUsd": 0.017755
+  },
+  "codeMode": {
+    "didFailTest": false,
+    "totalTokens": 3809,
+    "estimatedCostUsd": 0.020772
+  }
+}

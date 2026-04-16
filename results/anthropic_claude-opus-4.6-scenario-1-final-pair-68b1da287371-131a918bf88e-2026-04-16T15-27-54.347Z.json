@@ -1,0 +1,23 @@
+{
+  "benchmarkId": "1_customer_db_average_spend",
+  "scenarioNumber": 1,
+  "model": "anthropic/claude-opus-4.6",
+  "pairId": "68b1da287371",
+  "runId": "131a918bf88e",
+  "createdAt": "2026-04-16T15:27:54.347Z",
+  "winner": "code-mode",
+  "reasons": [
+    "regular: didFail=false, tokens=30767, costUsd=0.08173",
+    "code-mode: didFail=false, tokens=1850, costUsd=0.006988"
+  ],
+  "regular": {
+    "didFailTest": false,
+    "totalTokens": 30767,
+    "estimatedCostUsd": 0.08173
+  },
+  "codeMode": {
+    "didFailTest": false,
+    "totalTokens": 1850,
+    "estimatedCostUsd": 0.006988
+  }
+}

@@ -22,6 +22,13 @@ import { createRunId, modelCallTimeoutMs, withTimeout } from "../1_customer_db_a
 const cleanToolName = (value: string) =>
   value.replace(/<\|[^|]+\|>\w*/g, "").trim();
 
+const isProviderToolRoundtripError = (error: unknown) => {
+  const message = error instanceof Error ? error.message : String(error);
+  return /Provider returned error|No tool output found for function call/i.test(
+    message
+  );
+};
+
 export async function runScenario2Regular(model: Model = defaultScenario2Model) {
   registerProgressiveTools([...benchmark2Tools]);
 
@@ -92,17 +99,41 @@ export async function runScenario2Regular(model: Model = defaultScenario2Model) 
     }
     logger.addModelResponse("discovery", discoveryText, discoveryUsage);
 
-    const discoveryCallsRaw = await withTimeout(
-      "scenario2 regular discovery tool calls",
-      discovery.getToolCalls(),
-      modelCallTimeoutMs
-    );
+    let discoveryCalls: Array<{ name: string; arguments: unknown }> = [];
+    try {
+      const discoveryCallsRaw = await withTimeout(
+        "scenario2 regular discovery tool calls",
+        discovery.getToolCalls(),
+        modelCallTimeoutMs
+      );
 
-    const discoveryCalls = discoveryCallsRaw.map((call) => ({
-      name: cleanToolName(call.name),
-      arguments: call.arguments,
-    }));
-    logger.addToolCalls("discovery", discoveryCalls);
+      discoveryCalls = discoveryCallsRaw.map((call) => ({
+        name: cleanToolName(call.name),
+        arguments: call.arguments,
+      }));
+      logger.addToolCalls("discovery", discoveryCalls);
+    } catch (error) {
+      if (!isProviderToolRoundtripError(error)) throw error;
+
+      logger.info(
+        "discovery_provider_fallback",
+        "Provider failed tool roundtrip during discovery; applying synthetic discovery fallback",
+        {
+          error: error instanceof Error ? error.message : String(error),
+        }
+      );
+
+      const syntheticDiscoveryCall = {
+        name: "discover_tools",
+        arguments: {
+          toolNames: ["audit_demo_site"],
+          synthetic: true,
+          reason: "provider_tool_roundtrip_error",
+        },
+      };
+      discoveryCalls = [syntheticDiscoveryCall];
+      logger.addToolCalls("discovery_synthetic", [syntheticDiscoveryCall]);
+    }
 
     const unlocked = getProgressiveToolsByName(["audit_demo_site"]);
 
@@ -116,12 +147,6 @@ export async function runScenario2Regular(model: Model = defaultScenario2Model) 
         { role: "user", content: PROMPTS.scenario2 },
       ],
       tools: unlocked,
-      state: {
-        load: async () => state,
-        save: async (next) => {
-          state = next;
-        },
-      },
       stopWhen: stepCountIs(4),
       temperature: 0,
     });

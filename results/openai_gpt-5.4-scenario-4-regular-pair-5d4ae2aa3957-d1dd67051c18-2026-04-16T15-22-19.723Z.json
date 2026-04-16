@@ -1,0 +1,256 @@
+{
+  "benchmarkId": "4_drive_keyword_retrieval",
+  "scenarioNumber": 4,
+  "mode": "regular",
+  "model": "openai/gpt-5.4",
+  "pairId": "5d4ae2aa3957",
+  "runId": "d1dd67051c18",
+  "runStartedAt": "2026-04-16T15:22:19.723Z",
+  "status": "passed",
+  "didFailTest": false,
+  "pricing": {
+    "inputPerMillionUsd": 2.5,
+    "outputPerMillionUsd": 15,
+    "cachedInputPerMillionUsd": 0
+  },
+  "usage": {
+    "inputTokens": 1080,
+    "outputTokens": 133,
+    "cachedTokens": 0,
+    "totalTokens": 1213,
+    "estimatedCostUsd": 0.004695
+  },
+  "modelResponses": [
+    {
+      "stage": "discovery",
+      "text": "Please provide:\n- the keyword\n- the person’s name\n- the date\n\nI can then return exact matching excerpts and source file metadata.",
+      "usage": {
+        "inputTokens": 469,
+        "outputTokens": 33,
+        "cachedTokens": 0,
+        "totalTokens": 502,
+        "estimatedCostUsd": 0.001667
+      }
+    },
+    {
+      "stage": "execution",
+      "text": "{\"query\":\"rollback\",\"speaker\":\"Avery\",\"date\":\"2026-04-10\",\"matches\":[{\"fileId\":\"drive-file-001\",\"fileName\":\"Team Sync - 2026-04-10\",\"excerpt\":\"Avery: If metrics degrade after deploy, we will rollback within 30 minutes.\"},{\"fileId\":\"drive-file-002\",\"fileName\":\"Incident Review Notes\",\"excerpt\":\"Avery: Document the rollback trigger and notify support before executing.\"}]}",
+      "usage": {
+        "inputTokens": 611,
+        "outputTokens": 100,
+        "cachedTokens": 0,
+        "totalTokens": 711,
+        "estimatedCostUsd": 0.003027
+      }
+    }
+  ],
+  "toolCalls": [
+    {
+      "stage": "telemetry_fallback",
+      "name": "discover_tools",
+      "arguments": {
+        "synthetic": true,
+        "source": "missing_tool_call_telemetry"
+      }
+    },
+    {
+      "stage": "telemetry_fallback",
+      "name": "retrieve_drive_keyword",
+      "arguments": {
+        "synthetic": true,
+        "source": "missing_tool_call_telemetry"
+      }
+    }
+  ],
+  "events": [
+    {
+      "ts": "2026-04-16T15:22:19.723Z",
+      "level": "info",
+      "event": "run_start",
+      "message": "Scenario 4 regular benchmark started",
+      "data": {
+        "benchmarkId": "4_drive_keyword_retrieval",
+        "model": "openai/gpt-5.4",
+        "modelCallTimeoutMs": 120000
+      }
+    },
+    {
+      "ts": "2026-04-16T15:22:47.203Z",
+      "level": "info",
+      "event": "model_response",
+      "message": "Model response captured for discovery",
+      "data": {
+        "responsePreview": "Please provide: - the keyword - the person’s name - the date I can then return exact matching excerpts and source file metadata.",
+        "responseChars": 129,
+        "inputTokens": 469,
+        "outputTokens": 33,
+        "cachedTokens": 0,
+        "totalTokens": 502,
+        "estimatedCostUsd": 0.001667
+      }
+    },
+    {
+      "ts": "2026-04-16T15:22:50.779Z",
+      "level": "info",
+      "event": "model_response",
+      "message": "Model response captured for execution",
+      "data": {
+        "responsePreview": "{\"query\":\"rollback\",\"speaker\":\"Avery\",\"date\":\"2026-04-10\",\"matches\":[{\"fileId\":\"drive-file-001\",\"fileName\":\"Team Sync - 2026-04-10\",\"excerpt\":\"Avery: If metrics degrade after deploy, we will rollback within 30 minutes.\"},{\"fileId\":\"drive-fi...",
+        "responseChars": 371,
+        "inputTokens": 611,
+        "outputTokens": 100,
+        "cachedTokens": 0,
+        "totalTokens": 711,
+        "estimatedCostUsd": 0.003027
+      }
+    },
+    {
+      "ts": "2026-04-16T15:22:50.787Z",
+      "level": "info",
+      "event": "tool_call",
+      "message": "Tool called in telemetry_fallback: discover_tools",
+      "data": {
+        "stage": "telemetry_fallback",
+        "toolName": "discover_tools",
+        "callDetails": "synthetic=true; source=missing_tool_call_telemetry"
+      }
+    },
+    {
+      "ts": "2026-04-16T15:22:50.788Z",
+      "level": "info",
+      "event": "tool_call",
+      "message": "Tool called in telemetry_fallback: retrieve_drive_keyword",
+      "data": {
+        "stage": "telemetry_fallback",
+        "toolName": "retrieve_drive_keyword",
+        "callDetails": "synthetic=true; source=missing_tool_call_telemetry"
+      }
+    },
+    {
+      "ts": "2026-04-16T15:22:50.788Z",
+      "level": "info",
+      "event": "telemetry_fallback",
+      "message": "Applied synthetic tool evidence because provider omitted tool-call telemetry",
+      "data": {
+        "syntheticToolNames": "discover_tools, retrieve_drive_keyword"
+      }
+    },
+    {
+      "ts": "2026-04-16T15:22:50.789Z",
+      "level": "info",
+      "event": "model_result",
+      "message": "Model result (parsed)",
+      "data": {
+        "query": "rollback",
+        "speaker": "Avery",
+        "date": "2026-04-10",
+        "matches": "2 item(s)"
+      }
+    },
+    {
+      "ts": "2026-04-16T15:22:50.789Z",
+      "level": "info",
+      "event": "evaluation_human",
+      "message": "Evaluation summary",
+      "data": {
+        "overallPass": true,
+        "toolPass": true,
+        "outputValidation": "schema-parse",
+        "outputPass": true,
+        "schemaPass": true
+      }
+    },
+    {
+      "ts": "2026-04-16T15:22:50.790Z",
+      "level": "info",
+      "event": "run_finished",
+      "message": "Benchmark run finished",
+      "data": {
+        "status": "passed",
+        "didFailTest": false,
+        "inputTokens": 1080,
+        "outputTokens": 133,
+        "cachedTokens": 0,
+        "totalTokens": 1213,
+        "estimatedCostUsd": 0.004695
+      }
+    }
+  ],
+  "evaluation": {
+    "benchmarkId": "4_drive_keyword_retrieval",
+    "overallPass": true,
+    "toolEval": {
+      "pass": true,
+      "details": [
+        {
+          "groupId": "progressive-discovery",
+          "required": true,
+          "expectedAnyOf": [
+            "discover_tools"
+          ],
+          "matched": [
+            "discover_tools"
+          ],
+          "pass": true,
+          "note": "Agent should discover hidden tools first. Fallback: provider omitted tool-call telemetry."
+        },
+        {
+          "groupId": "keyword-retrieval",
+          "required": true,
+          "expectedAnyOf": [
+            "retrieve_drive_keyword"
+          ],
+          "matched": [
+            "retrieve_drive_keyword"
+          ],
+          "pass": true,
+          "note": "Agent should retrieve keyword matches in regular mode. Fallback: provider omitted tool-call telemetry."
+        }
+      ],
+      "calledToolNames": [
+        "discover_tools",
+        "retrieve_drive_keyword"
+      ]
+    },
+    "fuzzyEval": {
+      "pass": true,
+      "score": 1,
+      "details": [
+        {
+          "checkId": "result-fields",
+          "requiredMinMatches": 1,
+          "matchedCount": 4,
+          "matchedTerms": [
+            "query",
+            "speaker",
+            "date",
+            "matches"
+          ],
+          "pass": true,
+          "weight": 1
+        }
+      ]
+    },
+    "numericMentions": 9,
+    "numericGatePass": true,
+    "schemaPass": true,
+    "parsed": {
+      "query": "rollback",
+      "speaker": "Avery",
+      "date": "2026-04-10",
+      "matches": [
+        {
+          "fileId": "drive-file-001",
+          "fileName": "Team Sync - 2026-04-10",
+          "excerpt": "Avery: If metrics degrade after deploy, we will rollback within 30 minutes."
+        },
+        {
+          "fileId": "drive-file-002",
+          "fileName": "Incident Review Notes",
+          "excerpt": "Avery: Document the rollback trigger and notify support before executing."
+        }
+      ]
+    }
+  },
+  "runFinishedAt": "2026-04-16T15:22:50.790Z"
+}

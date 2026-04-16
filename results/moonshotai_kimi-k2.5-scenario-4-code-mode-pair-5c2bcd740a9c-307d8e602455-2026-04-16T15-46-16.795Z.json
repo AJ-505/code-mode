@@ -1,0 +1,74 @@
+{
+  "benchmarkId": "4_drive_keyword_retrieval",
+  "scenarioNumber": 4,
+  "mode": "code-mode",
+  "model": "moonshotai/kimi-k2.5",
+  "pairId": "5c2bcd740a9c",
+  "runId": "307d8e602455",
+  "runStartedAt": "2026-04-16T15:46:16.795Z",
+  "status": "failed",
+  "didFailTest": true,
+  "pricing": {
+    "inputPerMillionUsd": 2.5,
+    "outputPerMillionUsd": 15,
+    "cachedInputPerMillionUsd": 0
+  },
+  "usage": {
+    "inputTokens": 0,
+    "outputTokens": 0,
+    "cachedTokens": 0,
+    "totalTokens": 0,
+    "estimatedCostUsd": 0
+  },
+  "modelResponses": [],
+  "toolCalls": [],
+  "events": [
+    {
+      "ts": "2026-04-16T15:46:16.795Z",
+      "level": "info",
+      "event": "run_start",
+      "message": "Scenario 4 code-mode benchmark started",
+      "data": {
+        "benchmarkId": "4_drive_keyword_retrieval",
+        "model": "moonshotai/kimi-k2.5",
+        "modelCallTimeoutMs": 120000
+      }
+    },
+    {
+      "ts": "2026-04-16T15:46:16.796Z",
+      "level": "info",
+      "event": "prompts",
+      "message": "Prompts for code_mode",
+      "data": {
+        "systemPrompt": "You are a specialised benchmark agent.\nUse progressive discovery when tools are hidden.\nIf the required tool is not directly available, call discover_tools with the exact tool names you need, then continue to solve the task.\n\nYou are now in code-mode.\nWrite TypeScript code that uses ONLY the provided tool execute_scenario4_code.\nWhen calling the tool, pass a full TS program string in input key \"typescript\".\nDo not explain your reasoning.\nDo not output long analysis.\nYour final assistant message must contain only a single short sentence confirming completion.\n\nIn the generated code, use only the provided global \"api\" methods.\nReturn a strict JSON object with keys:\n{ query, speaker, date, matches }\n",
+        "userPrompt": "\nFind a specific keyword spoken by a specific person in meeting notes from a given day in Google Drive.\nReturn exact matching excerpts and source file metadata.\n"
+      }
+    },
+    {
+      "ts": "2026-04-16T15:48:16.808Z",
+      "level": "error",
+      "event": "run_failed",
+      "message": "Scenario 4 code-mode benchmark failed",
+      "data": {
+        "error": "Timeout while waiting for code_mode response after 120000ms"
+      }
+    },
+    {
+      "ts": "2026-04-16T15:48:16.809Z",
+      "level": "info",
+      "event": "run_finished",
+      "message": "Benchmark run finished",
+      "data": {
+        "status": "failed",
+        "didFailTest": true,
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "cachedTokens": 0,
+        "totalTokens": 0,
+        "estimatedCostUsd": 0
+      }
+    }
+  ],
+  "runFinishedAt": "2026-04-16T15:48:16.809Z",
+  "error": "Timeout while waiting for code_mode response after 120000ms"
+}

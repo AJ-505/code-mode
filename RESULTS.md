@@ -29,11 +29,11 @@ Failures are split into **non-model** (provider/API or infra/runtime) vs **bench
 
 ## Per-Model Comparison
 
-| Model | Regular (In/Out, Recomputed Price, R/W, NM fails) | Code Mode (In/Out, Recomputed Price, R/W, NM fails) | Winner |
+| Model | Regular: Tokens (Input/Output), Cost, Passed, Failed, Non-model failures | Code mode: Tokens (Input/Output), Cost, Passed, Failed, Non-model failures | Winner |
 |---|---|---|---|
-| `anthropic/claude-opus-4.6` | 43,851 / 3,015, $0.154852, 1 / 5, NM=0 | 13,101 / 1,914, $0.061462, 6 / 0, NM=0 | **Code Mode** |
-| `anthropic/claude-sonnet-4.6` | 46,816 / 3,458, $0.168910, 2 / 4, NM=0 | 29,227 / 4,610, $0.142217, 5 / 1, NM=0 | **Code Mode** |
-| `google/gemini-3.1-pro-preview` | 43,237 / 4,302, $0.172623, 5 / 1, NM=0 | 5,703 / 10,468, $0.171277, 2 / 4, NM=0 | **Regular** |
-| `moonshotai/kimi-k2.5` | 7,506 / 2,055, $0.006407, 2 / 4, NM=1 | 19,891 / 1,653, $0.010455, 2 / 4, NM=2 | **Tie** |
-| `openai/gpt-5.4` | 8,302 / 1,147, $0.037960, 4 / 2, NM=0 | 6,784 / 37, $0.017515, 6 / 0, NM=0 | **Code Mode** |
-| `z-ai/glm-5.1` | 43,642 / 3,263, $0.022314, 3 / 3, NM=0 | 10,908 / 896, $0.005716, 6 / 0, NM=0 | **Code Mode** |
+| `anthropic/claude-opus-4.6` | 43,851 / 3,015, $0.154852, Passed 1, Failed 5, Non-model failures 0 | 13,101 / 1,914, $0.061462, Passed 6, Failed 0, Non-model failures 0 | **Code Mode** |
+| `anthropic/claude-sonnet-4.6` | 46,816 / 3,458, $0.168910, Passed 2, Failed 4, Non-model failures 0 | 29,227 / 4,610, $0.142217, Passed 5, Failed 1, Non-model failures 0 | **Code Mode** |
+| `google/gemini-3.1-pro-preview` | 43,237 / 4,302, $0.172623, Passed 5, Failed 1, Non-model failures 0 | 5,703 / 10,468, $0.171277, Passed 2, Failed 4, Non-model failures 0 | **Regular** |
+| `moonshotai/kimi-k2.5` | 7,506 / 2,055, $0.006407, Passed 2, Failed 4, Non-model failures 1 | 19,891 / 1,653, $0.010455, Passed 2, Failed 4, Non-model failures 2 | **Tie** |
+| `openai/gpt-5.4` | 8,302 / 1,147, $0.037960, Passed 4, Failed 2, Non-model failures 0 | 6,784 / 37, $0.017515, Passed 6, Failed 0, Non-model failures 0 | **Code Mode** |
+| `z-ai/glm-5.1` | 43,642 / 3,263, $0.022314, Passed 3, Failed 3, Non-model failures 0 | 10,908 / 896, $0.005716, Passed 6, Failed 0, Non-model failures 0 | **Code Mode** |

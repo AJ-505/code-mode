@@ -1,64 +1,79 @@
 # Benchmark Results: Regular vs Code Mode
 
-All metrics below use the **best-case representative run per (model, scenario, paradigm)** from `results/`.
+All metrics in the initial table use a **single representative run per (model, scenario, configuration)** from `results/`.
 When multiple runs exist, representative selection prefers: **pass > benchmark/model failure > non-model failure**, then lower cost, then lower tokens.
 Official FX conversion uses the official CBN NFEM weighted average rate as at April-20-2026.
 
 Coverage denominator is always **48 model-scenario cells** (8 models x 6 scenarios) per paradigm.
 Recorded Runs can be higher than Coverage because retries and repeated rounds are counted.
 
-| Paradigm | Recorded Runs | Covered Model-Scenario Cells (max 48) | Best Passes | Best Pass Rate | Avg Input Tokens / Best-Case Run | Avg Output Tokens / Best-Case Run | Avg Total Tokens / Best-Case Run | Avg Cost / Best-Case Run (NGN) | Avg API Calls / Best-Case Run | Attempts / Covered Cell | Non-model Fail Best Cases | Benchmark/Model Fail Best Cases | Avg Recovery Cost (NGN) |
+| Configuration | Recorded Runs | Covered Model-Scenario Cells (max 48) | Representative Passes | Representative Pass Rate | Avg Input Tokens / Representative Run | Avg Output Tokens / Representative Run | Avg Total Tokens / Representative Run | Avg Cost / Representative Run (NGN) | Avg Network Round-Trips / Representative Run | Avg API Calls / Representative Run | Attempts / Covered Cell | Representative Non-model Failures | Representative Benchmark/Model Failures | Avg Recovery Cost (NGN) |
 |---|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| Regular (with progressive discovery) | 94 | 48/48 [1,2,3,4,5,6] | 24 | 50.0% | 4,680 | 386 | 5,066 | ₦16.83 | 1.96 | 1.96 | 2 | 22 | ₦6.03 |
-| Regular (without progressive discovery) | 49 | 48/48 [1,2,3,4,5,6] | 33 | 68.8% | 1,116 | 378 | 1,493 | ₦9.04 | 0.94 | 1.02 | 0 | 15 | n/a |
-| Code Mode (progressive API discovery) | 120 | 48/48 [1,2,3,4,5,6] | 29 | 60.4% | 1,290 | 207 | 1,497 | ₦4.98 | 0.96 | 2.50 | 1 | 18 | ₦16.79 |
-| Code Mode (full API context) | 92 | 48/48 [1,2,3,4,5,6] | 32 | 66.7% | 2,216 | 382 | 2,597 | ₦10.35 | 1.48 | 1.92 | 3 | 13 | n/a |
+| Regular (with progressive discovery) | 94 | 48/48 [1,2,3,4,5,6] | 24 | 50.0% | 4,680 | 386 | 5,066 | ₦16.83 | 1.96 | 1.96 | 1.96 | 2 | 22 | ₦6.03 |
+| Regular (without progressive discovery) | 49 | 48/48 [1,2,3,4,5,6] | 33 | 68.8% | 1,116 | 378 | 1,493 | ₦9.04 | 0.94 | 0.94 | 1.02 | 0 | 15 | n/a |
+| **Regular (paradigm average across both configs)** | **71.5** | **48/48 [1,2,3,4,5,6]** | **28.5** | **59.4%** | **2,898** | **382** | **3,280** | **₦12.94** | **1.45** | **1.45** | **1.49** | **1.0** | **18.5** | **₦6.03†** |
+| Code Mode (progressive API discovery) | 120 | 48/48 [1,2,3,4,5,6] | 29 | 60.4% | 1,290 | 207 | 1,497 | ₦4.98 | 0.96 | 0.96 | 2.50 | 1 | 18 | ₦16.79 |
+| Code Mode (full API context) | 92 | 48/48 [1,2,3,4,5,6] | 32 | 66.7% | 2,216 | 382 | 2,597 | ₦10.35 | 1.48 | 1.48 | 1.92 | 3 | 13 | n/a |
+| **Code Mode (paradigm average across both configs)** | **106.0** | **48/48 [1,2,3,4,5,6]** | **30.5** | **63.6%** | **1,753** | **295** | **2,047** | **₦7.67** | **1.22** | **1.22** | **2.21** | **2.0** | **15.5** | **₦16.79†** |
 
-## Best Case (Overall)
+`Representative` means one selected run per cell, not a global optimistic upper bound.
 
+† Paradigm-average recovery cost is computed over configurations that had recoveries; configs with no recoveries are excluded.
+
+## Best-Case Slice (Overall)
+
+`Best-case` here means: for each model + scenario + configuration, select the most favorable valid run.
 Excludes network/provider failures and known false positives.
 
 | Paradigm | Runs Used | Pass Rate | Input Tokens | Output Tokens | Total Tokens | Cost (NGN) | Network Round-Trips | Network Latency / Round-Trip | Failure-Related Retries |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 | Regular (with progressive discovery) | 46 | 52.2% | 4,864 | 402 | 5,266 | ₦17.53 | 2.00 | 16,975 ms | 0.00 |
 | Regular (without progressive discovery) | 48 | 68.8% | 1,116 | 378 | 1,493 | ₦9.04 | 0.94 | 21,303 ms | 0.00 |
+| **Regular (paradigm average across both configs)** | **47** | **60.5%** | **2,990** | **390** | **3,380** | **₦13.29** | **1.47** | **19,139 ms** | **0.00** |
 | Code Mode (progressive API discovery) | 47 | 61.7% | 1,307 | 193 | 1,500 | ₦4.68 | 0.96 | 20,075 ms | 0.19 |
 | Code Mode (full API context) | 45 | 71.1% | 2,209 | 380 | 2,589 | ₦10.81 | 1.49 | 30,309 ms | 0.73 |
+| **Code Mode (paradigm average across both configs)** | **46** | **66.4%** | **1,758** | **287** | **2,045** | **₦7.75** | **1.23** | **25,192 ms** | **0.46** |
 
-## Worst Case (Overall)
+## Worst-Case Slice (Overall)
 
+`Worst-case` here means: for each model + scenario + configuration, select the least favorable valid run.
 Excludes network/provider failures and known false positives.
 
 | Paradigm | Runs Used | Pass Rate | Input Tokens | Output Tokens | Total Tokens | Cost (NGN) | Network Round-Trips | Network Latency / Round-Trip | Failure-Related Retries |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 | Regular (with progressive discovery) | 46 | 30.4% | 3,305 | 373 | 3,678 | ₦11.55 | 1.87 | 16,335 ms | 0.00 |
 | Regular (without progressive discovery) | 48 | 68.8% | 1,116 | 378 | 1,493 | ₦9.04 | 0.94 | 21,303 ms | 0.00 |
+| **Regular (paradigm average across both configs)** | **47** | **49.6%** | **2,211** | **376** | **2,586** | **₦10.30** | **1.41** | **18,819 ms** | **0.00** |
 | Code Mode (progressive API discovery) | 47 | 29.8% | 2,712 | 338 | 3,049 | ₦9.23 | 1.70 | 25,227 ms | 1.28 |
 | Code Mode (full API context) | 45 | 64.4% | 2,391 | 474 | 2,865 | ₦12.95 | 1.58 | 31,641 ms | 0.89 |
+| **Code Mode (paradigm average across both configs)** | **46** | **47.1%** | **2,552** | **406** | **2,957** | **₦11.09** | **1.64** | **28,434 ms** | **1.09** |
 
-## Average Case (Overall)
+## Average-Case Slice (Overall)
 
+`Average-case` here means: for each model + scenario + configuration, average across valid runs, then aggregate.
 Excludes network/provider failures and known false positives.
 
 | Paradigm | Runs Used | Pass Rate | Input Tokens | Output Tokens | Total Tokens | Cost (NGN) | Network Round-Trips | Network Latency / Round-Trip | Failure-Related Retries |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 | Regular (with progressive discovery) | 72 | 34.7% | 4,012 | 331 | 4,343 | ₦15.25 | 1.68 | 16,481 ms | 0.00 |
 | Regular (without progressive discovery) | 48 | 68.8% | 1,116 | 378 | 1,493 | ₦9.04 | 0.94 | 21,303 ms | 0.00 |
+| **Regular (paradigm average across both configs)** | **60** | **51.8%** | **2,564** | **355** | **2,918** | **₦12.15** | **1.31** | **18,892 ms** | **0.00** |
 | Code Mode (progressive API discovery) | 96 | 30.2% | 1,814 | 234 | 2,048 | ₦6.17 | 1.21 | 23,674 ms | 0.68 |
 | Code Mode (full API context) | 72 | 61.1% | 1,901 | 322 | 2,224 | ₦9.62 | 1.24 | 31,117 ms | 0.60 |
+| **Code Mode (paradigm average across both configs)** | **84** | **45.7%** | **1,858** | **278** | **2,136** | **₦7.90** | **1.23** | **27,396 ms** | **0.64** |
 
 ## Scenario Round-Trip Breakdown
 
 Excludes network/provider failures and known false positives. Lower is better.
 
-| Scenario | Regular (with progressive discovery) | Regular (without progressive discovery) | Code Mode (progressive API discovery) | Code Mode (full API context) | Best (Lowest Round-Trips) |
-|---|---:|---:|---:|---:|---|
-| 1 | 1.00 (n=21) | 0.63 (n=8) | 0.00 (n=25) | 0.55 (n=22) | Code Mode (progressive API discovery) |
-| 2 | 2.00 (n=11) | 1.00 (n=8) | 1.73 (n=11) | 1.80 (n=10) | Regular (without progressive discovery) |
-| 3 | 2.00 (n=12) | 1.00 (n=8) | 1.79 (n=14) | 1.60 (n=10) | Regular (without progressive discovery) |
-| 4 | 2.00 (n=10) | 1.00 (n=8) | 1.58 (n=12) | 1.30 (n=10) | Regular (without progressive discovery) |
-| 5 | 2.00 (n=9) | 1.00 (n=8) | 1.80 (n=10) | 1.40 (n=10) | Regular (without progressive discovery) |
-| 6 | 1.78 (n=9) | 1.00 (n=8) | 1.46 (n=24) | 1.60 (n=10) | Regular (without progressive discovery) |
+| Scenario | Regular (with progressive discovery) | Regular (without progressive discovery) | **Regular (paradigm avg)** | Code Mode (progressive API discovery) | Code Mode (full API context) | **Code Mode (paradigm avg)** | Best (Paradigm Avg) |
+|---|---:|---:|---:|---:|---:|---:|---|
+| 1 | 1.00 (n=21) | 0.63 (n=8) | **0.82** | 0.00 (n=25) | 0.55 (n=22) | **0.28** | **Code Mode** |
+| 2 | 2.00 (n=11) | 1.00 (n=8) | **1.50** | 1.73 (n=11) | 1.80 (n=10) | **1.77** | **Regular** |
+| 3 | 2.00 (n=12) | 1.00 (n=8) | **1.50** | 1.79 (n=14) | 1.60 (n=10) | **1.70** | **Regular** |
+| 4 | 2.00 (n=10) | 1.00 (n=8) | **1.50** | 1.58 (n=12) | 1.30 (n=10) | **1.44** | **Code Mode** |
+| 5 | 2.00 (n=9) | 1.00 (n=8) | **1.50** | 1.80 (n=10) | 1.40 (n=10) | **1.60** | **Regular** |
+| 6 | 1.78 (n=9) | 1.00 (n=8) | **1.39** | 1.46 (n=24) | 1.60 (n=10) | **1.53** | **Regular** |
 
 Overall champion (average-case composite): **Regular (without progressive discovery)**
 
@@ -109,9 +124,9 @@ Lower is better for retries, cost, and time.
 | Network Latency / Round-Trip | End-to-end run duration divided by round-trips, used as proxy latency. Lower is better. |
 | Failure-Related Retries | Count of in-run retry loops triggered after tool/code failure feedback. Lower is better. |
 | Attempts / Covered Cell | Recorded Runs divided by Covered Cells. This explains rows like 92 runs with 48/48 coverage (many retries per covered cell). |
-| Best Passes | Number of covered scenarios where the representative run passed. |
-| Non-model Fail Best Cases | Representative runs that failed due to provider, network, timeout, or other infra/runtime issues. |
-| Benchmark/Model Fail Best Cases | Representative runs that failed due to evaluation mismatch, missing required tool evidence, or incorrect output content. |
+| Representative Run | The single selected run used for a (model, scenario, configuration) cell in the initial table. |
+| Representative Passes | Number of covered scenarios where the representative run passed. |
+| Representative Non-model Failures | Representative runs that failed due to provider, network, timeout, or other infra/runtime issues. |
+| Representative Benchmark/Model Failures | Representative runs that failed due to evaluation mismatch, missing required tool evidence, or incorrect output content. |
 | Avg Recovery Cost | Average spend on failed attempts before a later pass for the same model + scenario + paradigm. |
 | Scenario Round-Trip Breakdown | Per-scenario average network round-trips by paradigm (with sample counts), excluding network/provider failures and known false positives. |
-

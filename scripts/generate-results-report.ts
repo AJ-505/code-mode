@@ -915,6 +915,61 @@ function compareCaseStats(
   };
 }
 
+function buildScenarioRoundTripBreakdown(allRuns: EnrichedRun[]) {
+  return Array.from({ length: TOTAL_SCENARIOS }, (_, index) => index + 1).map(
+    (scenarioNumber) => {
+      const perParadigm = PARADIGM_ORDER.map((paradigm) => {
+        const runs = getModelScenarioRuns(allRuns, paradigm).filter(
+          (run) => run.log.scenarioNumber === scenarioNumber
+        );
+
+        const avgRoundTrips = average(runs.map((run) => run.networkRoundTrips));
+        const avgLatencyMs = average(
+          runs
+            .map((run) => run.networkLatencyMs)
+            .filter((value): value is number =>
+              typeof value === "number" && Number.isFinite(value)
+            )
+        );
+
+        return {
+          paradigm,
+          runs: runs.length,
+          avgRoundTrips,
+          avgLatencyMs,
+        };
+      });
+
+      const best = perParadigm
+        .filter(
+          (entry) =>
+            typeof entry.avgRoundTrips === "number" &&
+            Number.isFinite(entry.avgRoundTrips)
+        )
+        .sort((a, b) => {
+          if (a.avgRoundTrips !== b.avgRoundTrips) {
+            return (a.avgRoundTrips ?? Number.POSITIVE_INFINITY) -
+              (b.avgRoundTrips ?? Number.POSITIVE_INFINITY);
+          }
+
+          return (a.avgLatencyMs ?? Number.POSITIVE_INFINITY) -
+            (b.avgLatencyMs ?? Number.POSITIVE_INFINITY);
+        })[0];
+
+      return {
+        scenarioNumber,
+        perParadigm,
+        winner: best ? PARADIGM_LABEL[best.paradigm] : "n/a",
+      };
+    }
+  );
+}
+
+function formatScenarioRoundTripCell(avgRoundTrips: number | null, runs: number) {
+  if (avgRoundTrips === null || !Number.isFinite(avgRoundTrips)) return "n/a";
+  return `${formatRate(avgRoundTrips)} (n=${runs})`;
+}
+
 function overallChampionLabel(rows: Array<{ label: string; stats: CaseStats }>) {
   const score = (stats: CaseStats) => {
     if (stats.runs === 0) return Number.NEGATIVE_INFINITY;
@@ -1291,6 +1346,32 @@ async function main() {
     officialFxRate.ngnPerUsd,
     "average"
   );
+  const scenarioRoundTripRows = buildScenarioRoundTripBreakdown(allRuns)
+    .map((entry) => {
+      const byParadigm = new Map(
+        entry.perParadigm.map((value) => [value.paradigm, value])
+      );
+
+      const regularProgressive = byParadigm.get("regular-progressive");
+      const regularDirect = byParadigm.get("regular-full-tool-context");
+      const codeProgressive = byParadigm.get("code-mode-progressive");
+      const codeFull = byParadigm.get("code-mode");
+
+      return `| ${entry.scenarioNumber} | ${formatScenarioRoundTripCell(
+        regularProgressive?.avgRoundTrips ?? null,
+        regularProgressive?.runs ?? 0
+      )} | ${formatScenarioRoundTripCell(
+        regularDirect?.avgRoundTrips ?? null,
+        regularDirect?.runs ?? 0
+      )} | ${formatScenarioRoundTripCell(
+        codeProgressive?.avgRoundTrips ?? null,
+        codeProgressive?.runs ?? 0
+      )} | ${formatScenarioRoundTripCell(
+        codeFull?.avgRoundTrips ?? null,
+        codeFull?.runs ?? 0
+      )} | ${entry.winner} |`;
+    })
+    .join("\n");
 
   const recoveryChampionRows = PARADIGM_ORDER.map((paradigm) => {
     const detail = summarizeRecoveryDetailed(allRuns, paradigm, officialFxRate.ngnPerUsd);
@@ -1349,6 +1430,14 @@ Excludes network/provider failures and known false positives.
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 ${averageCaseOverall.tableRows}
 
+## Scenario Round-Trip Breakdown
+
+Excludes network/provider failures and known false positives. Lower is better.
+
+| Scenario | Regular (with progressive discovery) | Regular (without progressive discovery) | Code Mode (progressive API discovery) | Code Mode (full API context) | Best (Lowest Round-Trips) |
+|---|---:|---:|---:|---:|---|
+${scenarioRoundTripRows}
+
 Overall champion (average-case composite): **${overallChampion}**
 
 ## Recovery Champion (Overall)
@@ -1385,6 +1474,7 @@ ${modelRows}
 | Non-model Fail Best Cases | Representative runs that failed due to provider, network, timeout, or other infra/runtime issues. |
 | Benchmark/Model Fail Best Cases | Representative runs that failed due to evaluation mismatch, missing required tool evidence, or incorrect output content. |
 | Avg Recovery Cost | Average spend on failed attempts before a later pass for the same model + scenario + paradigm. |
+| Scenario Round-Trip Breakdown | Per-scenario average network round-trips by paradigm (with sample counts), excluding network/provider failures and known false positives. |
 `;
 
   await Bun.write("RESULTS.md", `${markdown}\n`);

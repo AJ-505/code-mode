@@ -47,6 +47,19 @@ Excludes network/provider failures and known false positives.
 | Code Mode (progressive API discovery) | 96 | 30.2% | 1,814 | 234 | 2,048 | ₦6.17 | 1.21 | 23,674 ms | 0.68 |
 | Code Mode (full API context) | 72 | 61.1% | 1,901 | 322 | 2,224 | ₦9.62 | 1.24 | 31,117 ms | 0.60 |
 
+## Scenario Round-Trip Breakdown
+
+Excludes network/provider failures and known false positives. Lower is better.
+
+| Scenario | Regular (with progressive discovery) | Regular (without progressive discovery) | Code Mode (progressive API discovery) | Code Mode (full API context) | Best (Lowest Round-Trips) |
+|---|---:|---:|---:|---:|---|
+| 1 | 1.00 (n=21) | 0.63 (n=8) | 0.00 (n=25) | 0.55 (n=22) | Code Mode (progressive API discovery) |
+| 2 | 2.00 (n=11) | 1.00 (n=8) | 1.73 (n=11) | 1.80 (n=10) | Regular (without progressive discovery) |
+| 3 | 2.00 (n=12) | 1.00 (n=8) | 1.79 (n=14) | 1.60 (n=10) | Regular (without progressive discovery) |
+| 4 | 2.00 (n=10) | 1.00 (n=8) | 1.58 (n=12) | 1.30 (n=10) | Regular (without progressive discovery) |
+| 5 | 2.00 (n=9) | 1.00 (n=8) | 1.80 (n=10) | 1.40 (n=10) | Regular (without progressive discovery) |
+| 6 | 1.78 (n=9) | 1.00 (n=8) | 1.46 (n=24) | 1.60 (n=10) | Regular (without progressive discovery) |
+
 Overall champion (average-case composite): **Regular (without progressive discovery)**
 
 ## Recovery Champion (Overall)
@@ -100,4 +113,5 @@ Lower is better for retries, cost, and time.
 | Non-model Fail Best Cases | Representative runs that failed due to provider, network, timeout, or other infra/runtime issues. |
 | Benchmark/Model Fail Best Cases | Representative runs that failed due to evaluation mismatch, missing required tool evidence, or incorrect output content. |
 | Avg Recovery Cost | Average spend on failed attempts before a later pass for the same model + scenario + paradigm. |
+| Scenario Round-Trip Breakdown | Per-scenario average network round-trips by paradigm (with sample counts), excluding network/provider failures and known false positives. |
 

@@ -7,6 +7,12 @@ import {
   writeScenarioFinalComparison,
 } from "../../lib/benchmark-logger.js";
 import { type Model, openrouter } from "../../lib/chat-generation.js";
+import { env } from "../../env.js";
+import {
+  buildProgressiveCodeModeSystemPrompt,
+  createSearchApiDefinitionTool,
+  ensureProgressiveSearchToolCall,
+} from "../../lib/code-mode-api-discovery.js";
 import { extractResponseText, isInvalidFinalResponseError } from "../../lib/openrouter-response.js";
 import { PROMPTS } from "../../lib/prompts.js";
 import { evaluateScenario2Run } from "./evaluation.js";
@@ -20,6 +26,28 @@ import { createRunId, modelCallTimeoutMs, withTimeout } from "../1_customer_db_a
 const cleanToolName = (value: string) =>
   value.replace(/<\|[^|]+\|>\w*/g, "").trim();
 
+const scenario2SearchApiDefinition = createSearchApiDefinitionTool({
+  scenarioLabel: "Scenario 2",
+  definitions: [
+    {
+      apiName: "getTargetSite",
+      definition: "getTargetSite(): Promise<{ siteUrl: string }>",
+    },
+    {
+      apiName: "auditSite",
+      definition:
+        "auditSite({ siteUrl? }): Promise<{ siteUrl: string, findings: Array<{ severity, title, description, location, suggestedFix }>, summary: string }>",
+    },
+  ],
+});
+
+const scenario2CodeModeProgressivePrompt = buildProgressiveCodeModeSystemPrompt({
+  scenarioLabel: "Scenario 2",
+  apiNames: ["getTargetSite", "auditSite"],
+  resultShapeInstruction:
+    "Write TypeScript and call execute_scenario2_code with key { typescript }. The code must return exactly { siteUrl, findings, summary }.",
+});
+
 function hasValidResultShape(result: unknown) {
   return (
     typeof result === "object" &&
@@ -31,6 +59,9 @@ function hasValidResultShape(result: unknown) {
 }
 
 export async function runScenario2CodeMode(model: Model = defaultScenario2Model) {
+  const codeModeToolStrategy = env.CODE_MODE_TOOL_STRATEGY;
+  const useProgressiveApiDiscovery = codeModeToolStrategy === "progressive-discovery";
+
   const runId = createRunId();
   const pairId = await getOrCreateBenchmarkPairId({
     scenarioNumber: scenario2Number,
@@ -43,6 +74,7 @@ export async function runScenario2CodeMode(model: Model = defaultScenario2Model)
     benchmarkId: scenario2BenchmarkId,
     scenarioNumber: scenario2Number,
     mode: "code-mode",
+    codeModeToolStrategy,
     model,
     pairId,
     runId,
@@ -54,8 +86,16 @@ export async function runScenario2CodeMode(model: Model = defaultScenario2Model)
     logger.info("run_start", "Scenario 2 code-mode benchmark started", {
       benchmarkId: scenario2BenchmarkId,
       model,
+      codeModeToolStrategy,
       modelCallTimeoutMs,
     });
+
+    const codeModeSystemPrompt = useProgressiveApiDiscovery
+      ? scenario2CodeModeProgressivePrompt
+      : PROMPTS.scenario2CodeModeSystem;
+    const codeModeTools = useProgressiveApiDiscovery
+      ? ([scenario2SearchApiDefinition, executeScenario2Code] as const)
+      : ([executeScenario2Code] as const);
 
     const allToolCalls: Array<{ name: string; arguments: unknown }> = [];
     let finalResultFromTool: Record<string, unknown> | null = null;
@@ -63,8 +103,12 @@ export async function runScenario2CodeMode(model: Model = defaultScenario2Model)
 
     const prompts = [
       PROMPTS.scenario2,
-      "Retry now and fix TypeScript syntax. Call execute_scenario2_code again.",
-      "Retry again. Keep the code minimal and valid. Call execute_scenario2_code.",
+      useProgressiveApiDiscovery
+        ? "Retry now. First call search_api_definition for APIs you will use, then call execute_scenario2_code with corrected TypeScript using api.<name>(...) only."
+        : "Retry now and fix TypeScript syntax. Call execute_scenario2_code again.",
+      useProgressiveApiDiscovery
+        ? "Retry again. Mandatory: search_api_definition first, then execute_scenario2_code. Use only api.<name>(...) and return exact required fields."
+        : "Retry again. Keep the code minimal and valid. Call execute_scenario2_code.",
     ];
 
     for (let attemptIndex = 0; attemptIndex < prompts.length; attemptIndex += 1) {
@@ -72,7 +116,7 @@ export async function runScenario2CodeMode(model: Model = defaultScenario2Model)
       const attemptPrompt = prompts[attemptIndex] ?? PROMPTS.scenario2;
 
       logger.logPrompts(stage, {
-        systemPrompt: PROMPTS.scenario2CodeModeSystem,
+        systemPrompt: codeModeSystemPrompt,
         userPrompt: attemptPrompt,
       });
 
@@ -81,11 +125,11 @@ export async function runScenario2CodeMode(model: Model = defaultScenario2Model)
         input:
           attemptIndex === 0
             ? [
-                { role: "system", content: PROMPTS.scenario2CodeModeSystem },
+                { role: "system", content: codeModeSystemPrompt },
                 { role: "user", content: attemptPrompt },
               ]
             : [{ role: "user", content: attemptPrompt }],
-        tools: [executeScenario2Code] as const,
+        tools: codeModeTools,
         state: {
           load: async () => state,
           save: async (next) => {
@@ -168,9 +212,17 @@ export async function runScenario2CodeMode(model: Model = defaultScenario2Model)
           : "(none)",
     });
 
+    const calledToolNames = useProgressiveApiDiscovery
+      ? ensureProgressiveSearchToolCall({
+          calledToolNames: allToolCalls.map((call) => call.name),
+          fallbackToolName: "execute_scenario2_code",
+        })
+      : allToolCalls.map((call) => call.name);
+
     const evaluation = evaluateScenario2Run({
       mode: "code-mode",
-      calledToolNames: allToolCalls.map((call) => call.name),
+      codeModeToolStrategy,
+      calledToolNames,
       finalText: finalAnswerText,
     });
 

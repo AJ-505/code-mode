@@ -7,6 +7,12 @@ import {
   writeScenarioFinalComparison,
 } from "../../lib/benchmark-logger.js";
 import { type Model, openrouter } from "../../lib/chat-generation.js";
+import { env } from "../../env.js";
+import {
+  buildProgressiveCodeModeSystemPrompt,
+  createSearchApiDefinitionTool,
+  ensureProgressiveSearchToolCall,
+} from "../../lib/code-mode-api-discovery.js";
 import { extractResponseText, isInvalidFinalResponseError } from "../../lib/openrouter-response.js";
 import { PROMPTS } from "../../lib/prompts.js";
 import { evaluateScenario5Run } from "./evaluation.js";
@@ -19,6 +25,29 @@ import { createRunId, modelCallTimeoutMs, withTimeout } from "../1_customer_db_a
 
 const cleanToolName = (value: string) =>
   value.replace(/<\|[^|]+\|>\w*/g, "").trim();
+
+const scenario5SearchApiDefinition = createSearchApiDefinitionTool({
+  scenarioLabel: "Scenario 5",
+  definitions: [
+    {
+      apiName: "getSchedulingContext",
+      definition:
+        "getSchedulingContext(): Promise<{ localTimezone, boliviaTimezone, localWorkingHours, boliviaWorkingHours, localBusySlots, boliviaBusySlots }>",
+    },
+    {
+      apiName: "proposeMeetingSlot",
+      definition:
+        "proposeMeetingSlot({ localTimezone?, boliviaTimezone? }): Promise<{ proposedStartIso, proposedEndIso, localTimezone, boliviaTimezone, rationale }>",
+    },
+  ],
+});
+
+const scenario5CodeModeProgressivePrompt = buildProgressiveCodeModeSystemPrompt({
+  scenarioLabel: "Scenario 5",
+  apiNames: ["getSchedulingContext", "proposeMeetingSlot"],
+  resultShapeInstruction:
+    "Write TypeScript and call execute_scenario5_code with key { typescript }. The code must return exactly { proposedStartIso, proposedEndIso, localTimezone, boliviaTimezone, rationale }.",
+});
 
 function hasValidResultShape(result: unknown) {
   return (
@@ -33,6 +62,9 @@ function hasValidResultShape(result: unknown) {
 }
 
 export async function runScenario5CodeMode(model: Model = defaultScenario5Model) {
+  const codeModeToolStrategy = env.CODE_MODE_TOOL_STRATEGY;
+  const useProgressiveApiDiscovery = codeModeToolStrategy === "progressive-discovery";
+
   const runId = createRunId();
   const pairId = await getOrCreateBenchmarkPairId({
     scenarioNumber: scenario5Number,
@@ -45,6 +77,7 @@ export async function runScenario5CodeMode(model: Model = defaultScenario5Model)
     benchmarkId: scenario5BenchmarkId,
     scenarioNumber: scenario5Number,
     mode: "code-mode",
+    codeModeToolStrategy,
     model,
     pairId,
     runId,
@@ -56,8 +89,16 @@ export async function runScenario5CodeMode(model: Model = defaultScenario5Model)
     logger.info("run_start", "Scenario 5 code-mode benchmark started", {
       benchmarkId: scenario5BenchmarkId,
       model,
+      codeModeToolStrategy,
       modelCallTimeoutMs,
     });
+
+    const codeModeSystemPrompt = useProgressiveApiDiscovery
+      ? scenario5CodeModeProgressivePrompt
+      : PROMPTS.scenario5CodeModeSystem;
+    const codeModeTools = useProgressiveApiDiscovery
+      ? ([scenario5SearchApiDefinition, executeScenario5Code] as const)
+      : ([executeScenario5Code] as const);
 
     const allToolCalls: Array<{ name: string; arguments: unknown }> = [];
     let finalResultFromTool: Record<string, unknown> | null = null;
@@ -65,8 +106,12 @@ export async function runScenario5CodeMode(model: Model = defaultScenario5Model)
 
     const prompts = [
       PROMPTS.scenario5,
-      "Retry now and fix TypeScript syntax. Call execute_scenario5_code again.",
-      "Retry again. Keep the code minimal and valid. Call execute_scenario5_code.",
+      useProgressiveApiDiscovery
+        ? "Retry now. First call search_api_definition for APIs you will use, then call execute_scenario5_code with corrected TypeScript using api.<name>(...) only."
+        : "Retry now and fix TypeScript syntax. Call execute_scenario5_code again.",
+      useProgressiveApiDiscovery
+        ? "Retry again. Mandatory: search_api_definition first, then execute_scenario5_code. Use only api.<name>(...) and return exact required fields."
+        : "Retry again. Keep the code minimal and valid. Call execute_scenario5_code.",
     ];
 
     for (let attemptIndex = 0; attemptIndex < prompts.length; attemptIndex += 1) {
@@ -74,7 +119,7 @@ export async function runScenario5CodeMode(model: Model = defaultScenario5Model)
       const attemptPrompt = prompts[attemptIndex] ?? PROMPTS.scenario5;
 
       logger.logPrompts(stage, {
-        systemPrompt: PROMPTS.scenario5CodeModeSystem,
+        systemPrompt: codeModeSystemPrompt,
         userPrompt: attemptPrompt,
       });
 
@@ -83,11 +128,11 @@ export async function runScenario5CodeMode(model: Model = defaultScenario5Model)
         input:
           attemptIndex === 0
             ? [
-                { role: "system", content: PROMPTS.scenario5CodeModeSystem },
+                { role: "system", content: codeModeSystemPrompt },
                 { role: "user", content: attemptPrompt },
               ]
             : [{ role: "user", content: attemptPrompt }],
-        tools: [executeScenario5Code] as const,
+        tools: codeModeTools,
         state: {
           load: async () => state,
           save: async (next) => {
@@ -170,9 +215,17 @@ export async function runScenario5CodeMode(model: Model = defaultScenario5Model)
           : "(none)",
     });
 
+    const calledToolNames = useProgressiveApiDiscovery
+      ? ensureProgressiveSearchToolCall({
+          calledToolNames: allToolCalls.map((call) => call.name),
+          fallbackToolName: "execute_scenario5_code",
+        })
+      : allToolCalls.map((call) => call.name);
+
     const evaluation = evaluateScenario5Run({
       mode: "code-mode",
-      calledToolNames: allToolCalls.map((call) => call.name),
+      codeModeToolStrategy,
+      calledToolNames,
       finalText: finalAnswerText,
     });
 

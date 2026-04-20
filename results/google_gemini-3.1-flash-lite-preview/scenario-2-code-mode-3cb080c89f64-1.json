@@ -1,0 +1,151 @@
+{
+  "benchmarkId": "2_playwright_ui_audit",
+  "scenarioNumber": 2,
+  "mode": "code-mode",
+  "codeModeToolStrategy": "progressive-discovery",
+  "model": "google/gemini-3.1-flash-lite-preview",
+  "pairId": "3cb080c89f64",
+  "runId": "401975be7695",
+  "runStartedAt": "2026-04-20T17:44:03.772Z",
+  "status": "failed",
+  "didFailTest": true,
+  "pricing": {
+    "inputPerMillionUsd": 2.5,
+    "outputPerMillionUsd": 15,
+    "cachedInputPerMillionUsd": 0
+  },
+  "usage": {
+    "inputTokens": 732,
+    "outputTokens": 76,
+    "cachedTokens": 0,
+    "totalTokens": 808,
+    "estimatedCostUsd": 0.00297
+  },
+  "modelResponses": [
+    {
+      "stage": "code_mode",
+      "text": "",
+      "usage": {
+        "inputTokens": 732,
+        "outputTokens": 76,
+        "cachedTokens": 0,
+        "totalTokens": 808,
+        "estimatedCostUsd": 0.00297
+      }
+    }
+  ],
+  "toolCalls": [
+    {
+      "stage": "code_mode",
+      "name": "execute_scenario2_code",
+      "arguments": {
+        "typescript": "async function runAudit() {\n  const target = await getTargetSite();\n  const result = await auditSite({ siteUrl: target.siteUrl });\n  return result;\n}\n\nrunAudit().then(result => console.log(JSON.stringify(result)));"
+      }
+    }
+  ],
+  "events": [
+    {
+      "ts": "2026-04-20T17:44:03.774Z",
+      "level": "info",
+      "event": "run_start",
+      "message": "Scenario 2 code-mode benchmark started",
+      "data": {
+        "benchmarkId": "2_playwright_ui_audit",
+        "model": "google/gemini-3.1-flash-lite-preview",
+        "codeModeToolStrategy": "progressive-discovery",
+        "modelCallTimeoutMs": 300000
+      }
+    },
+    {
+      "ts": "2026-04-20T17:44:03.775Z",
+      "level": "info",
+      "event": "prompts",
+      "message": "Prompts for code_mode",
+      "data": {
+        "systemPrompt": "You are a specialised benchmark agent for Scenario 2.\nYou are now in code-mode.\nYou only know API method names at the start (no signatures or argument details yet).\n\nKnown API names: getTargetSite, auditSite\n\nYou may call these tools:\n1) search_api_definition(apiName) to fetch API docs for one method.\n2) execute_scenario code executor tool to run TypeScript.\n\nRules:\n- Use search_api_definition before using any API whose contract you are not fully sure about.\n- Write TypeScript only.\n- Do not output chain-of-thought.\n- Keep responses short.\n\nWrite TypeScript and call execute_scenario2_code with key { typescript }. The code must return exactly { siteUrl, findings, summary }.",
+        "userPrompt": "\nPlease audit a demo website for UI and UX issues.\nBrowse key pages and return a concise report with severity levels, reproducible steps, and suggested fixes.\n"
+      }
+    },
+    {
+      "ts": "2026-04-20T17:44:13.018Z",
+      "level": "info",
+      "event": "model_response",
+      "message": "Model response captured for code_mode",
+      "data": {
+        "responsePreview": "",
+        "responseChars": 0,
+        "inputTokens": 732,
+        "outputTokens": 76,
+        "cachedTokens": 0,
+        "totalTokens": 808,
+        "estimatedCostUsd": 0.00297
+      }
+    },
+    {
+      "ts": "2026-04-20T17:44:13.033Z",
+      "level": "info",
+      "event": "tool_call",
+      "message": "Tool called in code_mode: execute_scenario2_code",
+      "data": {
+        "stage": "code_mode",
+        "toolName": "execute_scenario2_code",
+        "callDetails": "typescript=async function runAudit() {\n  const target = await getTargetSite();\n  const result = await auditSite({ siteUrl: target.siteUrl });\n  return result;\n}\n\nrunAudit().then(result => console.log(JSON.stringify(result)));"
+      }
+    },
+    {
+      "ts": "2026-04-20T17:44:13.034Z",
+      "level": "info",
+      "event": "tool_code",
+      "message": "Code passed to execute_scenario1_code",
+      "data": {
+        "code": "async function runAudit() {\n  const target = await getTargetSite();\n  const result = await auditSite({ siteUrl: target.siteUrl });\n  return result;\n}\n\nrunAudit().then(result => console.log(JSON.stringify(result)));"
+      }
+    },
+    {
+      "ts": "2026-04-20T17:44:13.034Z",
+      "level": "info",
+      "event": "tool_result",
+      "message": "Code execution failed inside tool",
+      "data": {
+        "error": "[\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  }\n]",
+        "stdout": ""
+      }
+    },
+    {
+      "ts": "2026-04-20T17:44:13.034Z",
+      "level": "info",
+      "event": "prompts",
+      "message": "Prompts for code_mode_retry_1",
+      "data": {
+        "systemPrompt": "You are a specialised benchmark agent for Scenario 2.\nYou are now in code-mode.\nYou only know API method names at the start (no signatures or argument details yet).\n\nKnown API names: getTargetSite, auditSite\n\nYou may call these tools:\n1) search_api_definition(apiName) to fetch API docs for one method.\n2) execute_scenario code executor tool to run TypeScript.\n\nRules:\n- Use search_api_definition before using any API whose contract you are not fully sure about.\n- Write TypeScript only.\n- Do not output chain-of-thought.\n- Keep responses short.\n\nWrite TypeScript and call execute_scenario2_code with key { typescript }. The code must return exactly { siteUrl, findings, summary }.",
+        "userPrompt": "Retry now and fix TypeScript syntax. Call execute_scenario2_code again."
+      }
+    },
+    {
+      "ts": "2026-04-20T17:44:24.247Z",
+      "level": "error",
+      "event": "run_failed",
+      "message": "Scenario 2 code-mode benchmark failed",
+      "data": {
+        "error": "Response failed: {\"code\":\"server_error\",\"message\":\"internal stream ended unexpectedly\"}"
+      }
+    },
+    {
+      "ts": "2026-04-20T17:44:24.248Z",
+      "level": "info",
+      "event": "run_finished",
+      "message": "Benchmark run finished",
+      "data": {
+        "status": "failed",
+        "didFailTest": true,
+        "inputTokens": 732,
+        "outputTokens": 76,
+        "cachedTokens": 0,
+        "totalTokens": 808,
+        "estimatedCostUsd": 0.00297
+      }
+    }
+  ],
+  "runFinishedAt": "2026-04-20T17:44:24.248Z",
+  "error": "Response failed: {\"code\":\"server_error\",\"message\":\"internal stream ended unexpectedly\"}"
+}

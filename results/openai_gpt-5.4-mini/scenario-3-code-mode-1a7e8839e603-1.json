@@ -1,0 +1,257 @@
+{
+  "benchmarkId": "3_slack_summary",
+  "scenarioNumber": 3,
+  "mode": "code-mode",
+  "codeModeToolStrategy": "progressive-discovery",
+  "model": "openai/gpt-5.4-mini",
+  "pairId": "1a7e8839e603",
+  "runId": "526b97800b5e",
+  "runStartedAt": "2026-04-20T18:07:41.337Z",
+  "status": "failed",
+  "didFailTest": true,
+  "pricing": {
+    "inputPerMillionUsd": 2.5,
+    "outputPerMillionUsd": 15,
+    "cachedInputPerMillionUsd": 0
+  },
+  "usage": {
+    "inputTokens": 1006,
+    "outputTokens": 66,
+    "cachedTokens": 0,
+    "totalTokens": 1072,
+    "estimatedCostUsd": 0.003505
+  },
+  "modelResponses": [
+    {
+      "stage": "code_mode",
+      "text": "{\"channelId\":\"unknown\",\"fromIso\":\"2026-04-19T18:07:55.419Z\",\"toIso\":\"2026-04-20T18:07:55.419Z\",\"summary\":\"Unable to access API functions in the sandbox.\",\"topics\":[],\"actionItems\":[]}",
+      "usage": {
+        "inputTokens": 1006,
+        "outputTokens": 66,
+        "cachedTokens": 0,
+        "totalTokens": 1072,
+        "estimatedCostUsd": 0.003505
+      }
+    }
+  ],
+  "toolCalls": [
+    {
+      "stage": "code_mode",
+      "name": "execute_scenario3_code",
+      "arguments": {
+        "synthetic": true,
+        "source": "tool_result_event"
+      }
+    }
+  ],
+  "events": [
+    {
+      "ts": "2026-04-20T18:07:41.341Z",
+      "level": "info",
+      "event": "run_start",
+      "message": "Scenario 3 code-mode benchmark started",
+      "data": {
+        "benchmarkId": "3_slack_summary",
+        "model": "openai/gpt-5.4-mini",
+        "codeModeToolStrategy": "progressive-discovery",
+        "modelCallTimeoutMs": 300000
+      }
+    },
+    {
+      "ts": "2026-04-20T18:07:41.346Z",
+      "level": "info",
+      "event": "prompts",
+      "message": "Prompts for code_mode",
+      "data": {
+        "systemPrompt": "You are a specialised benchmark agent for Scenario 3.\nYou are now in code-mode.\nYou only know API method names at the start (no signatures or argument details yet).\n\nKnown API names: getTargetChannel, summarizeChannel\n\nYou may call these tools:\n1) search_api_definition(apiName) to fetch API docs for one method.\n2) execute_scenario code executor tool to run TypeScript.\n\nRules:\n- Use search_api_definition before using any API whose contract you are not fully sure about.\n- Write TypeScript only.\n- Do not output chain-of-thought.\n- Keep responses short.\n\nWrite TypeScript and call execute_scenario3_code with key { typescript }. The code must return exactly { channelId, fromIso, toIso, summary, topics, actionItems }.",
+        "userPrompt": "\nSummarize all messages from a specific Slack channel in the past 24 hours.\nInclude major topics, decisions, blockers, and action items with owners.\n"
+      }
+    },
+    {
+      "ts": "2026-04-20T18:07:56.822Z",
+      "level": "info",
+      "event": "model_response",
+      "message": "Model response captured for code_mode",
+      "data": {
+        "responsePreview": "{\"channelId\":\"unknown\",\"fromIso\":\"2026-04-19T18:07:55.419Z\",\"toIso\":\"2026-04-20T18:07:55.419Z\",\"summary\":\"Unable to access API functions in the sandbox.\",\"topics\":[],\"actionItems\":[]}",
+        "responseChars": 183,
+        "inputTokens": 1006,
+        "outputTokens": 66,
+        "cachedTokens": 0,
+        "totalTokens": 1072,
+        "estimatedCostUsd": 0.003505
+      }
+    },
+    {
+      "ts": "2026-04-20T18:07:56.841Z",
+      "level": "info",
+      "event": "tool_call",
+      "message": "Tool called in code_mode: execute_scenario3_code",
+      "data": {
+        "stage": "code_mode",
+        "toolName": "execute_scenario3_code",
+        "callDetails": "synthetic=true; source=tool_result_event"
+      }
+    },
+    {
+      "ts": "2026-04-20T18:07:56.841Z",
+      "level": "info",
+      "event": "tool_result",
+      "message": "Code execution result from tool",
+      "data": {
+        "channelId": "unknown",
+        "fromIso": "2026-04-19T18:07:55.419Z",
+        "toIso": "2026-04-20T18:07:55.419Z",
+        "summary": "Unable to access API functions in the sandbox.",
+        "topics": [],
+        "actionItems": []
+      }
+    },
+    {
+      "ts": "2026-04-20T18:07:56.842Z",
+      "level": "info",
+      "event": "tool_activity",
+      "message": "Tool calls captured",
+      "data": {
+        "count": 1,
+        "names": "execute_scenario3_code"
+      }
+    },
+    {
+      "ts": "2026-04-20T18:07:56.888Z",
+      "level": "info",
+      "event": "model_result",
+      "message": "Model result (parsed)",
+      "data": {
+        "channelId": "unknown",
+        "fromIso": "2026-04-19T18:07:55.419Z",
+        "toIso": "2026-04-20T18:07:55.419Z",
+        "summary": "Unable to access API functions in the sandbox.",
+        "topics": "0 item(s)",
+        "actionItems": "0 item(s)"
+      }
+    },
+    {
+      "ts": "2026-04-20T18:07:56.888Z",
+      "level": "info",
+      "event": "evaluation_human",
+      "message": "Evaluation summary",
+      "data": {
+        "overallPass": false,
+        "toolPass": false,
+        "outputValidation": "expected-result",
+        "outputPass": false,
+        "expectedPass": false
+      }
+    },
+    {
+      "ts": "2026-04-20T18:07:56.900Z",
+      "level": "info",
+      "event": "run_finished",
+      "message": "Benchmark run finished",
+      "data": {
+        "status": "failed",
+        "didFailTest": true,
+        "inputTokens": 1006,
+        "outputTokens": 66,
+        "cachedTokens": 0,
+        "totalTokens": 1072,
+        "estimatedCostUsd": 0.003505
+      }
+    }
+  ],
+  "evaluation": {
+    "benchmarkId": "3_slack_summary",
+    "overallPass": false,
+    "toolEval": {
+      "pass": false,
+      "details": [
+        {
+          "groupId": "api-definition-search",
+          "required": true,
+          "expectedAnyOf": [
+            "search_api_definition"
+          ],
+          "matched": [],
+          "pass": false,
+          "note": "Code mode progressive strategy should query API definitions."
+        },
+        {
+          "groupId": "code-execution",
+          "required": true,
+          "expectedAnyOf": [
+            "execute_scenario3_code"
+          ],
+          "matched": [
+            "execute_scenario3_code"
+          ],
+          "pass": true,
+          "note": "Code mode must write and execute code."
+        }
+      ],
+      "calledToolNames": [
+        "execute_scenario3_code"
+      ]
+    },
+    "fuzzyEval": {
+      "pass": true,
+      "score": 1,
+      "details": [
+        {
+          "checkId": "summary-fields",
+          "requiredMinMatches": 1,
+          "matchedCount": 3,
+          "matchedTerms": [
+            "summary",
+            "topics",
+            "actionItems"
+          ],
+          "pass": true,
+          "weight": 1
+        }
+      ]
+    },
+    "numericMentions": 8,
+    "numericGatePass": true,
+    "schemaPass": true,
+    "parsed": {
+      "channelId": "unknown",
+      "fromIso": "2026-04-19T18:07:55.419Z",
+      "toIso": "2026-04-20T18:07:55.419Z",
+      "summary": "Unable to access API functions in the sandbox.",
+      "topics": [],
+      "actionItems": []
+    },
+    "expectedEval": {
+      "pass": false,
+      "details": {
+        "channelIdPass": false,
+        "summaryPass": false,
+        "topicCoverage": 0,
+        "actionItemsPass": false,
+        "expected": {
+          "channelId": "C123BENCH",
+          "fromIso": "2026-04-19T18:07:56.872Z",
+          "toIso": "2026-04-20T18:07:56.872Z",
+          "summary": "Team discussed release scope, identified one blocker on analytics instrumentation, and aligned on ownership for fixes.",
+          "topics": [
+            "Release planning",
+            "Analytics blocker",
+            "Customer onboarding bug triage"
+          ],
+          "actionItems": [
+            {
+              "owner": "Avery",
+              "task": "Fix analytics event naming mismatch before release cutoff."
+            },
+            {
+              "owner": "Jordan",
+              "task": "Prepare rollout checklist and post channel update by EOD."
+            }
+          ]
+        }
+      }
+    }
+  },
+  "runFinishedAt": "2026-04-20T18:07:56.900Z"
+}

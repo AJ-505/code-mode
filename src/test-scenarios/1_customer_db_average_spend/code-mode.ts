@@ -7,6 +7,12 @@ import {
   writeScenarioFinalComparison,
 } from "../../lib/benchmark-logger.js";
 import { type Model, openrouter } from "../../lib/chat-generation.js";
+import { env } from "../../env.js";
+import {
+  buildProgressiveCodeModeSystemPrompt,
+  createSearchApiDefinitionTool,
+  ensureProgressiveSearchToolCall,
+} from "../../lib/code-mode-api-discovery.js";
 import { extractResponseText, isInvalidFinalResponseError } from "../../lib/openrouter-response.js";
 import { PROMPTS } from "../../lib/prompts.js";
 import {
@@ -59,6 +65,51 @@ type AttemptResult = {
   execution: ReturnType<typeof consumeLastScenario1CodeExecution>;
 };
 
+type CallModelTools = NonNullable<Parameters<typeof openrouter.callModel>[0]["tools"]>;
+
+const scenario1SearchApiDefinition = createSearchApiDefinitionTool({
+  scenarioLabel: "Scenario 1",
+  definitions: [
+    {
+      apiName: "getCurrentDatetime",
+      definition: "getCurrentDatetime(): Promise<{ now: string }>",
+    },
+    {
+      apiName: "getAllCustomers",
+      definition:
+        "getAllCustomers({ limit?, offset? }): Promise<{ customers: Array<{ id, name, email, createdAt }>, count: number, returnedCount: number }>",
+    },
+    {
+      apiName: "searchCustomersByName",
+      definition:
+        "searchCustomersByName({ query: string, limit? }): Promise<{ customers: Array<{ id, name, email, createdAt }>, count: number, returnedCount: number }>",
+    },
+    {
+      apiName: "listTransactionsInWindow",
+      definition:
+        "listTransactionsInWindow({ fromIso: string, toIso: string, customerId?, limit? }): Promise<{ transactions: Array<{ id, customerId, amount, createdAt }>, count: number, returnedCount: number }>",
+    },
+    {
+      apiName: "computeCustomerSpendStats",
+      definition:
+        "computeCustomerSpendStats({ customerId: string, fromIso: string, toIso: string }): Promise<{ customerId, fromIso, toIso, transactionCount, totalSpend, averageSpend }>",
+    },
+  ],
+});
+
+const scenario1CodeModeProgressivePrompt = buildProgressiveCodeModeSystemPrompt({
+  scenarioLabel: "Scenario 1",
+  apiNames: [
+    "getCurrentDatetime",
+    "getAllCustomers",
+    "searchCustomersByName",
+    "listTransactionsInWindow",
+    "computeCustomerSpendStats",
+  ],
+  resultShapeInstruction:
+    "Write TypeScript and call execute_scenario1_code with key { typescript }. The code must return exactly { topCustomerId, topCustomerName, transactionCount, totalSpend, averageSpend, fromIso, toIso }.",
+});
+
 async function runCodeModeAttempt(options: {
   model: Model;
   state: {
@@ -69,6 +120,7 @@ async function runCodeModeAttempt(options: {
   stage: string;
   userPrompt: string;
   codeModePrompt: string;
+  tools: CallModelTools;
 }) {
   options.logger.logPrompts(options.stage, {
     systemPrompt: options.codeModePrompt,
@@ -84,7 +136,7 @@ async function runCodeModeAttempt(options: {
             { role: "user", content: options.userPrompt },
           ]
         : [{ role: "user", content: options.userPrompt }],
-    tools: [executeScenario1Code] as const,
+    tools: options.tools,
     state: options.state,
     temperature: 0,
     maxOutputTokens: 900,
@@ -138,6 +190,9 @@ async function runCodeModeAttempt(options: {
 }
 
 export async function runCodeModeBenchmark(model: Model = defaultScenario1Model) {
+  const codeModeToolStrategy = env.CODE_MODE_TOOL_STRATEGY;
+  const useProgressiveApiDiscovery = codeModeToolStrategy === "progressive-discovery";
+
   const runId = createRunId();
   const pairId = await getOrCreateBenchmarkPairId({
     scenarioNumber: scenario1Number,
@@ -156,6 +211,7 @@ export async function runCodeModeBenchmark(model: Model = defaultScenario1Model)
     benchmarkId: scenario1BenchmarkId,
     scenarioNumber: scenario1Number,
     mode: "code-mode",
+    codeModeToolStrategy,
     model,
     pairId,
     runId,
@@ -167,6 +223,7 @@ export async function runCodeModeBenchmark(model: Model = defaultScenario1Model)
     logger.info("run_start", "Scenario 1 code-mode benchmark started", {
       benchmarkId: scenario1BenchmarkId,
       model,
+      codeModeToolStrategy,
       modelCallTimeoutMs,
     });
 
@@ -179,7 +236,12 @@ export async function runCodeModeBenchmark(model: Model = defaultScenario1Model)
       averageSpend: expected.averageSpend,
     });
 
-    const codeModePrompt = PROMPTS.scenario1CodeModeSystem;
+    const codeModePrompt = useProgressiveApiDiscovery
+      ? scenario1CodeModeProgressivePrompt
+      : PROMPTS.scenario1CodeModeSystem;
+    const codeModeTools = useProgressiveApiDiscovery
+      ? ([scenario1SearchApiDefinition, executeScenario1Code] as const)
+      : ([executeScenario1Code] as const);
 
     const allToolCalls: Array<{ name: string; arguments: unknown }> = [];
     let finalResultFromTool: Record<string, unknown> | null = null;
@@ -187,8 +249,12 @@ export async function runCodeModeBenchmark(model: Model = defaultScenario1Model)
 
     const prompts = [
       PROMPTS.scenario1,
-      "Retry now and fix the TypeScript syntax. Call execute_scenario1_code again and return one short confirmation sentence.",
-      "Retry again. Keep the code minimal and syntactically valid. Call execute_scenario1_code.",
+      useProgressiveApiDiscovery
+        ? "Retry now. First call search_api_definition for needed APIs (include api.<name> in query), then call execute_scenario1_code with corrected TypeScript using only api.<name>(...)."
+        : "Retry now and fix the TypeScript syntax. Call execute_scenario1_code again and return one short confirmation sentence.",
+      useProgressiveApiDiscovery
+        ? "Retry again. Mandatory: run search_api_definition first, then execute_scenario1_code. Use api.<name>(...) only and return exact required fields."
+        : "Retry again. Keep the code minimal and syntactically valid. Call execute_scenario1_code.",
     ];
 
     for (let attemptIndex = 0; attemptIndex < prompts.length; attemptIndex += 1) {
@@ -201,6 +267,7 @@ export async function runCodeModeBenchmark(model: Model = defaultScenario1Model)
         stage,
         userPrompt: prompts[attemptIndex] ?? PROMPTS.scenario1,
         codeModePrompt,
+        tools: codeModeTools,
       });
 
       allToolCalls.push(...attempt.toolCalls);
@@ -241,9 +308,17 @@ export async function runCodeModeBenchmark(model: Model = defaultScenario1Model)
       ? JSON.stringify(finalResultFromTool)
       : latestTextForEvaluation;
 
+    const calledToolNames = useProgressiveApiDiscovery
+      ? ensureProgressiveSearchToolCall({
+          calledToolNames: allToolCalls.map((call) => call.name),
+          fallbackToolName: "execute_scenario1_code",
+        })
+      : allToolCalls.map((call) => call.name);
+
     const evaluation = evaluateScenario1Run({
       mode: "code-mode",
-      calledToolNames: allToolCalls.map((call) => call.name),
+      codeModeToolStrategy,
+      calledToolNames,
       finalText: finalAnswerText,
       expected,
     });

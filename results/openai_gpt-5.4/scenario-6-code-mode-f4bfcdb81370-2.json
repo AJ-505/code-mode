@@ -1,0 +1,265 @@
+{
+  "benchmarkId": "6_github_repo_change_pr",
+  "scenarioNumber": 6,
+  "mode": "code-mode",
+  "codeModeToolStrategy": "progressive-discovery",
+  "model": "openai/gpt-5.4",
+  "pairId": "f4bfcdb81370",
+  "runId": "7cabf25d699c",
+  "runStartedAt": "2026-04-20T18:45:52.100Z",
+  "status": "failed",
+  "didFailTest": true,
+  "pricing": {
+    "inputPerMillionUsd": 2.5,
+    "outputPerMillionUsd": 15,
+    "cachedInputPerMillionUsd": 0
+  },
+  "usage": {
+    "inputTokens": 1115,
+    "outputTokens": 138,
+    "cachedTokens": 0,
+    "totalTokens": 1253,
+    "estimatedCostUsd": 0.004857
+  },
+  "modelResponses": [
+    {
+      "stage": "code_mode",
+      "text": "{\n  \"repo\": \"octo-org/benchmark-demo-repo\",\n  \"branch\": \"main\",\n  \"changedFiles\": [\n    {\n      \"path\": \"README.md\",\n      \"changeSummary\": \"Corrected setup typo and clarified benchmark run command formatting.\"\n    }\n  ],\n  \"prTitle\": \"docs: fix README setup typo and benchmark command wording\",\n  \"prBody\": \"## Summary\\n- fix typo in README setup instructions\\n- clarify benchmark execution command\\n\\n## Validation\\n- docs-only simulation benchmark output\",\n  \"prUrl\": \"https://github.com/octo-org/benchmark-demo-repo/pull/128\"\n}",
+      "usage": {
+        "inputTokens": 1115,
+        "outputTokens": 138,
+        "cachedTokens": 0,
+        "totalTokens": 1253,
+        "estimatedCostUsd": 0.004857
+      }
+    }
+  ],
+  "toolCalls": [
+    {
+      "stage": "code_mode",
+      "name": "execute_scenario6_code",
+      "arguments": {
+        "synthetic": true,
+        "source": "tool_result_event"
+      }
+    }
+  ],
+  "events": [
+    {
+      "ts": "2026-04-20T18:45:52.111Z",
+      "level": "info",
+      "event": "run_start",
+      "message": "Scenario 6 code-mode benchmark started",
+      "data": {
+        "benchmarkId": "6_github_repo_change_pr",
+        "model": "openai/gpt-5.4",
+        "codeModeToolStrategy": "progressive-discovery",
+        "modelCallTimeoutMs": 300000
+      }
+    },
+    {
+      "ts": "2026-04-20T18:45:52.112Z",
+      "level": "info",
+      "event": "prompts",
+      "message": "Prompts for code_mode",
+      "data": {
+        "systemPrompt": "You are a specialised benchmark agent for Scenario 6.\nYou are now in code-mode.\nYou only know API method names at the start (no signatures or argument details yet).\nYour job is to discover definitions, then execute correctly.\n\nKnown API names: getRepoTask, applyRepoChange\nIMPORTANT: these methods are properties on a provided object named \"api\". Always call them as api.<methodName>(...), for example: api.getRepoTask, api.applyRepoChange\n\nYou may call these tools:\n1) search_api_definition(apiName) to fetch API docs for one method.\n2) execute_scenario code executor tool to run TypeScript.\n\nRules:\n- REQUIRED DISCOVERY STEP: before calling execute_scenario tool, you MUST call search_api_definition at least once.\n- Use search_api_definition for each API you plan to use.\n- Write TypeScript only.\n- Inside your TypeScript, never call bare names like getRepoTask(...). Use api.<name>(...) only.\n- Do not output chain-of-thought.\n- Keep responses short.\n\nExecution checklist (follow in order):\n1) Call search_api_definition for relevant API names.\n2) Write TypeScript that uses api.<methodName>(...) calls only.\n3) Call execute_scenario tool with { typescript }.\n\nWrite TypeScript and call execute_scenario6_code with key { typescript }. The code must return exactly { repo, branch, changedFiles, prTitle, prBody, prUrl }.",
+        "userPrompt": "\nFetch a repository, apply a requested change, and create a pull request.\nReturn the changed files and PR metadata.\n"
+      }
+    },
+    {
+      "ts": "2026-04-20T18:46:06.369Z",
+      "level": "info",
+      "event": "model_response",
+      "message": "Model response captured for code_mode",
+      "data": {
+        "responsePreview": "{ \"repo\": \"octo-org/benchmark-demo-repo\", \"branch\": \"main\", \"changedFiles\": [ { \"path\": \"README.md\", \"changeSummary\": \"Corrected setup typo and clarified benchmark run command formatting.\" } ], \"prTitle\": \"docs: fix README setup typo and be...",
+        "responseChars": 531,
+        "inputTokens": 1115,
+        "outputTokens": 138,
+        "cachedTokens": 0,
+        "totalTokens": 1253,
+        "estimatedCostUsd": 0.004857
+      }
+    },
+    {
+      "ts": "2026-04-20T18:46:06.383Z",
+      "level": "info",
+      "event": "tool_call",
+      "message": "Tool called in code_mode: execute_scenario6_code",
+      "data": {
+        "stage": "code_mode",
+        "toolName": "execute_scenario6_code",
+        "callDetails": "synthetic=true; source=tool_result_event"
+      }
+    },
+    {
+      "ts": "2026-04-20T18:46:06.384Z",
+      "level": "info",
+      "event": "tool_result",
+      "message": "Code execution result from tool",
+      "data": {
+        "repo": "octo-org/benchmark-demo-repo",
+        "branch": "main",
+        "changedFiles": [
+          {
+            "path": "README.md",
+            "changeSummary": "Corrected setup typo and clarified benchmark run command formatting."
+          }
+        ],
+        "prTitle": "docs: fix README setup typo and benchmark command wording",
+        "prBody": "## Summary\n- fix typo in README setup instructions\n- clarify benchmark execution command\n\n## Validation\n- docs-only simulation benchmark output",
+        "prUrl": "https://github.com/octo-org/benchmark-demo-repo/pull/128"
+      }
+    },
+    {
+      "ts": "2026-04-20T18:46:06.389Z",
+      "level": "info",
+      "event": "tool_activity",
+      "message": "Tool calls captured",
+      "data": {
+        "count": 1,
+        "names": "execute_scenario6_code"
+      }
+    },
+    {
+      "ts": "2026-04-20T18:46:06.417Z",
+      "level": "info",
+      "event": "model_result",
+      "message": "Model result (parsed)",
+      "data": {
+        "repo": "octo-org/benchmark-demo-repo",
+        "branch": "main",
+        "changedFiles": "1 item(s)",
+        "prTitle": "docs: fix README setup typo and benchmark command wording",
+        "prBody": "## Summary\n- fix typo in README setup instructions\n- clarify benchmark execution command\n\n## Validation\n- docs-only simulation benchmark output",
+        "prUrl": "https://github.com/octo-org/benchmark-demo-repo/pull/128"
+      }
+    },
+    {
+      "ts": "2026-04-20T18:46:06.420Z",
+      "level": "info",
+      "event": "evaluation_human",
+      "message": "Evaluation summary",
+      "data": {
+        "overallPass": false,
+        "toolPass": true,
+        "outputValidation": "expected-result",
+        "outputPass": false,
+        "expectedPass": false
+      }
+    },
+    {
+      "ts": "2026-04-20T18:46:06.421Z",
+      "level": "info",
+      "event": "run_finished",
+      "message": "Benchmark run finished",
+      "data": {
+        "status": "failed",
+        "didFailTest": true,
+        "inputTokens": 1115,
+        "outputTokens": 138,
+        "cachedTokens": 0,
+        "totalTokens": 1253,
+        "estimatedCostUsd": 0.004857
+      }
+    }
+  ],
+  "evaluation": {
+    "benchmarkId": "6_github_repo_change_pr",
+    "overallPass": false,
+    "toolEval": {
+      "pass": true,
+      "details": [
+        {
+          "groupId": "api-definition-search",
+          "required": true,
+          "expectedAnyOf": [
+            "search_api_definition"
+          ],
+          "matched": [
+            "search_api_definition"
+          ],
+          "pass": true,
+          "note": "Code mode progressive strategy should query API definitions."
+        },
+        {
+          "groupId": "code-execution",
+          "required": true,
+          "expectedAnyOf": [
+            "execute_scenario6_code"
+          ],
+          "matched": [
+            "execute_scenario6_code"
+          ],
+          "pass": true,
+          "note": "Code mode must write and execute code."
+        }
+      ],
+      "calledToolNames": [
+        "search_api_definition",
+        "execute_scenario6_code"
+      ]
+    },
+    "fuzzyEval": {
+      "pass": true,
+      "score": 1,
+      "details": [
+        {
+          "checkId": "result-fields",
+          "requiredMinMatches": 1,
+          "matchedCount": 4,
+          "matchedTerms": [
+            "repo",
+            "changedFiles",
+            "prTitle",
+            "prUrl"
+          ],
+          "pass": true,
+          "weight": 1
+        }
+      ]
+    },
+    "numericMentions": 1,
+    "numericGatePass": true,
+    "schemaPass": true,
+    "parsed": {
+      "repo": "octo-org/benchmark-demo-repo",
+      "branch": "main",
+      "changedFiles": [
+        {
+          "path": "README.md",
+          "changeSummary": "Corrected setup typo and clarified benchmark run command formatting."
+        }
+      ],
+      "prTitle": "docs: fix README setup typo and benchmark command wording",
+      "prBody": "## Summary\n- fix typo in README setup instructions\n- clarify benchmark execution command\n\n## Validation\n- docs-only simulation benchmark output",
+      "prUrl": "https://github.com/octo-org/benchmark-demo-repo/pull/128"
+    },
+    "expectedEval": {
+      "pass": false,
+      "details": {
+        "repoPass": true,
+        "branchPass": false,
+        "prTitlePass": true,
+        "prUrlPass": true,
+        "changedFilesPass": true,
+        "prBodyPass": true,
+        "expected": {
+          "repo": "octo-org/benchmark-demo-repo",
+          "branch": "benchmark/fix-readme-typo",
+          "changedFiles": [
+            {
+              "path": "README.md",
+              "changeSummary": "Corrected setup typo and clarified benchmark run command formatting."
+            }
+          ],
+          "prTitle": "docs: fix README setup typo and benchmark command wording",
+          "prBody": "## Summary\n- fix typo in README setup instructions\n- clarify benchmark execution command\n\n## Validation\n- docs-only simulation benchmark output",
+          "prUrl": "https://github.com/octo-org/benchmark-demo-repo/pull/128"
+        }
+      }
+    }
+  },
+  "runFinishedAt": "2026-04-20T18:46:06.421Z"
+}

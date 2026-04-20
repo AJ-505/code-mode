@@ -1,0 +1,66 @@
+{
+  "benchmarkId": "1_customer_db_average_spend",
+  "scenarioNumber": 1,
+  "mode": "code-mode",
+  "codeModeToolStrategy": "progressive-discovery",
+  "model": "google/gemini-3.1-flash-lite-preview",
+  "pairId": "3932da03d4fb",
+  "runId": "b01b3553edc8",
+  "runStartedAt": "2026-04-20T17:42:58.939Z",
+  "status": "failed",
+  "didFailTest": true,
+  "pricing": {
+    "inputPerMillionUsd": 2.5,
+    "outputPerMillionUsd": 15,
+    "cachedInputPerMillionUsd": 0
+  },
+  "usage": {
+    "inputTokens": 0,
+    "outputTokens": 0,
+    "cachedTokens": 0,
+    "totalTokens": 0,
+    "estimatedCostUsd": 0
+  },
+  "modelResponses": [],
+  "toolCalls": [],
+  "events": [
+    {
+      "ts": "2026-04-20T17:42:58.956Z",
+      "level": "info",
+      "event": "run_start",
+      "message": "Scenario 1 code-mode benchmark started",
+      "data": {
+        "benchmarkId": "1_customer_db_average_spend",
+        "model": "google/gemini-3.1-flash-lite-preview",
+        "codeModeToolStrategy": "progressive-discovery",
+        "modelCallTimeoutMs": 300000
+      }
+    },
+    {
+      "ts": "2026-04-20T17:43:06.260Z",
+      "level": "error",
+      "event": "run_failed",
+      "message": "Scenario 1 code-mode benchmark failed",
+      "data": {
+        "error": "Failed query: select \"id\", \"customer_id\", \"amount\", \"created_at\" from \"transactions\" where (\"transactions\".\"created_at\" >= $1 and \"transactions\".\"created_at\" <= $2) order by \"transactions\".\"created_at\" asc limit $3\nparams: 2026-04-13T17:42:58.957Z,2026-04-20T17:42:58.957Z,50000"
+      }
+    },
+    {
+      "ts": "2026-04-20T17:43:06.261Z",
+      "level": "info",
+      "event": "run_finished",
+      "message": "Benchmark run finished",
+      "data": {
+        "status": "failed",
+        "didFailTest": true,
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "cachedTokens": 0,
+        "totalTokens": 0,
+        "estimatedCostUsd": 0
+      }
+    }
+  ],
+  "runFinishedAt": "2026-04-20T17:43:06.261Z",
+  "error": "Failed query: select \"id\", \"customer_id\", \"amount\", \"created_at\" from \"transactions\" where (\"transactions\".\"created_at\" >= $1 and \"transactions\".\"created_at\" <= $2) order by \"transactions\".\"created_at\" asc limit $3\nparams: 2026-04-13T17:42:58.957Z,2026-04-20T17:42:58.957Z,50000"
+}

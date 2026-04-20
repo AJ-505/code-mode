@@ -1,5 +1,6 @@
 import { evaluateBenchmarkRun, type BenchmarkEvaluationSpec } from "../../lib/benchmark-evaluation.js";
 import type { RegularToolStrategy } from "../../lib/benchmark-logger.js";
+import type { CodeModeToolStrategy } from "../../lib/benchmark-logger.js";
 import type { Scenario1ExpectedResult } from "./data.js";
 
 export const scenario1EvaluationSpec: BenchmarkEvaluationSpec = {
@@ -78,6 +79,19 @@ export const scenario1CodeModeEvaluationSpec: BenchmarkEvaluationSpec = {
     },
   ],
   minNumericMentions: 0,
+};
+
+export const scenario1CodeModeProgressiveEvaluationSpec: BenchmarkEvaluationSpec = {
+  ...scenario1CodeModeEvaluationSpec,
+  expectedToolGroups: [
+    {
+      id: "api-definition-search",
+      anyOf: ["search_api_definition"],
+      required: true,
+      note: "Code mode progressive strategy should query API definitions.",
+    },
+    ...scenario1CodeModeEvaluationSpec.expectedToolGroups,
+  ],
 };
 
 const scenario1NoDiscoveryEvaluationSpec: BenchmarkEvaluationSpec = {
@@ -212,10 +226,13 @@ export function evaluateScenario1Run(options: {
   expected: Scenario1ExpectedResult;
   mode: "regular" | "code-mode";
   regularToolStrategy?: RegularToolStrategy;
+  codeModeToolStrategy?: CodeModeToolStrategy;
 }) {
   const spec =
     options.mode === "code-mode"
-      ? scenario1CodeModeEvaluationSpec
+      ? options.codeModeToolStrategy === "progressive-discovery"
+        ? scenario1CodeModeProgressiveEvaluationSpec
+        : scenario1CodeModeEvaluationSpec
       : options.regularToolStrategy === "full-tool-context"
         ? scenario1NoDiscoveryEvaluationSpec
         : scenario1EvaluationSpec;

@@ -113,6 +113,9 @@ export type BenchmarkMode = "regular" | "code-mode";
 export type RegularToolStrategy =
   | "progressive-discovery"
   | "full-tool-context";
+export type CodeModeToolStrategy =
+  | "full-api-context"
+  | "progressive-discovery";
 
 export type PricingConfig = {
   inputPerMillionUsd: number;
@@ -125,6 +128,7 @@ export type BenchmarkJsonLog = {
   scenarioNumber: number;
   mode: BenchmarkMode;
   regularToolStrategy?: RegularToolStrategy;
+  codeModeToolStrategy?: CodeModeToolStrategy;
   model: string;
   pairId: string;
   runId: string;
@@ -178,6 +182,7 @@ type LoggerConfig = {
   scenarioNumber: number;
   mode: BenchmarkMode;
   regularToolStrategy?: RegularToolStrategy;
+  codeModeToolStrategy?: CodeModeToolStrategy;
   model: string;
   pairId: string;
   runId: string;
@@ -256,6 +261,9 @@ export class BenchmarkLogger {
       ...(config.regularToolStrategy
         ? { regularToolStrategy: config.regularToolStrategy }
         : {}),
+      ...(config.codeModeToolStrategy
+        ? { codeModeToolStrategy: config.codeModeToolStrategy }
+        : {}),
       model: config.model,
       pairId: config.pairId,
       runId: config.runId,
@@ -290,6 +298,10 @@ export class BenchmarkLogger {
     if (this.log.mode === "regular" && this.log.regularToolStrategy) {
       console.log(
         `  ${chalk.yellow("Strategy:")}  ${chalk.white(this.log.regularToolStrategy)}`
+      );
+    } else if (this.log.mode === "code-mode" && this.log.codeModeToolStrategy) {
+      console.log(
+        `  ${chalk.yellow("Strategy:")}  ${chalk.white(this.log.codeModeToolStrategy)}`
       );
     }
     console.log(`  ${chalk.yellow("Pair ID:")}   ${chalk.dim(this.log.pairId)}`);

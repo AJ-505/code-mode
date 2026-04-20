@@ -2,16 +2,19 @@ import * as Bun from "bun";
 
 type BenchmarkMode = "regular" | "code-mode";
 type RegularToolStrategy = "progressive-discovery" | "full-tool-context";
+type CodeModeToolStrategy = "full-api-context" | "progressive-discovery";
 type ParadigmKey =
   | "regular-progressive"
   | "regular-full-tool-context"
-  | "code-mode";
+  | "code-mode"
+  | "code-mode-progressive";
 
 type BenchmarkJsonLog = {
   benchmarkId?: string;
   scenarioNumber: number;
   mode: BenchmarkMode;
   regularToolStrategy?: RegularToolStrategy;
+  codeModeToolStrategy?: CodeModeToolStrategy;
   model: string;
   pairId?: string;
   runId?: string;
@@ -38,6 +41,20 @@ type BenchmarkJsonLog = {
   evaluation?: Record<string, unknown>;
 };
 
+function hasCodeModeProgressiveApiDiscovery(log: BenchmarkJsonLog) {
+  if (log.mode !== "code-mode") return false;
+  if (log.codeModeToolStrategy === "progressive-discovery") return true;
+
+  return (log.events ?? []).some((event) => {
+    if (event.event !== "tool_call") return false;
+
+    const data = event.data;
+    if (!data || typeof data !== "object") return false;
+    const toolName = (data as { toolName?: unknown }).toolName;
+    return typeof toolName === "string" && toolName === "search_api_definition";
+  });
+}
+
 type PricingConfig = {
   inputPerMillionUsd: number;
   outputPerMillionUsd: number;
@@ -51,9 +68,28 @@ type EnrichedRun = {
   recomputedCostUsd: number;
   recomputedCostNgn: number;
   apiCalls: number;
+  networkRoundTrips: number;
+  networkLatencyMs: number | null;
+  failureRelatedRetries: number;
   outcome: "passed" | "non_model_failure" | "benchmark_or_model_failure";
+  excludedAsFalsePositive: boolean;
+  startedAtMs: number;
   finishedAtMs: number;
+  runDurationMs: number | null;
   issueSummary: string;
+};
+
+type CaseStats = {
+  runs: number;
+  passRate: number | null;
+  avgInputTokens: number | null;
+  avgOutputTokens: number | null;
+  avgTotalTokens: number | null;
+  avgCostUsd: number | null;
+  avgCostNgn: number | null;
+  avgNetworkRoundTrips: number | null;
+  avgNetworkLatencyMs: number | null;
+  avgFailureRelatedRetries: number | null;
 };
 
 type OfficialFxRate = {
@@ -112,13 +148,15 @@ const INCLUDED_MODELS = Object.keys(CANONICAL_PRICING);
 const PARADIGM_ORDER: ParadigmKey[] = [
   "regular-progressive",
   "regular-full-tool-context",
+  "code-mode-progressive",
   "code-mode",
 ];
 
 const PARADIGM_LABEL: Record<ParadigmKey, string> = {
   "regular-progressive": "Regular (with progressive discovery)",
   "regular-full-tool-context": "Regular (without progressive discovery)",
-  "code-mode": "Code Mode",
+  "code-mode-progressive": "Code Mode (progressive API discovery)",
+  "code-mode": "Code Mode (full API context)",
 };
 
 function sanitizeLabel(value: string) {
@@ -215,7 +253,11 @@ async function fetchOfficialFxRate(): Promise<OfficialFxRate> {
 }
 
 function getParadigm(log: BenchmarkJsonLog): ParadigmKey {
-  if (log.mode === "code-mode") return "code-mode";
+  if (log.mode === "code-mode") {
+    return hasCodeModeProgressiveApiDiscovery(log)
+      ? "code-mode-progressive"
+      : "code-mode";
+  }
   return log.regularToolStrategy === "full-tool-context"
     ? "regular-full-tool-context"
     : "regular-progressive";
@@ -372,7 +414,168 @@ function getIssueSummary(log: BenchmarkJsonLog, outcome: EnrichedRun["outcome"])
   return evaluationReason || "failed";
 }
 
+function getFailureRelatedRetries(log: BenchmarkJsonLog) {
+  const events = log.events ?? [];
+  return events.filter(
+    (event) =>
+      event.event === "tool_result" &&
+      typeof event.message === "string" &&
+      /failed inside tool/i.test(event.message)
+  ).length;
+}
+
+function getNetworkRoundTrips(log: BenchmarkJsonLog) {
+  if (Array.isArray(log.modelResponses) && log.modelResponses.length > 0) {
+    return log.modelResponses.length;
+  }
+
+  const eventStages = new Set(
+    (log.events ?? [])
+      .filter((event) => event.event === "model_response")
+      .map((event) =>
+        typeof event.message === "string"
+          ? event.message.match(/for\s+([a-zA-Z0-9_\-]+)/)?.[1]
+          : undefined
+      )
+      .filter((value): value is string => typeof value === "string" && value.length > 0)
+  );
+
+  return eventStages.size;
+}
+
+function getNetworkLatencyMs(log: BenchmarkJsonLog) {
+  const start = Date.parse(log.runStartedAt);
+  const finish = Date.parse(log.runFinishedAt ?? log.runStartedAt);
+  if (!Number.isFinite(start) || !Number.isFinite(finish)) return null;
+
+  const runDurationMs = Math.max(0, finish - start);
+  const roundTrips = getNetworkRoundTrips(log);
+  if (roundTrips <= 0) return null;
+
+  return runDurationMs / roundTrips;
+}
+
+function inferFalsePositiveFlag(log: BenchmarkJsonLog, outcome: EnrichedRun["outcome"]) {
+  if (outcome !== "benchmark_or_model_failure") return false;
+
+  const evaluation = asRecord(log.evaluation);
+  if (!evaluation) return false;
+
+  const schemaPass = evaluation.schemaPass === true;
+  const expectedEval = asRecord(evaluation.expectedEval);
+  const expectedPass = expectedEval?.pass === true;
+  const toolEval = asRecord(evaluation.toolEval);
+  const toolPass = toolEval?.pass === true;
+
+  return schemaPass && expectedPass && !toolPass;
+}
+
+function getModelScenarioRuns(
+  allRuns: EnrichedRun[],
+  paradigm: ParadigmKey,
+  model?: string
+) {
+  return allRuns.filter(
+    (run) =>
+      run.paradigm === paradigm &&
+      (!model || run.log.model === model) &&
+      !run.excludedAsFalsePositive &&
+      run.outcome !== "non_model_failure"
+  );
+}
+
+function buildCaseStats(runs: EnrichedRun[], ngnPerUsd: number): CaseStats {
+  const passRate = runs.length === 0 ? null : runs.filter((run) => run.outcome === "passed").length / runs.length;
+  const avgInputTokens = average(runs.map((run) => run.log.usage.inputTokens));
+  const avgOutputTokens = average(runs.map((run) => run.log.usage.outputTokens));
+  const avgTotalTokens = average(runs.map((run) => run.log.usage.totalTokens));
+  const avgCostUsd = average(runs.map((run) => run.recomputedCostUsd));
+  const avgNetworkRoundTrips = average(runs.map((run) => run.networkRoundTrips));
+  const avgNetworkLatencyMs = average(
+    runs
+      .map((run) => run.networkLatencyMs)
+      .filter((value): value is number => typeof value === "number" && Number.isFinite(value))
+  );
+  const avgFailureRelatedRetries = average(runs.map((run) => run.failureRelatedRetries));
+
+  return {
+    runs: runs.length,
+    passRate,
+    avgInputTokens,
+    avgOutputTokens,
+    avgTotalTokens,
+    avgCostUsd,
+    avgCostNgn: avgCostUsd === null ? null : toNgn(avgCostUsd, ngnPerUsd),
+    avgNetworkRoundTrips,
+    avgNetworkLatencyMs,
+    avgFailureRelatedRetries,
+  };
+}
+
+function selectCaseRuns(runs: EnrichedRun[], kind: "best" | "worst") {
+  const grouped = new Map<string, EnrichedRun[]>();
+  for (const run of runs) {
+    const key = `${run.log.model}::${run.log.scenarioNumber}`;
+    const entries = grouped.get(key) ?? [];
+    entries.push(run);
+    grouped.set(key, entries);
+  }
+
+  const selected: EnrichedRun[] = [];
+  for (const entries of grouped.values()) {
+    const ordered = [...entries].sort((a, b) => {
+      const aPass = a.outcome === "passed" ? 1 : 0;
+      const bPass = b.outcome === "passed" ? 1 : 0;
+
+      if (kind === "best" && aPass !== bPass) return bPass - aPass;
+      if (kind === "worst" && aPass !== bPass) return aPass - bPass;
+
+      if (a.recomputedCostUsd !== b.recomputedCostUsd) {
+        return kind === "best"
+          ? a.recomputedCostUsd - b.recomputedCostUsd
+          : b.recomputedCostUsd - a.recomputedCostUsd;
+      }
+
+      if (a.log.usage.totalTokens !== b.log.usage.totalTokens) {
+        return kind === "best"
+          ? a.log.usage.totalTokens - b.log.usage.totalTokens
+          : b.log.usage.totalTokens - a.log.usage.totalTokens;
+      }
+
+      return kind === "best"
+        ? a.finishedAtMs - b.finishedAtMs
+        : b.finishedAtMs - a.finishedAtMs;
+    });
+
+    selected.push(ordered[0]!);
+  }
+
+  return selected;
+}
+
+function formatMs(value: number | null) {
+  if (value === null || !Number.isFinite(value)) return "n/a";
+  return `${Math.round(value).toLocaleString("en-US")} ms`;
+}
+
 async function loadRuns() {
+  const falseFailurePath = Bun.file("findings/false-failures.json");
+  let falseFailureFiles = new Set<string>();
+  if (await falseFailurePath.exists()) {
+    try {
+      const falseFailureData = (await falseFailurePath.json()) as {
+        falseFailures?: Array<{ file?: string }>;
+      };
+      falseFailureFiles = new Set(
+        (falseFailureData.falseFailures ?? [])
+          .map((entry) => entry.file)
+          .filter((value): value is string => typeof value === "string" && value.length > 0)
+      );
+    } catch {
+      falseFailureFiles = new Set<string>();
+    }
+  }
+
   const runs: EnrichedRun[] = [];
   const glob = new Bun.Glob("results/**/*.json");
 
@@ -386,9 +589,13 @@ async function loadRuns() {
     if (typeof data.scenarioNumber !== "number") continue;
 
     const log = data as BenchmarkJsonLog;
+    const startedAtMs = Date.parse(log.runStartedAt);
     const finishedAtMs = Date.parse(log.runFinishedAt ?? log.runStartedAt);
     const paradigm = getParadigm(log);
     const outcome = classifyOutcome(log);
+    const excludedAsFalsePositive =
+      falseFailureFiles.has(path.replace(/^results\//, "")) ||
+      inferFalsePositiveFlag(log, outcome);
 
     runs.push({
       path,
@@ -397,8 +604,17 @@ async function loadRuns() {
       recomputedCostUsd: estimateCostUsd(log),
       recomputedCostNgn: 0,
       apiCalls: log.modelResponses?.length ?? 0,
+      networkRoundTrips: getNetworkRoundTrips(log),
+      networkLatencyMs: getNetworkLatencyMs(log),
+      failureRelatedRetries: getFailureRelatedRetries(log),
       outcome,
+      excludedAsFalsePositive,
+      startedAtMs,
       finishedAtMs,
+      runDurationMs:
+        Number.isFinite(startedAtMs) && Number.isFinite(finishedAtMs)
+          ? Math.max(0, finishedAtMs - startedAtMs)
+          : null,
       issueSummary: getIssueSummary(log, outcome),
     });
   }
@@ -467,10 +683,16 @@ function summarizeRunSet(
   model?: string
 ) {
   const subset = allRuns.filter(
-    (run) => run.paradigm === paradigm && (!model || run.log.model === model)
+    (run) =>
+      run.paradigm === paradigm &&
+      (!model || run.log.model === model) &&
+      !run.excludedAsFalsePositive
   );
   const bestSubset = [...bestRuns.values()].filter(
-    (run) => run.paradigm === paradigm && (!model || run.log.model === model)
+    (run) =>
+      run.paradigm === paradigm &&
+      (!model || run.log.model === model) &&
+      !run.excludedAsFalsePositive
   );
 
   const possibleScenarios = model ? TOTAL_SCENARIOS : INCLUDED_MODELS.length * TOTAL_SCENARIOS;
@@ -520,6 +742,7 @@ function summarizeRecovery(
   for (const run of runs) {
     if (run.paradigm !== paradigm) continue;
     if (model && run.log.model !== model) continue;
+    if (run.excludedAsFalsePositive || run.outcome === "non_model_failure") continue;
 
     const key = `${run.log.model}::${run.log.scenarioNumber}`;
     const entries = grouped.get(key) ?? [];
@@ -558,10 +781,78 @@ function summarizeRecovery(
   };
 }
 
+function summarizeRecoveryDetailed(
+  runs: EnrichedRun[],
+  paradigm: ParadigmKey,
+  ngnPerUsd: number,
+  model?: string
+) {
+  const grouped = new Map<string, EnrichedRun[]>();
+
+  for (const run of runs) {
+    if (run.paradigm !== paradigm) continue;
+    if (model && run.log.model !== model) continue;
+    if (run.excludedAsFalsePositive || run.outcome === "non_model_failure") continue;
+
+    const key = `${run.log.model}::${run.log.scenarioNumber}`;
+    const entries = grouped.get(key) ?? [];
+    entries.push(run);
+    grouped.set(key, entries);
+  }
+
+  const recoveryCostsUsd: number[] = [];
+  const recoveryRetryCounts: number[] = [];
+  const recoveryLatencyMs: number[] = [];
+
+  for (const entries of grouped.values()) {
+    entries.sort((a, b) => a.finishedAtMs - b.finishedAtMs);
+
+    let failedCostUsd = 0;
+    let failureCount = 0;
+    let firstFailureStartedAt: number | null = null;
+
+    for (const run of entries) {
+      if (run.outcome === "passed") {
+        if (failureCount > 0 && failedCostUsd > 0) {
+          recoveryCostsUsd.push(failedCostUsd);
+          recoveryRetryCounts.push(failureCount);
+          if (firstFailureStartedAt !== null && Number.isFinite(run.finishedAtMs)) {
+            recoveryLatencyMs.push(Math.max(0, run.finishedAtMs - firstFailureStartedAt));
+          }
+        }
+
+        failedCostUsd = 0;
+        failureCount = 0;
+        firstFailureStartedAt = null;
+        continue;
+      }
+
+      failedCostUsd += run.recomputedCostUsd;
+      failureCount += 1;
+      if (firstFailureStartedAt === null && Number.isFinite(run.startedAtMs)) {
+        firstFailureStartedAt = run.startedAtMs;
+      }
+    }
+  }
+
+  const averageUsd = average(recoveryCostsUsd);
+  const averageRetries = average(recoveryRetryCounts);
+  const averageLatencyMs = average(recoveryLatencyMs);
+
+  return {
+    recoveredCases: recoveryCostsUsd.length,
+    averageUsd,
+    averageNgn: averageUsd === null ? null : toNgn(averageUsd, ngnPerUsd),
+    averageRetries,
+    averageLatencyMs,
+  };
+}
+
 function winnerLabel(
   progressive: ReturnType<typeof summarizeRunSet>,
   direct: ReturnType<typeof summarizeRunSet>,
-  codeMode: ReturnType<typeof summarizeRunSet>
+  codeMode: ReturnType<typeof summarizeRunSet>,
+  codeModeProgressive: ReturnType<typeof summarizeRunSet>
 ) {
   const score = (summary: ReturnType<typeof summarizeRunSet>) =>
     summary.bestPasses * 10_000 -
@@ -571,12 +862,77 @@ function winnerLabel(
   const candidates = [
     { label: "**Regular + Discovery**", score: score(progressive) },
     { label: "**Regular - Discovery**", score: score(direct) },
-    { label: "**Code Mode**", score: score(codeMode) },
+    { label: "**Code Mode + API Discovery**", score: score(codeModeProgressive) },
+    { label: "**Code Mode (Full API Context)**", score: score(codeMode) },
   ].sort((a, b) => b.score - a.score);
 
   if (!Number.isFinite(candidates[0]?.score ?? Number.NaN)) return "n/a";
   if ((candidates[0]?.score ?? 0) === (candidates[1]?.score ?? -1)) return "**Tie**";
   return candidates[0]!.label;
+}
+
+function compareCaseStats(
+  allRuns: EnrichedRun[],
+  ngnPerUsd: number,
+  kind: "best" | "worst" | "average"
+) {
+  const rows = PARADIGM_ORDER.map((paradigm) => {
+    const candidateRuns = getModelScenarioRuns(allRuns, paradigm);
+    const caseRuns =
+      kind === "average"
+        ? candidateRuns
+        : selectCaseRuns(candidateRuns, kind === "best" ? "best" : "worst");
+
+    const stats = buildCaseStats(caseRuns, ngnPerUsd);
+
+    return {
+      paradigm,
+      label: PARADIGM_LABEL[paradigm],
+      stats,
+    };
+  });
+
+  const tableRows = rows
+    .map(
+      ({ label, stats }) =>
+        `| ${label} | ${stats.runs} | ${formatPercent(stats.passRate)} | ${
+          stats.avgInputTokens === null ? "n/a" : formatInt(Math.round(stats.avgInputTokens))
+        } | ${stats.avgOutputTokens === null ? "n/a" : formatInt(
+          Math.round(stats.avgOutputTokens)
+        )} | ${stats.avgTotalTokens === null ? "n/a" : formatInt(
+          Math.round(stats.avgTotalTokens)
+        )} | ${formatNgn(stats.avgCostNgn)} | ${formatRate(
+          stats.avgNetworkRoundTrips
+        )} | ${formatMs(stats.avgNetworkLatencyMs)} | ${formatRate(
+          stats.avgFailureRelatedRetries
+        )} |`
+    )
+    .join("\n");
+
+  return {
+    rows,
+    tableRows,
+  };
+}
+
+function overallChampionLabel(rows: Array<{ label: string; stats: CaseStats }>) {
+  const score = (stats: CaseStats) => {
+    if (stats.runs === 0) return Number.NEGATIVE_INFINITY;
+    const pass = stats.passRate ?? 0;
+    const tokens = stats.avgTotalTokens ?? Number.POSITIVE_INFINITY;
+    const cost = stats.avgCostUsd ?? Number.POSITIVE_INFINITY;
+    const roundTrips = stats.avgNetworkRoundTrips ?? Number.POSITIVE_INFINITY;
+    const retries = stats.avgFailureRelatedRetries ?? Number.POSITIVE_INFINITY;
+    return pass * 10_000 - tokens - cost * 10_000 - roundTrips * 200 - retries * 200;
+  };
+
+  const ordered = [...rows]
+    .map((row) => ({ ...row, score: score(row.stats) }))
+    .sort((a, b) => b.score - a.score);
+
+  if (!ordered[0] || !Number.isFinite(ordered[0].score)) return "n/a";
+  if (ordered[1] && ordered[0].score === ordered[1].score) return "Tie";
+  return ordered[0].label;
 }
 
 function modelSummaryRow(
@@ -612,10 +968,19 @@ function modelSummaryRow(
     model
   );
   const codeMode = summarizeRunSet(allRuns, bestRuns, "code-mode", ngnPerUsd, model);
+  const codeModeProgressive = summarizeRunSet(
+    allRuns,
+    bestRuns,
+    "code-mode-progressive",
+    ngnPerUsd,
+    model
+  );
 
   return `| \`${model}\` | ${summarizeCell("regular-progressive")} | ${summarizeCell(
     "regular-full-tool-context"
-  )} | ${summarizeCell("code-mode")} | ${winnerLabel(progressive, direct, codeMode)} |`;
+  )} | ${summarizeCell("code-mode-progressive")} | ${summarizeCell(
+    "code-mode"
+  )} | ${winnerLabel(progressive, direct, codeMode, codeModeProgressive)} |`;
 }
 
 function escapePipe(value: string) {
@@ -662,6 +1027,47 @@ async function writePerModelReports(
       )} | ${summary.nonModelFailures} | ${summary.benchmarkFailures} | ${formatNgn(
         recovery.averageNgn
       )} |`;
+    }).join("\n");
+
+    const caseRows = (kind: "best" | "worst" | "average") =>
+      PARADIGM_ORDER.map((paradigm) => {
+        const candidateRuns = getModelScenarioRuns(allRuns, paradigm, model);
+        const caseRuns =
+          kind === "average"
+            ? candidateRuns
+            : selectCaseRuns(candidateRuns, kind === "best" ? "best" : "worst");
+        const stats = buildCaseStats(caseRuns, officialFxRate.ngnPerUsd);
+
+        return `| ${PARADIGM_LABEL[paradigm]} | ${stats.runs} | ${formatPercent(
+          stats.passRate
+        )} | ${stats.avgInputTokens === null ? "n/a" : formatInt(
+          Math.round(stats.avgInputTokens)
+        )} | ${stats.avgOutputTokens === null ? "n/a" : formatInt(
+          Math.round(stats.avgOutputTokens)
+        )} | ${stats.avgTotalTokens === null ? "n/a" : formatInt(
+          Math.round(stats.avgTotalTokens)
+        )} | ${formatNgn(stats.avgCostNgn)} | ${formatRate(
+          stats.avgNetworkRoundTrips
+        )} | ${formatMs(stats.avgNetworkLatencyMs)} | ${formatRate(
+          stats.avgFailureRelatedRetries
+        )} |`;
+      }).join("\n");
+
+    const bestCaseTable = caseRows("best");
+    const worstCaseTable = caseRows("worst");
+    const averageCaseTable = caseRows("average");
+
+    const recoveryByParadigmRows = PARADIGM_ORDER.map((paradigm) => {
+      const recovery = summarizeRecoveryDetailed(
+        allRuns,
+        paradigm,
+        officialFxRate.ngnPerUsd,
+        model
+      );
+
+      return `| ${PARADIGM_LABEL[paradigm]} | ${recovery.recoveredCases} | ${formatRate(
+        recovery.averageRetries
+      )} | ${formatNgn(recovery.averageNgn)} | ${formatMs(recovery.averageLatencyMs)} |`;
     }).join("\n");
 
     const failureByParadigmRows = PARADIGM_ORDER.map((paradigm) => {
@@ -716,7 +1122,7 @@ async function writePerModelReports(
 
     const failureReasonRows =
       failureReasonMap.size === 0
-        ? "| none | 0 | n/a | n/a | n/a |"
+        ? "| none | 0 | n/a | n/a | n/a | n/a |"
         : [...failureReasonMap.entries()]
             .sort((a, b) => {
               if (b[1].count !== a[1].count) return b[1].count - a[1].count;
@@ -771,6 +1177,38 @@ Official FX conversion in this report uses the official CBN NFEM weighted averag
 | Paradigm | Best Passes | Covered Scenarios (max 6) | Best Pass Rate | Recorded Runs | Avg Input Tokens / Run | Avg Output Tokens / Run | Avg Total Tokens / Run | Avg Cost / Run (NGN) | Avg API Calls / Run | Attempts / Covered Scenario | Non-model Fail Runs | Benchmark/Model Fail Runs | Avg Recovery Cost (NGN) |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 ${summaryTable}
+
+## Best Case (Per Model + Paradigm)
+
+Excludes network/provider failures and known false positives.
+
+| Paradigm | Runs Used | Pass Rate | Input Tokens | Output Tokens | Total Tokens | Cost (NGN) | Network Round-Trips | Network Latency / Round-Trip | Failure-Related Retries |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+${bestCaseTable}
+
+## Worst Case (Per Model + Paradigm)
+
+Excludes network/provider failures and known false positives.
+
+| Paradigm | Runs Used | Pass Rate | Input Tokens | Output Tokens | Total Tokens | Cost (NGN) | Network Round-Trips | Network Latency / Round-Trip | Failure-Related Retries |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+${worstCaseTable}
+
+## Average Case (Per Model + Paradigm)
+
+Excludes network/provider failures and known false positives.
+
+| Paradigm | Runs Used | Pass Rate | Input Tokens | Output Tokens | Total Tokens | Cost (NGN) | Network Round-Trips | Network Latency / Round-Trip | Failure-Related Retries |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+${averageCaseTable}
+
+## Recovery Benchmarks
+
+Lower is better for retries, cost, and time.
+
+| Paradigm | Recovered Cases | Avg Retries To Recover | Avg Recovery Cost (NGN) | Avg Recovery Time |
+|---|---:|---:|---:|---:|
+${recoveryByParadigmRows}
 
 ## Failure Analysis (All Recorded Rounds)
 
@@ -838,6 +1276,31 @@ async function main() {
     } | ${summary.benchmarkFailures} | ${formatNgn(recovery.averageNgn)} |`;
   }).join("\n");
 
+  const bestCaseOverall = compareCaseStats(
+    allRuns,
+    officialFxRate.ngnPerUsd,
+    "best"
+  );
+  const worstCaseOverall = compareCaseStats(
+    allRuns,
+    officialFxRate.ngnPerUsd,
+    "worst"
+  );
+  const averageCaseOverall = compareCaseStats(
+    allRuns,
+    officialFxRate.ngnPerUsd,
+    "average"
+  );
+
+  const recoveryChampionRows = PARADIGM_ORDER.map((paradigm) => {
+    const detail = summarizeRecoveryDetailed(allRuns, paradigm, officialFxRate.ngnPerUsd);
+    return `| ${PARADIGM_LABEL[paradigm]} | ${detail.recoveredCases} | ${formatRate(
+      detail.averageRetries
+    )} | ${formatNgn(detail.averageNgn)} | ${formatMs(detail.averageLatencyMs)} |`;
+  }).join("\n");
+
+  const overallChampion = overallChampionLabel(averageCaseOverall.rows);
+
   const pricingTable = INCLUDED_MODELS.map((model) => {
     const pricing = CANONICAL_PRICING[model]!;
     return `| \`${model}\` | ${formatNgn(
@@ -862,6 +1325,40 @@ Recorded Runs can be higher than Coverage because retries and repeated rounds ar
 |---|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 ${paradigmRows}
 
+## Best Case (Overall)
+
+Excludes network/provider failures and known false positives.
+
+| Paradigm | Runs Used | Pass Rate | Input Tokens | Output Tokens | Total Tokens | Cost (NGN) | Network Round-Trips | Network Latency / Round-Trip | Failure-Related Retries |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+${bestCaseOverall.tableRows}
+
+## Worst Case (Overall)
+
+Excludes network/provider failures and known false positives.
+
+| Paradigm | Runs Used | Pass Rate | Input Tokens | Output Tokens | Total Tokens | Cost (NGN) | Network Round-Trips | Network Latency / Round-Trip | Failure-Related Retries |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+${worstCaseOverall.tableRows}
+
+## Average Case (Overall)
+
+Excludes network/provider failures and known false positives.
+
+| Paradigm | Runs Used | Pass Rate | Input Tokens | Output Tokens | Total Tokens | Cost (NGN) | Network Round-Trips | Network Latency / Round-Trip | Failure-Related Retries |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+${averageCaseOverall.tableRows}
+
+Overall champion (average-case composite): **${overallChampion}**
+
+## Recovery Champion (Overall)
+
+Lower is better for retries, cost, and time.
+
+| Paradigm | Recovered Cases | Avg Retries To Recover | Avg Recovery Cost (NGN) | Avg Recovery Time |
+|---|---:|---:|---:|---:|
+${recoveryChampionRows}
+
 ## Canonical Pricing Used
 
 | Model | Input / 1M Tokens (NGN) | Output / 1M Tokens (NGN) |
@@ -870,8 +1367,8 @@ ${pricingTable}
 
 ## Per-Model Comparison
 
-| Model | Regular (with progressive discovery) | Regular (without progressive discovery) | Code Mode | Winner |
-|---|---|---|---|---|
+| Model | Regular (with progressive discovery) | Regular (without progressive discovery) | Code Mode (progressive API discovery) | Code Mode (full API context) | Winner |
+|---|---|---|---|---|---|
 ${modelRows}
 
 ## Glossary
@@ -880,6 +1377,9 @@ ${modelRows}
 |---|---|
 | Recorded Runs | Total attempts found in \`results/\` for that paradigm. |
 | Covered Model-Scenario Cells | Unique (model, scenario) pairs with at least one run in that paradigm. Max is 48 because there are 8 models and 6 scenarios. |
+| Network Round-Trips | Count of model request/response cycles in a run (derived from \`modelResponses\`). Lower is better. |
+| Network Latency / Round-Trip | End-to-end run duration divided by round-trips, used as proxy latency. Lower is better. |
+| Failure-Related Retries | Count of in-run retry loops triggered after tool/code failure feedback. Lower is better. |
 | Attempts / Covered Cell | Recorded Runs divided by Covered Cells. This explains rows like 92 runs with 48/48 coverage (many retries per covered cell). |
 | Best Passes | Number of covered scenarios where the representative run passed. |
 | Non-model Fail Best Cases | Representative runs that failed due to provider, network, timeout, or other infra/runtime issues. |

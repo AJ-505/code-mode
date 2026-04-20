@@ -1,0 +1,66 @@
+{
+  "benchmarkId": "1_customer_db_average_spend",
+  "scenarioNumber": 1,
+  "mode": "code-mode",
+  "codeModeToolStrategy": "progressive-discovery",
+  "model": "anthropic/claude-opus-4.6",
+  "pairId": "45ffda7f209e",
+  "runId": "09255637c49b",
+  "runStartedAt": "2026-04-20T18:44:17.439Z",
+  "status": "failed",
+  "didFailTest": true,
+  "pricing": {
+    "inputPerMillionUsd": 2.5,
+    "outputPerMillionUsd": 15,
+    "cachedInputPerMillionUsd": 0
+  },
+  "usage": {
+    "inputTokens": 0,
+    "outputTokens": 0,
+    "cachedTokens": 0,
+    "totalTokens": 0,
+    "estimatedCostUsd": 0
+  },
+  "modelResponses": [],
+  "toolCalls": [],
+  "events": [
+    {
+      "ts": "2026-04-20T18:44:17.473Z",
+      "level": "info",
+      "event": "run_start",
+      "message": "Scenario 1 code-mode benchmark started",
+      "data": {
+        "benchmarkId": "1_customer_db_average_spend",
+        "model": "anthropic/claude-opus-4.6",
+        "codeModeToolStrategy": "progressive-discovery",
+        "modelCallTimeoutMs": 300000
+      }
+    },
+    {
+      "ts": "2026-04-20T18:44:20.707Z",
+      "level": "error",
+      "event": "run_failed",
+      "message": "Scenario 1 code-mode benchmark failed",
+      "data": {
+        "error": "No transactions found in the last 7 days. Run the seed script first."
+      }
+    },
+    {
+      "ts": "2026-04-20T18:44:20.708Z",
+      "level": "info",
+      "event": "run_finished",
+      "message": "Benchmark run finished",
+      "data": {
+        "status": "failed",
+        "didFailTest": true,
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "cachedTokens": 0,
+        "totalTokens": 0,
+        "estimatedCostUsd": 0
+      }
+    }
+  ],
+  "runFinishedAt": "2026-04-20T18:44:20.707Z",
+  "error": "No transactions found in the last 7 days. Run the seed script first."
+}

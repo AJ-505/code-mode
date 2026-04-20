@@ -1,0 +1,66 @@
+{
+  "benchmarkId": "1_customer_db_average_spend",
+  "scenarioNumber": 1,
+  "mode": "code-mode",
+  "codeModeToolStrategy": "progressive-discovery",
+  "model": "google/gemini-3.1-pro-preview",
+  "pairId": "abc86a6de3ed",
+  "runId": "9929adb14f25",
+  "runStartedAt": "2026-04-20T18:39:13.274Z",
+  "status": "failed",
+  "didFailTest": true,
+  "pricing": {
+    "inputPerMillionUsd": 2.5,
+    "outputPerMillionUsd": 15,
+    "cachedInputPerMillionUsd": 0
+  },
+  "usage": {
+    "inputTokens": 0,
+    "outputTokens": 0,
+    "cachedTokens": 0,
+    "totalTokens": 0,
+    "estimatedCostUsd": 0
+  },
+  "modelResponses": [],
+  "toolCalls": [],
+  "events": [
+    {
+      "ts": "2026-04-20T18:39:13.304Z",
+      "level": "info",
+      "event": "run_start",
+      "message": "Scenario 1 code-mode benchmark started",
+      "data": {
+        "benchmarkId": "1_customer_db_average_spend",
+        "model": "google/gemini-3.1-pro-preview",
+        "codeModeToolStrategy": "progressive-discovery",
+        "modelCallTimeoutMs": 300000
+      }
+    },
+    {
+      "ts": "2026-04-20T18:39:16.935Z",
+      "level": "error",
+      "event": "run_failed",
+      "message": "Scenario 1 code-mode benchmark failed",
+      "data": {
+        "error": "No transactions found in the last 7 days. Run the seed script first."
+      }
+    },
+    {
+      "ts": "2026-04-20T18:39:16.936Z",
+      "level": "info",
+      "event": "run_finished",
+      "message": "Benchmark run finished",
+      "data": {
+        "status": "failed",
+        "didFailTest": true,
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "cachedTokens": 0,
+        "totalTokens": 0,
+        "estimatedCostUsd": 0
+      }
+    }
+  ],
+  "runFinishedAt": "2026-04-20T18:39:16.936Z",
+  "error": "No transactions found in the last 7 days. Run the seed script first."
+}

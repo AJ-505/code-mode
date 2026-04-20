@@ -18,6 +18,9 @@ export const envSchema = z.object({
   REGULAR_TOOL_STRATEGY: z
     .enum(["progressive-discovery", "full-tool-context"])
     .default("progressive-discovery"),
+  CODE_MODE_TOOL_STRATEGY: z
+    .enum(["full-api-context", "progressive-discovery"])
+    .default("full-api-context"),
   INPUT_COST_PER_MILLION_USD: numberFromEnv(0, z.number().nonnegative()),
   OUTPUT_COST_PER_MILLION_USD: numberFromEnv(0, z.number().nonnegative()),
   CACHED_INPUT_COST_PER_MILLION_USD: numberFromEnv(0, z.number().nonnegative()),

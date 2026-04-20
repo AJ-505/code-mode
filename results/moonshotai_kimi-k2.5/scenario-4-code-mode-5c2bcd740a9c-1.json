@@ -1,0 +1,76 @@
+{
+  "benchmarkId": "4_drive_keyword_retrieval",
+  "scenarioNumber": 4,
+  "mode": "code-mode",
+  "codeModeToolStrategy": "progressive-discovery",
+  "model": "moonshotai/kimi-k2.5",
+  "pairId": "5c2bcd740a9c",
+  "runId": "0f202d4af941",
+  "runStartedAt": "2026-04-20T17:54:23.015Z",
+  "status": "failed",
+  "didFailTest": true,
+  "pricing": {
+    "inputPerMillionUsd": 2.5,
+    "outputPerMillionUsd": 15,
+    "cachedInputPerMillionUsd": 0
+  },
+  "usage": {
+    "inputTokens": 0,
+    "outputTokens": 0,
+    "cachedTokens": 0,
+    "totalTokens": 0,
+    "estimatedCostUsd": 0
+  },
+  "modelResponses": [],
+  "toolCalls": [],
+  "events": [
+    {
+      "ts": "2026-04-20T17:54:23.018Z",
+      "level": "info",
+      "event": "run_start",
+      "message": "Scenario 4 code-mode benchmark started",
+      "data": {
+        "benchmarkId": "4_drive_keyword_retrieval",
+        "model": "moonshotai/kimi-k2.5",
+        "codeModeToolStrategy": "progressive-discovery",
+        "modelCallTimeoutMs": 300000
+      }
+    },
+    {
+      "ts": "2026-04-20T17:54:23.019Z",
+      "level": "info",
+      "event": "prompts",
+      "message": "Prompts for code_mode",
+      "data": {
+        "systemPrompt": "You are a specialised benchmark agent for Scenario 4.\nYou are now in code-mode.\nYou only know API method names at the start (no signatures or argument details yet).\n\nKnown API names: getDefaultQuery, retrieveKeyword\n\nYou may call these tools:\n1) search_api_definition(apiName) to fetch API docs for one method.\n2) execute_scenario code executor tool to run TypeScript.\n\nRules:\n- Use search_api_definition before using any API whose contract you are not fully sure about.\n- Write TypeScript only.\n- Do not output chain-of-thought.\n- Keep responses short.\n\nWrite TypeScript and call execute_scenario4_code with key { typescript }. The code must return exactly { query, speaker, date, matches }.",
+        "userPrompt": "\nFind a specific keyword spoken by a specific person in meeting notes from a given day in Google Drive.\nReturn exact matching excerpts and source file metadata.\n"
+      }
+    },
+    {
+      "ts": "2026-04-20T17:54:43.177Z",
+      "level": "error",
+      "event": "run_failed",
+      "message": "Scenario 4 code-mode benchmark failed",
+      "data": {
+        "error": "Unexpected HTTP client error: Error: Unable to connect. Is the computer able to access the url?"
+      }
+    },
+    {
+      "ts": "2026-04-20T17:54:43.179Z",
+      "level": "info",
+      "event": "run_finished",
+      "message": "Benchmark run finished",
+      "data": {
+        "status": "failed",
+        "didFailTest": true,
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "cachedTokens": 0,
+        "totalTokens": 0,
+        "estimatedCostUsd": 0
+      }
+    }
+  ],
+  "runFinishedAt": "2026-04-20T17:54:43.179Z",
+  "error": "Unexpected HTTP client error: Error: Unable to connect. Is the computer able to access the url?"
+}

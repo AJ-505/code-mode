@@ -1,0 +1,23 @@
+{
+  "benchmarkId": "3_slack_summary",
+  "scenarioNumber": 3,
+  "model": "openai/gpt-5.4-mini",
+  "pairId": "1a7e8839e603",
+  "runId": "526b97800b5e",
+  "createdAt": "2026-04-20T18:07:57.201Z",
+  "winner": "code-mode",
+  "reasons": [
+    "regular: didFail=true, tokens=1391, costUsd=0.001662",
+    "code-mode: didFail=true, tokens=1072, costUsd=0.003505"
+  ],
+  "regular": {
+    "didFailTest": true,
+    "totalTokens": 1391,
+    "estimatedCostUsd": 0.001662
+  },
+  "codeMode": {
+    "didFailTest": true,
+    "totalTokens": 1072,
+    "estimatedCostUsd": 0.003505
+  }
+}

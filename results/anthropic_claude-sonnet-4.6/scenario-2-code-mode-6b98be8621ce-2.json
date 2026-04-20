@@ -1,0 +1,280 @@
+{
+  "benchmarkId": "2_playwright_ui_audit",
+  "scenarioNumber": 2,
+  "mode": "code-mode",
+  "codeModeToolStrategy": "progressive-discovery",
+  "model": "anthropic/claude-sonnet-4.6",
+  "pairId": "6b98be8621ce",
+  "runId": "936289a2fcd7",
+  "runStartedAt": "2026-04-20T18:44:19.169Z",
+  "status": "passed",
+  "didFailTest": false,
+  "pricing": {
+    "inputPerMillionUsd": 2.5,
+    "outputPerMillionUsd": 15,
+    "cachedInputPerMillionUsd": 0
+  },
+  "usage": {
+    "inputTokens": 1742,
+    "outputTokens": 709,
+    "cachedTokens": 0,
+    "totalTokens": 2451,
+    "estimatedCostUsd": 0.01499
+  },
+  "modelResponses": [
+    {
+      "stage": "code_mode",
+      "text": "---\n\n## 🔍 UI/UX Audit Report — `https://playwright.dev`\n\n---\n\n### 📋 Summary\n> **Site is usable but needs stronger information hierarchy and accessibility-focused interaction states.**\n\n---\n\n### 🐛 Findings\n\n#### 1. 🟡 Low Visual Hierarchy on Hero Section\n| Field | Detail |\n|---|---|\n| **Severity** | `Medium` |\n| **Location** | `/` — Hero Section |\n| **Description** | The primary heading and supporting text share similar weight and contrast, making it hard for users to quickly scan and understand the page's core message. |\n\n**🔁 Reproducible Steps:**\n1. Navigate to `https://playwright.dev`\n2. Observe the hero section at the top of the page\n3. Compare the visual weight of the `<h1>` heading vs. the subtitle/body text beneath it\n\n**✅ Suggested Fix:**\n- Increase the heading's `font-size` and `font-weight` significantly\n- Reduce the visual prominence of secondary/supporting text (lighter color, smaller size)\n- Ensure a clear typographic scale (e.g., heading → subheading → body) is applied consistently\n\n---\n\n#### 2. 🔵 No Explicit Keyboard Focus Styling\n| Field | Detail |\n|---|---|\n| **Severity** | `Low` |\n| **Location** | Global — All Interactive Elements (links, buttons, nav items) |\n| **Description** | Interactive elements rely solely on the browser's default focus outline, which varies across browsers and can be nearly invisible in some environments — a barrier for keyboard-only and assistive-technology users. |\n\n**🔁 Reproducible Steps:**\n1. Navigate to `https://playwright.dev`\n2. Press `Tab` to cycle through interactive elements (links, buttons, nav)\n3. Observe the focus indicator — it may be faint, inconsistent, or absent in some browsers\n\n**✅ Suggested Fix:**\n- Define a custom, high-contrast `:focus-visible` CSS rule globally, e.g.:\n  ```css\n  :focus-visible {\n    outline: 3px solid #0078d4;\n    outline-offset: 3px;\n    border-radius: 3px;\n  }\n  ```\n- Apply consistently across all interactive components\n- Test with keyboard-only navigation and screen readers (WCAG 2.1 SC 2.4.7)\n\n---\n\n### 🏁 Overall Assessment\n\n| Metric | Status |\n|---|---|\n| **Usability** | ✅ Generally good |\n| **Visual Hierarchy** | ⚠️ Needs improvement |\n| **Accessibility (a11y)** | ⚠️ Focus states need attention |\n| **Critical Blockers** | ✅ None found |\n\n> **Priority recommendation:** Address the keyboard focus styling first — it's a quick CSS fix with a high accessibility impact. Then revisit the hero section's typographic scale for improved scannability.",
+      "usage": {
+        "inputTokens": 1742,
+        "outputTokens": 709,
+        "cachedTokens": 0,
+        "totalTokens": 2451,
+        "estimatedCostUsd": 0.01499
+      }
+    }
+  ],
+  "toolCalls": [
+    {
+      "stage": "code_mode",
+      "name": "execute_scenario2_code",
+      "arguments": {
+        "synthetic": true,
+        "source": "tool_result_event"
+      }
+    }
+  ],
+  "events": [
+    {
+      "ts": "2026-04-20T18:44:19.175Z",
+      "level": "info",
+      "event": "run_start",
+      "message": "Scenario 2 code-mode benchmark started",
+      "data": {
+        "benchmarkId": "2_playwright_ui_audit",
+        "model": "anthropic/claude-sonnet-4.6",
+        "codeModeToolStrategy": "progressive-discovery",
+        "modelCallTimeoutMs": 300000
+      }
+    },
+    {
+      "ts": "2026-04-20T18:44:19.177Z",
+      "level": "info",
+      "event": "prompts",
+      "message": "Prompts for code_mode",
+      "data": {
+        "systemPrompt": "You are a specialised benchmark agent for Scenario 2.\nYou are now in code-mode.\nYou only know API method names at the start (no signatures or argument details yet).\nYour job is to discover definitions, then execute correctly.\n\nKnown API names: getTargetSite, auditSite\nIMPORTANT: these methods are properties on a provided object named \"api\". Always call them as api.<methodName>(...), for example: api.getTargetSite, api.auditSite\n\nYou may call these tools:\n1) search_api_definition(apiName) to fetch API docs for one method.\n2) execute_scenario code executor tool to run TypeScript.\n\nRules:\n- REQUIRED DISCOVERY STEP: before calling execute_scenario tool, you MUST call search_api_definition at least once.\n- Use search_api_definition for each API you plan to use.\n- Write TypeScript only.\n- Inside your TypeScript, never call bare names like getTargetSite(...). Use api.<name>(...) only.\n- Do not output chain-of-thought.\n- Keep responses short.\n\nExecution checklist (follow in order):\n1) Call search_api_definition for relevant API names.\n2) Write TypeScript that uses api.<methodName>(...) calls only.\n3) Call execute_scenario tool with { typescript }.\n\nWrite TypeScript and call execute_scenario2_code with key { typescript }. The code must return exactly { siteUrl, findings, summary }.",
+        "userPrompt": "\nPlease audit a demo website for UI and UX issues.\nBrowse key pages and return a concise report with severity levels, reproducible steps, and suggested fixes.\n"
+      }
+    },
+    {
+      "ts": "2026-04-20T18:44:39.144Z",
+      "level": "info",
+      "event": "model_response",
+      "message": "Model response captured for code_mode",
+      "data": {
+        "responsePreview": "--- ## 🔍 UI/UX Audit Report — `https://playwright.dev` --- ### 📋 Summary > **Site is usable but needs stronger information hierarchy and accessibility-focused interaction states.** --- ### 🐛 Findings #### 1. 🟡 Low Visual Hierarchy on He...",
+        "responseChars": 2474,
+        "inputTokens": 1742,
+        "outputTokens": 709,
+        "cachedTokens": 0,
+        "totalTokens": 2451,
+        "estimatedCostUsd": 0.01499
+      }
+    },
+    {
+      "ts": "2026-04-20T18:44:39.162Z",
+      "level": "info",
+      "event": "tool_call",
+      "message": "Tool called in code_mode: execute_scenario2_code",
+      "data": {
+        "stage": "code_mode",
+        "toolName": "execute_scenario2_code",
+        "callDetails": "synthetic=true; source=tool_result_event"
+      }
+    },
+    {
+      "ts": "2026-04-20T18:44:39.166Z",
+      "level": "info",
+      "event": "tool_result",
+      "message": "Code execution result from tool",
+      "data": {
+        "siteUrl": "https://playwright.dev",
+        "findings": [
+          {
+            "severity": "medium",
+            "title": "Low visual hierarchy on hero section",
+            "description": "Primary heading and supporting text have similar weight and contrast, reducing scannability.",
+            "location": "/ hero",
+            "suggestedFix": "Increase heading size/weight and reduce secondary text prominence for clearer hierarchy."
+          },
+          {
+            "severity": "low",
+            "title": "No explicit keyboard focus styling",
+            "description": "Interactive elements rely on default browser focus outline with inconsistent visibility.",
+            "location": "Global interactive elements",
+            "suggestedFix": "Define a consistent, high-contrast focus ring across interactive components."
+          }
+        ],
+        "summary": "Site is usable but needs stronger information hierarchy and accessibility-focused interaction states."
+      }
+    },
+    {
+      "ts": "2026-04-20T18:44:39.167Z",
+      "level": "info",
+      "event": "tool_activity",
+      "message": "Tool calls captured",
+      "data": {
+        "count": 1,
+        "names": "execute_scenario2_code"
+      }
+    },
+    {
+      "ts": "2026-04-20T18:44:39.192Z",
+      "level": "info",
+      "event": "model_result",
+      "message": "Model result (parsed)",
+      "data": {
+        "siteUrl": "https://playwright.dev",
+        "findings": "2 item(s)",
+        "summary": "Site is usable but needs stronger information hierarchy and accessibility-focused interaction states."
+      }
+    },
+    {
+      "ts": "2026-04-20T18:44:39.198Z",
+      "level": "info",
+      "event": "evaluation_human",
+      "message": "Evaluation summary",
+      "data": {
+        "overallPass": true,
+        "toolPass": true,
+        "outputValidation": "expected-result",
+        "outputPass": true,
+        "expectedPass": true
+      }
+    },
+    {
+      "ts": "2026-04-20T18:44:39.199Z",
+      "level": "info",
+      "event": "run_finished",
+      "message": "Benchmark run finished",
+      "data": {
+        "status": "passed",
+        "didFailTest": false,
+        "inputTokens": 1742,
+        "outputTokens": 709,
+        "cachedTokens": 0,
+        "totalTokens": 2451,
+        "estimatedCostUsd": 0.01499
+      }
+    }
+  ],
+  "evaluation": {
+    "benchmarkId": "2_playwright_ui_audit",
+    "overallPass": true,
+    "toolEval": {
+      "pass": true,
+      "details": [
+        {
+          "groupId": "api-definition-search",
+          "required": true,
+          "expectedAnyOf": [
+            "search_api_definition"
+          ],
+          "matched": [
+            "search_api_definition"
+          ],
+          "pass": true,
+          "note": "Code mode progressive strategy should query API definitions."
+        },
+        {
+          "groupId": "code-execution",
+          "required": true,
+          "expectedAnyOf": [
+            "execute_scenario2_code"
+          ],
+          "matched": [
+            "execute_scenario2_code"
+          ],
+          "pass": true,
+          "note": "Code mode must write and execute code."
+        }
+      ],
+      "calledToolNames": [
+        "search_api_definition",
+        "execute_scenario2_code"
+      ]
+    },
+    "fuzzyEval": {
+      "pass": true,
+      "score": 1,
+      "details": [
+        {
+          "checkId": "finding-mention",
+          "requiredMinMatches": 1,
+          "matchedCount": 3,
+          "matchedTerms": [
+            "findings",
+            "severity",
+            "suggestedFix"
+          ],
+          "pass": true,
+          "weight": 1
+        }
+      ]
+    },
+    "numericMentions": 0,
+    "numericGatePass": true,
+    "schemaPass": true,
+    "parsed": {
+      "siteUrl": "https://playwright.dev",
+      "findings": [
+        {
+          "severity": "medium",
+          "title": "Low visual hierarchy on hero section",
+          "description": "Primary heading and supporting text have similar weight and contrast, reducing scannability.",
+          "location": "/ hero",
+          "suggestedFix": "Increase heading size/weight and reduce secondary text prominence for clearer hierarchy."
+        },
+        {
+          "severity": "low",
+          "title": "No explicit keyboard focus styling",
+          "description": "Interactive elements rely on default browser focus outline with inconsistent visibility.",
+          "location": "Global interactive elements",
+          "suggestedFix": "Define a consistent, high-contrast focus ring across interactive components."
+        }
+      ],
+      "summary": "Site is usable but needs stronger information hierarchy and accessibility-focused interaction states."
+    },
+    "expectedEval": {
+      "pass": true,
+      "details": {
+        "siteUrlPass": true,
+        "summaryPass": true,
+        "hasHierarchyFinding": true,
+        "hasFocusFinding": true,
+        "expected": {
+          "siteUrl": "https://playwright.dev",
+          "findings": [
+            {
+              "severity": "medium",
+              "title": "Low visual hierarchy on hero section",
+              "description": "Primary heading and supporting text have similar weight and contrast, reducing scannability.",
+              "location": "/ hero",
+              "suggestedFix": "Increase heading size/weight and reduce secondary text prominence for clearer hierarchy."
+            },
+            {
+              "severity": "low",
+              "title": "No explicit keyboard focus styling",
+              "description": "Interactive elements rely on default browser focus outline with inconsistent visibility.",
+              "location": "Global interactive elements",
+              "suggestedFix": "Define a consistent, high-contrast focus ring across interactive components."
+            }
+          ],
+          "summary": "Site is usable but needs stronger information hierarchy and accessibility-focused interaction states."
+        }
+      }
+    }
+  },
+  "runFinishedAt": "2026-04-20T18:44:39.199Z"
+}

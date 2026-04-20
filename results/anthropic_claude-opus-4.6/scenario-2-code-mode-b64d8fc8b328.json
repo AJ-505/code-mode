@@ -1,0 +1,76 @@
+{
+  "benchmarkId": "2_playwright_ui_audit",
+  "scenarioNumber": 2,
+  "mode": "code-mode",
+  "codeModeToolStrategy": "progressive-discovery",
+  "model": "anthropic/claude-opus-4.6",
+  "pairId": "b64d8fc8b328",
+  "runId": "88556990e875",
+  "runStartedAt": "2026-04-20T17:27:18.030Z",
+  "status": "failed",
+  "didFailTest": true,
+  "pricing": {
+    "inputPerMillionUsd": 2.5,
+    "outputPerMillionUsd": 15,
+    "cachedInputPerMillionUsd": 0
+  },
+  "usage": {
+    "inputTokens": 0,
+    "outputTokens": 0,
+    "cachedTokens": 0,
+    "totalTokens": 0,
+    "estimatedCostUsd": 0
+  },
+  "modelResponses": [],
+  "toolCalls": [],
+  "events": [
+    {
+      "ts": "2026-04-20T17:27:18.033Z",
+      "level": "info",
+      "event": "run_start",
+      "message": "Scenario 2 code-mode benchmark started",
+      "data": {
+        "benchmarkId": "2_playwright_ui_audit",
+        "model": "anthropic/claude-opus-4.6",
+        "codeModeToolStrategy": "progressive-discovery",
+        "modelCallTimeoutMs": 300000
+      }
+    },
+    {
+      "ts": "2026-04-20T17:27:18.034Z",
+      "level": "info",
+      "event": "prompts",
+      "message": "Prompts for code_mode",
+      "data": {
+        "systemPrompt": "You are a specialised benchmark agent for Scenario 2.\nYou are now in code-mode.\nYou only know API method names at the start (no signatures or argument details yet).\n\nKnown API names: getTargetSite, auditSite\n\nYou may call these tools:\n1) search_api_definition(apiName) to fetch API docs for one method.\n2) execute_scenario code executor tool to run TypeScript.\n\nRules:\n- Use search_api_definition before using any API whose contract you are not fully sure about.\n- Write TypeScript only.\n- Do not output chain-of-thought.\n- Keep responses short.\n\nWrite TypeScript and call execute_scenario2_code with key { typescript }. The code must return exactly { siteUrl, findings, summary }.",
+        "userPrompt": "\nPlease audit a demo website for UI and UX issues.\nBrowse key pages and return a concise report with severity levels, reproducible steps, and suggested fixes.\n"
+      }
+    },
+    {
+      "ts": "2026-04-20T17:27:38.302Z",
+      "level": "error",
+      "event": "run_failed",
+      "message": "Scenario 2 code-mode benchmark failed",
+      "data": {
+        "error": "Unexpected HTTP client error: Error: Unable to connect. Is the computer able to access the url?"
+      }
+    },
+    {
+      "ts": "2026-04-20T17:27:38.304Z",
+      "level": "info",
+      "event": "run_finished",
+      "message": "Benchmark run finished",
+      "data": {
+        "status": "failed",
+        "didFailTest": true,
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "cachedTokens": 0,
+        "totalTokens": 0,
+        "estimatedCostUsd": 0
+      }
+    }
+  ],
+  "runFinishedAt": "2026-04-20T17:27:38.304Z",
+  "error": "Unexpected HTTP client error: Error: Unable to connect. Is the computer able to access the url?"
+}

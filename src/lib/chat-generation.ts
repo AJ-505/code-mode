@@ -9,7 +9,9 @@ export type ChatMessage = {
 export type ProprietaryModel =
   | "anthropic/claude-opus-4.6"
   | "openai/gpt-5.4"
-  | "google/gemini-3.1-pro-preview";
+  | "openai/gpt-5.4-mini"
+  | "google/gemini-3.1-pro-preview"
+  | "google/gemini-3.1-flash-lite-preview";
 
 export type OpenWeightModel =
   | "z-ai/glm-5.1"

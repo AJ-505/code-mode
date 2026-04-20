@@ -110,6 +110,9 @@ function summarizeParsedResult(parsed: Record<string, unknown>) {
 }
 
 export type BenchmarkMode = "regular" | "code-mode";
+export type RegularToolStrategy =
+  | "progressive-discovery"
+  | "full-tool-context";
 
 export type PricingConfig = {
   inputPerMillionUsd: number;
@@ -121,6 +124,7 @@ export type BenchmarkJsonLog = {
   benchmarkId: string;
   scenarioNumber: number;
   mode: BenchmarkMode;
+  regularToolStrategy?: RegularToolStrategy;
   model: string;
   pairId: string;
   runId: string;
@@ -173,6 +177,7 @@ type LoggerConfig = {
   benchmarkId: string;
   scenarioNumber: number;
   mode: BenchmarkMode;
+  regularToolStrategy?: RegularToolStrategy;
   model: string;
   pairId: string;
   runId: string;
@@ -195,10 +200,28 @@ export function toResultLabel(value: string) {
 
 function getResultsPath(log: BenchmarkJsonLog) {
   const modelLabel = sanitizeLabel(log.model);
-  const dateLabel = sanitizeLabel(log.runStartedAt.replaceAll(":", "-"));
   const pairLabel = sanitizeLabel(log.pairId);
-  const fileName = `${modelLabel}-scenario-${log.scenarioNumber}-${log.mode}-pair-${pairLabel}-${log.runId}-${dateLabel}.json`;
-  return `results/${fileName}`;
+  const baseFileName = `scenario-${log.scenarioNumber}-${log.mode}-${pairLabel}`;
+  return `results/${modelLabel}/${baseFileName}.json`;
+}
+
+async function getUniqueResultsPath(log: BenchmarkJsonLog): Promise<string> {
+  const modelLabel = sanitizeLabel(log.model);
+  const pairLabel = sanitizeLabel(log.pairId);
+  const baseFileName = `scenario-${log.scenarioNumber}-${log.mode}-${pairLabel}`;
+  const modelDir = `results/${modelLabel}`;
+
+  await mkdir(modelDir, { recursive: true });
+
+  let filePath = `${modelDir}/${baseFileName}.json`;
+  let counter = 1;
+
+  while (await Bun.file(filePath).exists()) {
+    filePath = `${modelDir}/${baseFileName}-${counter}.json`;
+    counter++;
+  }
+
+  return filePath;
 }
 
 function getUsageSnapshot(usage: UsageLike | null | undefined) {
@@ -230,6 +253,9 @@ export class BenchmarkLogger {
       benchmarkId: config.benchmarkId,
       scenarioNumber: config.scenarioNumber,
       mode: config.mode,
+      ...(config.regularToolStrategy
+        ? { regularToolStrategy: config.regularToolStrategy }
+        : {}),
       model: config.model,
       pairId: config.pairId,
       runId: config.runId,
@@ -252,6 +278,60 @@ export class BenchmarkLogger {
 
   static getDefaultPricing() {
     return DEFAULT_PRICING;
+  }
+
+  printBenchmarkHeader() {
+    const divider = chalk.cyan("═".repeat(60));
+    console.log("\n" + divider);
+    console.log(chalk.bold.cyan(`  BENCHMARK RUN: Scenario ${this.log.scenarioNumber}`));
+    console.log(divider);
+    console.log(`  ${chalk.yellow("Model:")}     ${chalk.white(this.log.model)}`);
+    console.log(`  ${chalk.yellow("Mode:")}      ${chalk.white(this.log.mode)}`);
+    if (this.log.mode === "regular" && this.log.regularToolStrategy) {
+      console.log(
+        `  ${chalk.yellow("Strategy:")}  ${chalk.white(this.log.regularToolStrategy)}`
+      );
+    }
+    console.log(`  ${chalk.yellow("Pair ID:")}   ${chalk.dim(this.log.pairId)}`);
+    console.log(`  ${chalk.yellow("Run ID:")}    ${chalk.dim(this.log.runId)}`);
+    console.log(`  ${chalk.yellow("Started:")}   ${chalk.dim(this.log.runStartedAt)}`);
+    console.log(divider + "\n");
+  }
+
+  printBenchmarkSummary() {
+    const divider = chalk.cyan("─".repeat(60));
+    const statusColor = this.log.status === "passed" ? chalk.green : chalk.red;
+    const statusIcon = this.log.status === "passed" ? "✓" : "✗";
+
+    console.log("\n" + divider);
+    console.log(chalk.bold.cyan("  BENCHMARK SUMMARY"));
+    console.log(divider);
+    console.log(`  ${chalk.yellow("Status:")}        ${statusColor(`${statusIcon} ${this.log.status.toUpperCase()}`)}`);
+    console.log(`  ${chalk.yellow("Input Tokens:")}  ${chalk.white(this.log.usage.inputTokens.toLocaleString())}`);
+    console.log(`  ${chalk.yellow("Output Tokens:")} ${chalk.white(this.log.usage.outputTokens.toLocaleString())}`);
+    console.log(`  ${chalk.yellow("Total Tokens:")}  ${chalk.white(this.log.usage.totalTokens.toLocaleString())}`);
+    console.log(`  ${chalk.yellow("Cost (USD):")}    ${chalk.green("$" + this.log.usage.estimatedCostUsd.toFixed(6))}`);
+    console.log(`  ${chalk.yellow("Cost (NGN):")}    ${chalk.green("₦" + (this.log.usage.estimatedCostUsd * 1550).toFixed(2))}`);
+    console.log(`  ${chalk.yellow("Tool Calls:")}    ${chalk.white(this.log.toolCalls.length)}`);
+    console.log(`  ${chalk.yellow("Duration:")}      ${chalk.white(this.getDuration())}`);
+    console.log(divider + "\n");
+  }
+
+  private getDuration(): string {
+    if (!this.log.runFinishedAt) return "In progress...";
+    const start = new Date(this.log.runStartedAt).getTime();
+    const end = new Date(this.log.runFinishedAt).getTime();
+    const ms = end - start;
+    if (ms < 1000) return `${ms}ms`;
+    if (ms < 60000) return `${(ms / 1000).toFixed(2)}s`;
+    return `${(ms / 60000).toFixed(2)}min`;
+  }
+
+  printProgress(step: string, current: number, total: number) {
+    const pct = Math.round((current / total) * 100);
+    const filled = Math.round(pct / 5);
+    const bar = chalk.green("█".repeat(filled)) + chalk.gray("░".repeat(20 - filled));
+    console.log(`  ${chalk.cyan("→")} ${step} [${bar}] ${pct}%`);
   }
 
   info(event: string, message: string, data?: Record<string, unknown>) {
@@ -460,8 +540,7 @@ export class BenchmarkLogger {
   }
 
   async writeToFile() {
-    await mkdir("results", { recursive: true });
-    const path = getResultsPath(this.log);
+    const path = await getUniqueResultsPath(this.log);
     await Bun.write(path, `${JSON.stringify(this.log, null, 2)}\n`);
     this.info("log_written", "Wrote JSON benchmark log file", { path });
     return path;
@@ -525,8 +604,17 @@ export async function writeScenarioFinalComparison(options: {
 
   const modelLabel = sanitizeLabel(options.model);
   const pairLabel = sanitizeLabel(options.pairId);
-  const fileName = `${modelLabel}-scenario-${options.scenarioNumber}-final-pair-${pairLabel}-${options.runId}-${sanitizeLabel(comparison.createdAt.replaceAll(":", "-"))}.json`;
-  const path = `results/${fileName}`;
+  const modelDir = `results/${modelLabel}`;
+  await mkdir(modelDir, { recursive: true });
+
+  const baseFileName = `scenario-${options.scenarioNumber}-final-${pairLabel}`;
+  let filePath = `${modelDir}/${baseFileName}.json`;
+  let counter = 1;
+  while (await Bun.file(filePath).exists()) {
+    filePath = `${modelDir}/${baseFileName}-${counter}.json`;
+    counter++;
+  }
+  const path = filePath;
   await Bun.write(path, `${JSON.stringify(comparison, null, 2)}\n`);
 
   return { path, comparison };

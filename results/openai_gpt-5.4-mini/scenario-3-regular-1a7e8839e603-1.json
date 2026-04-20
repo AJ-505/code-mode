@@ -1,0 +1,236 @@
+{
+  "benchmarkId": "3_slack_summary",
+  "scenarioNumber": 3,
+  "mode": "regular",
+  "model": "openai/gpt-5.4-mini",
+  "pairId": "1a7e8839e603",
+  "runId": "c38866a6e87f",
+  "runStartedAt": "2026-04-20T13:51:53.488Z",
+  "status": "failed",
+  "didFailTest": true,
+  "pricing": {
+    "inputPerMillionUsd": 0.75,
+    "outputPerMillionUsd": 4.5,
+    "cachedInputPerMillionUsd": 0
+  },
+  "usage": {
+    "inputTokens": 1226,
+    "outputTokens": 165,
+    "cachedTokens": 0,
+    "totalTokens": 1391,
+    "estimatedCostUsd": 0.001662
+  },
+  "modelResponses": [
+    {
+      "stage": "discovery",
+      "text": "",
+      "usage": {
+        "inputTokens": 510,
+        "outputTokens": 23,
+        "cachedTokens": 0,
+        "totalTokens": 533,
+        "estimatedCostUsd": 0.000486
+      }
+    },
+    {
+      "stage": "execution",
+      "text": "{\"channelId\":\"C123BENCH\",\"window\":{\"from\":\"2026-04-19T00:00:00Z\",\"to\":\"2026-04-20T00:00:00Z\"},\"summary\":\"Team discussed release scope, identified one blocker on analytics instrumentation, and aligned on ownership for fixes.\",\"majorTopics\":[\"Release planning\",\"Analytics blocker\",\"Customer onboarding bug triage\"],\"decisions\":[],\"blockers\":[\"Analytics instrumentation issue due to event naming mismatch.\"],\"actionItems\":[{\"owner\":\"Avery\",\"task\":\"Fix analytics event naming mismatch before release cutoff.\"},{\"owner\":\"Jordan\",\"task\":\"Prepare rollout checklist and post channel update by EOD.\"}]}",
+      "usage": {
+        "inputTokens": 716,
+        "outputTokens": 142,
+        "cachedTokens": 0,
+        "totalTokens": 858,
+        "estimatedCostUsd": 0.001176
+      }
+    }
+  ],
+  "toolCalls": [
+    {
+      "stage": "discovery",
+      "name": "discover_tools",
+      "arguments": {
+        "toolNames": [
+          "get_current_datetime"
+        ]
+      }
+    }
+  ],
+  "events": [
+    {
+      "ts": "2026-04-20T13:51:53.493Z",
+      "level": "info",
+      "event": "run_start",
+      "message": "Scenario 3 regular benchmark started",
+      "data": {
+        "benchmarkId": "3_slack_summary",
+        "model": "openai/gpt-5.4-mini",
+        "modelCallTimeoutMs": 120000
+      }
+    },
+    {
+      "ts": "2026-04-20T13:51:57.206Z",
+      "level": "info",
+      "event": "model_response",
+      "message": "Model response captured for discovery",
+      "data": {
+        "responsePreview": "",
+        "responseChars": 0,
+        "inputTokens": 510,
+        "outputTokens": 23,
+        "cachedTokens": 0,
+        "totalTokens": 533,
+        "estimatedCostUsd": 0.000486
+      }
+    },
+    {
+      "ts": "2026-04-20T13:51:57.210Z",
+      "level": "info",
+      "event": "tool_call",
+      "message": "Tool called in discovery: discover_tools",
+      "data": {
+        "stage": "discovery",
+        "toolName": "discover_tools",
+        "callDetails": "tool names=get_current_datetime"
+      }
+    },
+    {
+      "ts": "2026-04-20T13:52:00.175Z",
+      "level": "info",
+      "event": "model_response",
+      "message": "Model response captured for execution",
+      "data": {
+        "responsePreview": "{\"channelId\":\"C123BENCH\",\"window\":{\"from\":\"2026-04-19T00:00:00Z\",\"to\":\"2026-04-20T00:00:00Z\"},\"summary\":\"Team discussed release scope, identified one blocker on analytics instrumentation, and aligned on ownership for fixes.\",\"majorTopics\":[...",
+        "responseChars": 593,
+        "inputTokens": 716,
+        "outputTokens": 142,
+        "cachedTokens": 0,
+        "totalTokens": 858,
+        "estimatedCostUsd": 0.001176
+      }
+    },
+    {
+      "ts": "2026-04-20T13:52:00.185Z",
+      "level": "info",
+      "event": "model_result",
+      "message": "Model result (parsed)",
+      "data": {
+        "parsed": "(missing)"
+      }
+    },
+    {
+      "ts": "2026-04-20T13:52:00.185Z",
+      "level": "info",
+      "event": "evaluation_human",
+      "message": "Evaluation summary",
+      "data": {
+        "overallPass": false,
+        "toolPass": false,
+        "outputValidation": "expected-result",
+        "outputPass": false,
+        "expectedPass": false
+      }
+    },
+    {
+      "ts": "2026-04-20T13:52:00.186Z",
+      "level": "info",
+      "event": "run_finished",
+      "message": "Benchmark run finished",
+      "data": {
+        "status": "failed",
+        "didFailTest": true,
+        "inputTokens": 1226,
+        "outputTokens": 165,
+        "cachedTokens": 0,
+        "totalTokens": 1391,
+        "estimatedCostUsd": 0.001662
+      }
+    }
+  ],
+  "evaluation": {
+    "benchmarkId": "3_slack_summary",
+    "overallPass": false,
+    "toolEval": {
+      "pass": false,
+      "details": [
+        {
+          "groupId": "progressive-discovery",
+          "required": true,
+          "expectedAnyOf": [
+            "discover_tools"
+          ],
+          "matched": [
+            "discover_tools"
+          ],
+          "pass": true,
+          "note": "Agent should discover hidden tools first."
+        },
+        {
+          "groupId": "channel-summary",
+          "required": true,
+          "expectedAnyOf": [
+            "summarize_slack_channel"
+          ],
+          "matched": [],
+          "pass": false,
+          "note": "Agent should summarize channel messages in regular mode."
+        }
+      ],
+      "calledToolNames": [
+        "discover_tools"
+      ]
+    },
+    "fuzzyEval": {
+      "pass": true,
+      "score": 1,
+      "details": [
+        {
+          "checkId": "summary-fields",
+          "requiredMinMatches": 1,
+          "matchedCount": 3,
+          "matchedTerms": [
+            "summary",
+            "topics",
+            "actionItems"
+          ],
+          "pass": true,
+          "weight": 1
+        }
+      ]
+    },
+    "numericMentions": 6,
+    "numericGatePass": true,
+    "schemaPass": false,
+    "parsed": null,
+    "expectedEval": {
+      "pass": false,
+      "details": {
+        "channelIdPass": false,
+        "summaryPass": false,
+        "topicCoverage": 0,
+        "actionItemsPass": false,
+        "expected": {
+          "channelId": "C123BENCH",
+          "fromIso": "2026-04-19T13:52:00.184Z",
+          "toIso": "2026-04-20T13:52:00.184Z",
+          "summary": "Team discussed release scope, identified one blocker on analytics instrumentation, and aligned on ownership for fixes.",
+          "topics": [
+            "Release planning",
+            "Analytics blocker",
+            "Customer onboarding bug triage"
+          ],
+          "actionItems": [
+            {
+              "owner": "Avery",
+              "task": "Fix analytics event naming mismatch before release cutoff."
+            },
+            {
+              "owner": "Jordan",
+              "task": "Prepare rollout checklist and post channel update by EOD."
+            }
+          ]
+        }
+      }
+    }
+  },
+  "runFinishedAt": "2026-04-20T13:52:00.186Z"
+}

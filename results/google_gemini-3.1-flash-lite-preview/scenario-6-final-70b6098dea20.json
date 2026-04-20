@@ -1,0 +1,23 @@
+{
+  "benchmarkId": "6_github_repo_change_pr",
+  "scenarioNumber": 6,
+  "model": "google/gemini-3.1-flash-lite-preview",
+  "pairId": "70b6098dea20",
+  "runId": "948ec2534c03",
+  "createdAt": "2026-04-20T13:57:32.652Z",
+  "winner": "code-mode",
+  "reasons": [
+    "regular: didFail=true, tokens=841, costUsd=0.000389",
+    "code-mode: didFail=false, tokens=1098, costUsd=0.000292"
+  ],
+  "regular": {
+    "didFailTest": true,
+    "totalTokens": 841,
+    "estimatedCostUsd": 0.000389
+  },
+  "codeMode": {
+    "didFailTest": false,
+    "totalTokens": 1098,
+    "estimatedCostUsd": 0.000292
+  }
+}

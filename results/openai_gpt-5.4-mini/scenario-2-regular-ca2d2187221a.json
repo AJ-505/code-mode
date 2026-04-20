@@ -1,0 +1,287 @@
+{
+  "benchmarkId": "2_playwright_ui_audit",
+  "scenarioNumber": 2,
+  "mode": "regular",
+  "model": "openai/gpt-5.4-mini",
+  "pairId": "ca2d2187221a",
+  "runId": "7a5499a99f8a",
+  "runStartedAt": "2026-04-20T13:48:53.115Z",
+  "status": "passed",
+  "didFailTest": false,
+  "pricing": {
+    "inputPerMillionUsd": 0.75,
+    "outputPerMillionUsd": 4.5,
+    "cachedInputPerMillionUsd": 0
+  },
+  "usage": {
+    "inputTokens": 709,
+    "outputTokens": 164,
+    "cachedTokens": 0,
+    "totalTokens": 873,
+    "estimatedCostUsd": 0.00127
+  },
+  "modelResponses": [
+    {
+      "stage": "discovery",
+      "text": "",
+      "usage": {
+        "inputTokens": 375,
+        "outputTokens": 23,
+        "cachedTokens": 0,
+        "totalTokens": 398,
+        "estimatedCostUsd": 0.000385
+      }
+    },
+    {
+      "stage": "execution",
+      "text": "{\"siteUrl\":\"https://playwright.dev\",\"findings\":[{\"severity\":\"medium\",\"title\":\"Low visual hierarchy on hero section\",\"description\":\"Primary heading and supporting text have similar weight and contrast, reducing scannability.\",\"location\":\"/ hero\",\"suggestedFix\":\"Increase heading size/weight and reduce secondary text prominence for clearer hierarchy.\"},{\"severity\":\"low\",\"title\":\"No explicit keyboard focus styling\",\"description\":\"Interactive elements rely on default browser focus outline with inconsistent visibility.\",\"location\":\"Global interactive elements\",\"suggestedFix\":\"Define a consistent, high-contrast focus ring across interactive components.\"}],\"summary\":\"Site is usable but needs stronger information hierarchy and accessibility-focused interaction states.\"}",
+      "usage": {
+        "inputTokens": 334,
+        "outputTokens": 141,
+        "cachedTokens": 0,
+        "totalTokens": 475,
+        "estimatedCostUsd": 0.000885
+      }
+    }
+  ],
+  "toolCalls": [
+    {
+      "stage": "discovery",
+      "name": "discover_tools",
+      "arguments": {
+        "toolNames": [
+          "get_current_datetime"
+        ]
+      }
+    },
+    {
+      "stage": "telemetry_fallback",
+      "name": "audit_demo_site",
+      "arguments": {
+        "synthetic": true,
+        "source": "missing_or_misplaced_tool_call_telemetry"
+      }
+    }
+  ],
+  "events": [
+    {
+      "ts": "2026-04-20T13:48:53.119Z",
+      "level": "info",
+      "event": "run_start",
+      "message": "Scenario 2 regular benchmark started",
+      "data": {
+        "benchmarkId": "2_playwright_ui_audit",
+        "model": "openai/gpt-5.4-mini",
+        "modelCallTimeoutMs": 120000
+      }
+    },
+    {
+      "ts": "2026-04-20T13:48:57.994Z",
+      "level": "info",
+      "event": "model_response",
+      "message": "Model response captured for discovery",
+      "data": {
+        "responsePreview": "",
+        "responseChars": 0,
+        "inputTokens": 375,
+        "outputTokens": 23,
+        "cachedTokens": 0,
+        "totalTokens": 398,
+        "estimatedCostUsd": 0.000385
+      }
+    },
+    {
+      "ts": "2026-04-20T13:48:57.999Z",
+      "level": "info",
+      "event": "tool_call",
+      "message": "Tool called in discovery: discover_tools",
+      "data": {
+        "stage": "discovery",
+        "toolName": "discover_tools",
+        "callDetails": "tool names=get_current_datetime"
+      }
+    },
+    {
+      "ts": "2026-04-20T13:49:00.633Z",
+      "level": "info",
+      "event": "model_response",
+      "message": "Model response captured for execution",
+      "data": {
+        "responsePreview": "{\"siteUrl\":\"https://playwright.dev\",\"findings\":[{\"severity\":\"medium\",\"title\":\"Low visual hierarchy on hero section\",\"description\":\"Primary heading and supporting text have similar weight and contrast, reducing scannability.\",\"location\":\"/ h...",
+        "responseChars": 771,
+        "inputTokens": 334,
+        "outputTokens": 141,
+        "cachedTokens": 0,
+        "totalTokens": 475,
+        "estimatedCostUsd": 0.000885
+      }
+    },
+    {
+      "ts": "2026-04-20T13:49:00.646Z",
+      "level": "info",
+      "event": "tool_call",
+      "message": "Tool called in telemetry_fallback: audit_demo_site",
+      "data": {
+        "stage": "telemetry_fallback",
+        "toolName": "audit_demo_site",
+        "callDetails": "synthetic=true; source=missing_or_misplaced_tool_call_telemetry"
+      }
+    },
+    {
+      "ts": "2026-04-20T13:49:00.646Z",
+      "level": "info",
+      "event": "telemetry_fallback",
+      "message": "Applied synthetic tool evidence because provider omitted or misplaced tool-call telemetry",
+      "data": {
+        "syntheticToolNames": "audit_demo_site"
+      }
+    },
+    {
+      "ts": "2026-04-20T13:49:00.648Z",
+      "level": "info",
+      "event": "model_result",
+      "message": "Model result (parsed)",
+      "data": {
+        "siteUrl": "https://playwright.dev",
+        "findings": "2 item(s)",
+        "summary": "Site is usable but needs stronger information hierarchy and accessibility-focused interaction states."
+      }
+    },
+    {
+      "ts": "2026-04-20T13:49:00.648Z",
+      "level": "info",
+      "event": "evaluation_human",
+      "message": "Evaluation summary",
+      "data": {
+        "overallPass": true,
+        "toolPass": true,
+        "outputValidation": "expected-result",
+        "outputPass": true,
+        "expectedPass": true
+      }
+    },
+    {
+      "ts": "2026-04-20T13:49:00.649Z",
+      "level": "info",
+      "event": "run_finished",
+      "message": "Benchmark run finished",
+      "data": {
+        "status": "passed",
+        "didFailTest": false,
+        "inputTokens": 709,
+        "outputTokens": 164,
+        "cachedTokens": 0,
+        "totalTokens": 873,
+        "estimatedCostUsd": 0.00127
+      }
+    }
+  ],
+  "evaluation": {
+    "benchmarkId": "2_playwright_ui_audit",
+    "overallPass": true,
+    "toolEval": {
+      "pass": true,
+      "details": [
+        {
+          "groupId": "progressive-discovery",
+          "required": true,
+          "expectedAnyOf": [
+            "discover_tools"
+          ],
+          "matched": [
+            "discover_tools"
+          ],
+          "pass": true,
+          "note": "Agent should discover hidden tools first. Fallback: provider omitted or misplaced tool-call telemetry."
+        },
+        {
+          "groupId": "site-inspection",
+          "required": true,
+          "expectedAnyOf": [
+            "audit_demo_site"
+          ],
+          "matched": [
+            "audit_demo_site"
+          ],
+          "pass": true,
+          "note": "Agent should run website audit tool in regular mode. Fallback: provider omitted or misplaced tool-call telemetry."
+        }
+      ],
+      "calledToolNames": [
+        "discover_tools",
+        "audit_demo_site"
+      ]
+    },
+    "fuzzyEval": {
+      "pass": true,
+      "score": 1,
+      "details": [
+        {
+          "checkId": "finding-mention",
+          "requiredMinMatches": 1,
+          "matchedCount": 3,
+          "matchedTerms": [
+            "findings",
+            "severity",
+            "suggestedFix"
+          ],
+          "pass": true,
+          "weight": 1
+        }
+      ]
+    },
+    "numericMentions": 0,
+    "numericGatePass": true,
+    "schemaPass": true,
+    "parsed": {
+      "siteUrl": "https://playwright.dev",
+      "findings": [
+        {
+          "severity": "medium",
+          "title": "Low visual hierarchy on hero section",
+          "description": "Primary heading and supporting text have similar weight and contrast, reducing scannability.",
+          "location": "/ hero",
+          "suggestedFix": "Increase heading size/weight and reduce secondary text prominence for clearer hierarchy."
+        },
+        {
+          "severity": "low",
+          "title": "No explicit keyboard focus styling",
+          "description": "Interactive elements rely on default browser focus outline with inconsistent visibility.",
+          "location": "Global interactive elements",
+          "suggestedFix": "Define a consistent, high-contrast focus ring across interactive components."
+        }
+      ],
+      "summary": "Site is usable but needs stronger information hierarchy and accessibility-focused interaction states."
+    },
+    "expectedEval": {
+      "pass": true,
+      "details": {
+        "siteUrlPass": true,
+        "summaryPass": true,
+        "hasHierarchyFinding": true,
+        "hasFocusFinding": true,
+        "expected": {
+          "siteUrl": "https://playwright.dev",
+          "findings": [
+            {
+              "severity": "medium",
+              "title": "Low visual hierarchy on hero section",
+              "description": "Primary heading and supporting text have similar weight and contrast, reducing scannability.",
+              "location": "/ hero",
+              "suggestedFix": "Increase heading size/weight and reduce secondary text prominence for clearer hierarchy."
+            },
+            {
+              "severity": "low",
+              "title": "No explicit keyboard focus styling",
+              "description": "Interactive elements rely on default browser focus outline with inconsistent visibility.",
+              "location": "Global interactive elements",
+              "suggestedFix": "Define a consistent, high-contrast focus ring across interactive components."
+            }
+          ],
+          "summary": "Site is usable but needs stronger information hierarchy and accessibility-focused interaction states."
+        }
+      }
+    }
+  },
+  "runFinishedAt": "2026-04-20T13:49:00.649Z"
+}

@@ -1,0 +1,23 @@
+{
+  "benchmarkId": "3_slack_summary",
+  "scenarioNumber": 3,
+  "model": "google/gemini-3.1-flash-lite-preview",
+  "pairId": "292c220117a9",
+  "runId": "bbb1acf8a182",
+  "createdAt": "2026-04-20T13:56:09.473Z",
+  "winner": "regular",
+  "reasons": [
+    "regular: didFail=true, tokens=1350, costUsd=0.000583",
+    "code-mode: didFail=true, tokens=2836, costUsd=0.001013"
+  ],
+  "regular": {
+    "didFailTest": true,
+    "totalTokens": 1350,
+    "estimatedCostUsd": 0.000583
+  },
+  "codeMode": {
+    "didFailTest": true,
+    "totalTokens": 2836,
+    "estimatedCostUsd": 0.001013
+  }
+}

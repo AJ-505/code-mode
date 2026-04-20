@@ -1,0 +1,222 @@
+{
+  "generatedAt": "2026-04-20",
+  "summary": "26 false failures identified - all due to network/provider issues, NOT model failures",
+  "categories": {
+    "network_connectivity": 14,
+    "provider_server_error": 6,
+    "invalid_model_id": 3,
+    "certificate_error": 2,
+    "socket_closed": 1
+  },
+  "falseFailures": [
+    {
+      "file": "anthropic_claude-opus-4.6-scenario-4-code-mode-pair-dfb1b3549e8d-a29155b35094-2026-04-15T15-59-55.981Z.json",
+      "model": "anthropic/claude-opus-4.6",
+      "scenario": 4,
+      "mode": "code-mode",
+      "error": "Unable to connect",
+      "category": "network_connectivity"
+    },
+    {
+      "file": "anthropic_claude-opus-4.6-scenario-5-code-mode-pair-bcec74aec51e-341bdadb15f0-2026-04-15T15-59-56.881Z.json",
+      "model": "anthropic/claude-opus-4.6",
+      "scenario": 5,
+      "mode": "code-mode",
+      "error": "Unable to connect",
+      "category": "network_connectivity"
+    },
+    {
+      "file": "anthropic_claude-opus-4.6-scenario-5-regular-pair-bcec74aec51e-0a5e3c63de87-2026-04-15T15-59-56.438Z.json",
+      "model": "anthropic/claude-opus-4.6",
+      "scenario": 5,
+      "mode": "regular",
+      "error": "Unable to connect",
+      "category": "network_connectivity"
+    },
+    {
+      "file": "anthropic_claude-opus-4.6-scenario-6-code-mode-pair-3b0383cfadec-8fac7df7cfc5-2026-04-15T15-59-57.871Z.json",
+      "model": "anthropic/claude-opus-4.6",
+      "scenario": 6,
+      "mode": "code-mode",
+      "error": "Unable to connect",
+      "category": "network_connectivity"
+    },
+    {
+      "file": "anthropic_claude-opus-4.6-scenario-6-regular-pair-3b0383cfadec-68935e01a54e-2026-04-15T15-59-57.395Z.json",
+      "model": "anthropic/claude-opus-4.6",
+      "scenario": 6,
+      "mode": "regular",
+      "error": "Unable to connect",
+      "category": "network_connectivity"
+    },
+    {
+      "file": "anthropic_claude-sonnet-4.6-scenario-6-code-mode-pair-918d04f0e1a2-3f7c195be16e-2026-04-15T15-59-55.532Z.json",
+      "model": "anthropic/claude-sonnet-4.6",
+      "scenario": 6,
+      "mode": "code-mode",
+      "error": "Unable to connect",
+      "category": "network_connectivity"
+    },
+    {
+      "file": "anthropic_opus-4.6-scenario-1-regular-pair-6592f2211a44-1b5a209645e2-2026-04-14T18-19-23.290Z.json",
+      "model": "anthropic/opus-4.6",
+      "scenario": 1,
+      "mode": "regular",
+      "error": "invalid model ID",
+      "category": "invalid_model_id"
+    },
+    {
+      "file": "anthropic_opus-4.99-scenario-1-regular-pair-1d98208264ee-0cd0d194fe71-2026-04-14T18-19-06.415Z.json",
+      "model": "anthropic/opus-4.99",
+      "scenario": 1,
+      "mode": "regular",
+      "error": "invalid model ID",
+      "category": "invalid_model_id"
+    },
+    {
+      "file": "anthropic_opus-4.99-scenario-2-regular-pair-be238b214d81-4312f23d7b63-2026-04-14T18-18-19.059Z.json",
+      "model": "anthropic/opus-4.99",
+      "scenario": 2,
+      "mode": "regular",
+      "error": "invalid model ID",
+      "category": "invalid_model_id"
+    },
+    {
+      "file": "google_gemini-3.1-pro-preview-scenario-2-regular-pair-d5f33071c10e-0259e450bce0-2026-04-15T15-44-31.596Z.json",
+      "model": "google/gemini-3.1-pro-preview",
+      "scenario": 2,
+      "mode": "regular",
+      "error": "internal stream ended unexpectedly",
+      "category": "provider_server_error"
+    },
+    {
+      "file": "google_gemini-3.1-pro-preview-scenario-2-regular-pair-d5f33071c10e-524c9f424f44-2026-04-14T18-31-36.518Z.json",
+      "model": "google/gemini-3.1-pro-preview",
+      "scenario": 2,
+      "mode": "regular",
+      "error": "internal stream ended unexpectedly",
+      "category": "provider_server_error"
+    },
+    {
+      "file": "google_gemini-3.1-pro-preview-scenario-4-code-mode-pair-c351e31b64c3-d53b993ba24a-2026-04-15T15-45-15.636Z.json",
+      "model": "google/gemini-3.1-pro-preview",
+      "scenario": 4,
+      "mode": "code-mode",
+      "error": "Unable to connect",
+      "category": "network_connectivity"
+    },
+    {
+      "file": "google_gemini-3.1-pro-preview-scenario-5-code-mode-pair-7f31b9bb3c9d-64570be9cf42-2026-04-15T15-46-29.203Z.json",
+      "model": "google/gemini-3.1-pro-preview",
+      "scenario": 5,
+      "mode": "code-mode",
+      "error": "Unable to connect",
+      "category": "network_connectivity"
+    },
+    {
+      "file": "google_gemini-3.1-pro-preview-scenario-5-regular-pair-7f31b9bb3c9d-3ca5f5672b2c-2026-04-15T15-45-36.322Z.json",
+      "model": "google/gemini-3.1-pro-preview",
+      "scenario": 5,
+      "mode": "regular",
+      "error": "internal stream ended unexpectedly",
+      "category": "provider_server_error"
+    },
+    {
+      "file": "google_gemini-3.1-pro-preview-scenario-6-regular-pair-9dd9d6d2032e-b1c4bb40321e-2026-04-15T15-46-49.921Z.json",
+      "model": "google/gemini-3.1-pro-preview",
+      "scenario": 6,
+      "mode": "regular",
+      "error": "socket connection closed unexpectedly",
+      "category": "socket_closed"
+    },
+    {
+      "file": "moonshotai_kimi-k2.5-scenario-2-code-mode-pair-8cc5aa870019-21a81139f991-2026-04-14T18-39-55.035Z.json",
+      "model": "moonshotai/kimi-k2.5",
+      "scenario": 2,
+      "mode": "code-mode",
+      "error": "Unable to connect",
+      "category": "network_connectivity"
+    },
+    {
+      "file": "moonshotai_kimi-k2.5-scenario-2-regular-pair-8cc5aa870019-0f2786c9795b-2026-04-14T18-39-52.766Z.json",
+      "model": "moonshotai/kimi-k2.5",
+      "scenario": 2,
+      "mode": "regular",
+      "error": "Unable to connect",
+      "category": "network_connectivity"
+    },
+    {
+      "file": "moonshotai_kimi-k2.5-scenario-2-regular-pair-8cc5aa870019-d35ffd4dc333-2026-04-15T14-35-43.168Z.json",
+      "model": "moonshotai/kimi-k2.5",
+      "scenario": 2,
+      "mode": "regular",
+      "error": "Unable to connect",
+      "category": "network_connectivity"
+    },
+    {
+      "file": "moonshotai_kimi-k2.5-scenario-3-code-mode-pair-cb0d220d0ff9-1c1f8d8c9208-2026-04-14T18-39-58.438Z.json",
+      "model": "moonshotai/kimi-k2.5",
+      "scenario": 3,
+      "mode": "code-mode",
+      "error": "Unable to connect",
+      "category": "network_connectivity"
+    },
+    {
+      "file": "moonshotai_kimi-k2.5-scenario-3-regular-pair-cb0d220d0ff9-80aea061c5c8-2026-04-14T18-39-57.020Z.json",
+      "model": "moonshotai/kimi-k2.5",
+      "scenario": 3,
+      "mode": "regular",
+      "error": "Unable to connect",
+      "category": "network_connectivity"
+    },
+    {
+      "file": "moonshotai_kimi-k2.5-scenario-4-regular-pair-e710704d704d-a2d4e87e2871-2026-04-14T18-39-59.581Z.json",
+      "model": "moonshotai/kimi-k2.5",
+      "scenario": 4,
+      "mode": "regular",
+      "error": "Unable to connect",
+      "category": "network_connectivity"
+    },
+    {
+      "file": "openai_gpt-5.4-scenario-2-regular-pair-b74d97c3aa02-c38873c97f23-2026-04-16T16-01-02.452Z.json",
+      "model": "openai/gpt-5.4",
+      "scenario": 2,
+      "mode": "regular",
+      "error": "Provider returned error",
+      "category": "provider_server_error"
+    },
+    {
+      "file": "openai_gpt-5.4-scenario-2-regular-pair-b74d97c3aa02-fd1c521efa43-2026-04-16T16-15-33.698Z.json",
+      "model": "openai/gpt-5.4",
+      "scenario": 2,
+      "mode": "regular",
+      "error": "Provider returned error",
+      "category": "provider_server_error"
+    },
+    {
+      "file": "openai_gpt-5.4-scenario-3-regular-pair-04e38921bf86-8f85fb9cf0b9-2026-04-16T16-01-25.802Z.json",
+      "model": "openai/gpt-5.4",
+      "scenario": 3,
+      "mode": "regular",
+      "error": "Provider returned error",
+      "category": "provider_server_error"
+    },
+    {
+      "file": "openai_gpt-5.4-scenario-5-code-mode-pair-26b62ad3840b-a8df20a98470-2026-04-15T15-51-00.745Z.json",
+      "model": "openai/gpt-5.4",
+      "scenario": 5,
+      "mode": "code-mode",
+      "error": "certificate verification error",
+      "category": "certificate_error"
+    },
+    {
+      "file": "openai_gpt-5.4-scenario-6-code-mode-pair-5409489c2e19-823f4f2c851e-2026-04-15T15-51-34.623Z.json",
+      "model": "openai/gpt-5.4",
+      "scenario": 6,
+      "mode": "code-mode",
+      "error": "certificate verification error",
+      "category": "certificate_error"
+    }
+  ],
+  "recommendation": "These 26 runs should be excluded from pass/fail analysis or re-run. They represent infrastructure failures, not model capability issues."
+}

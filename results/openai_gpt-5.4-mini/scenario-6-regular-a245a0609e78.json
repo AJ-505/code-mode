@@ -1,0 +1,112 @@
+{
+  "benchmarkId": "6_github_repo_change_pr",
+  "scenarioNumber": 6,
+  "mode": "regular",
+  "model": "openai/gpt-5.4-mini",
+  "pairId": "a245a0609e78",
+  "runId": "067534ba44fb",
+  "runStartedAt": "2026-04-20T13:52:59.467Z",
+  "status": "failed",
+  "didFailTest": true,
+  "pricing": {
+    "inputPerMillionUsd": 0.75,
+    "outputPerMillionUsd": 4.5,
+    "cachedInputPerMillionUsd": 0
+  },
+  "usage": {
+    "inputTokens": 427,
+    "outputTokens": 25,
+    "cachedTokens": 0,
+    "totalTokens": 452,
+    "estimatedCostUsd": 0.000433
+  },
+  "modelResponses": [
+    {
+      "stage": "discovery",
+      "text": "",
+      "usage": {
+        "inputTokens": 427,
+        "outputTokens": 25,
+        "cachedTokens": 0,
+        "totalTokens": 452,
+        "estimatedCostUsd": 0.000433
+      }
+    }
+  ],
+  "toolCalls": [
+    {
+      "stage": "discovery",
+      "name": "discover_tools",
+      "arguments": {
+        "toolNames": [
+          "simulate_repo_change_and_pr"
+        ]
+      }
+    }
+  ],
+  "events": [
+    {
+      "ts": "2026-04-20T13:52:59.470Z",
+      "level": "info",
+      "event": "run_start",
+      "message": "Scenario 6 regular benchmark started",
+      "data": {
+        "benchmarkId": "6_github_repo_change_pr",
+        "model": "openai/gpt-5.4-mini",
+        "modelCallTimeoutMs": 120000
+      }
+    },
+    {
+      "ts": "2026-04-20T13:53:03.456Z",
+      "level": "info",
+      "event": "model_response",
+      "message": "Model response captured for discovery",
+      "data": {
+        "responsePreview": "",
+        "responseChars": 0,
+        "inputTokens": 427,
+        "outputTokens": 25,
+        "cachedTokens": 0,
+        "totalTokens": 452,
+        "estimatedCostUsd": 0.000433
+      }
+    },
+    {
+      "ts": "2026-04-20T13:53:03.469Z",
+      "level": "info",
+      "event": "tool_call",
+      "message": "Tool called in discovery: discover_tools",
+      "data": {
+        "stage": "discovery",
+        "toolName": "discover_tools",
+        "callDetails": "tool names=simulate_repo_change_and_pr"
+      }
+    },
+    {
+      "ts": "2026-04-20T13:53:04.497Z",
+      "level": "error",
+      "event": "run_failed",
+      "message": "Scenario 6 regular benchmark failed",
+      "data": {
+        "error": "Provider returned error"
+      }
+    },
+    {
+      "ts": "2026-04-20T13:53:04.497Z",
+      "level": "info",
+      "event": "run_finished",
+      "message": "Benchmark run finished",
+      "data": {
+        "status": "failed",
+        "didFailTest": true,
+        "inputTokens": 427,
+        "outputTokens": 25,
+        "cachedTokens": 0,
+        "totalTokens": 452,
+        "estimatedCostUsd": 0.000433
+      }
+    }
+  ],
+  "runFinishedAt": "2026-04-20T13:53:04.497Z",
+  "error": "Provider returned error"
+}

@@ -1,0 +1,74 @@
+{
+  "benchmarkId": "3_slack_summary",
+  "scenarioNumber": 3,
+  "mode": "code-mode",
+  "model": "openrouter/free",
+  "pairId": "51cd38e97b99",
+  "runId": "8b9354872738",
+  "runStartedAt": "2026-04-20T13:37:03.426Z",
+  "status": "failed",
+  "didFailTest": true,
+  "pricing": {
+    "inputPerMillionUsd": 2.5,
+    "outputPerMillionUsd": 15,
+    "cachedInputPerMillionUsd": 0
+  },
+  "usage": {
+    "inputTokens": 0,
+    "outputTokens": 0,
+    "cachedTokens": 0,
+    "totalTokens": 0,
+    "estimatedCostUsd": 0
+  },
+  "modelResponses": [],
+  "toolCalls": [],
+  "events": [
+    {
+      "ts": "2026-04-20T13:37:03.438Z",
+      "level": "info",
+      "event": "run_start",
+      "message": "Scenario 3 code-mode benchmark started",
+      "data": {
+        "benchmarkId": "3_slack_summary",
+        "model": "openrouter/free",
+        "modelCallTimeoutMs": 120000
+      }
+    },
+    {
+      "ts": "2026-04-20T13:37:03.443Z",
+      "level": "info",
+      "event": "prompts",
+      "message": "Prompts for code_mode",
+      "data": {
+        "systemPrompt": "You are a specialised benchmark agent.\nUse progressive discovery when tools are hidden.\nIf the required tool is not directly available, call discover_tools with the exact tool names you need, then continue to solve the task.\n\nYou are now in code-mode.\nWrite TypeScript code that uses ONLY the provided tool execute_scenario3_code.\nWhen calling the tool, pass a full TS program string in input key \"typescript\".\nDo not explain your reasoning.\nDo not output long analysis.\nYour final assistant message must contain only a single short sentence confirming completion.\n\nIn the generated code, use only the provided global \"api\" methods.\nReturn a strict JSON object with keys:\n{ channelId, fromIso, toIso, summary, topics, actionItems }\n",
+        "userPrompt": "\nSummarize all messages from a specific Slack channel in the past 24 hours.\nInclude major topics, decisions, blockers, and action items with owners.\n"
+      }
+    },
+    {
+      "ts": "2026-04-20T13:39:03.516Z",
+      "level": "error",
+      "event": "run_failed",
+      "message": "Scenario 3 code-mode benchmark failed",
+      "data": {
+        "error": "Timeout while waiting for code_mode response after 120000ms"
+      }
+    },
+    {
+      "ts": "2026-04-20T13:39:03.518Z",
+      "level": "info",
+      "event": "run_finished",
+      "message": "Benchmark run finished",
+      "data": {
+        "status": "failed",
+        "didFailTest": true,
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "cachedTokens": 0,
+        "totalTokens": 0,
+        "estimatedCostUsd": 0
+      }
+    }
+  ],
+  "runFinishedAt": "2026-04-20T13:39:03.518Z",
+  "error": "Timeout while waiting for code_mode response after 120000ms"
+}

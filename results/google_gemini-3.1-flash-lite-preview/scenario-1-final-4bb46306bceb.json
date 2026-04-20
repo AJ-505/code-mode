@@ -1,0 +1,23 @@
+{
+  "benchmarkId": "1_customer_db_average_spend",
+  "scenarioNumber": 1,
+  "model": "google/gemini-3.1-flash-lite-preview",
+  "pairId": "4bb46306bceb",
+  "runId": "6646914ac05c",
+  "createdAt": "2026-04-20T13:54:56.264Z",
+  "winner": "code-mode",
+  "reasons": [
+    "regular: didFail=true, tokens=11398, costUsd=0.003056",
+    "code-mode: didFail=true, tokens=5694, costUsd=0.00206"
+  ],
+  "regular": {
+    "didFailTest": true,
+    "totalTokens": 11398,
+    "estimatedCostUsd": 0.003056
+  },
+  "codeMode": {
+    "didFailTest": true,
+    "totalTokens": 5694,
+    "estimatedCostUsd": 0.00206
+  }
+}

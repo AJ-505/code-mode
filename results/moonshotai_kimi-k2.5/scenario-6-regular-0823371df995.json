@@ -1,0 +1,223 @@
+{
+  "benchmarkId": "6_github_repo_change_pr",
+  "scenarioNumber": 6,
+  "mode": "regular",
+  "regularToolStrategy": "full-tool-context",
+  "model": "moonshotai/kimi-k2.5",
+  "pairId": "0823371df995",
+  "runId": "6ddaaff56a39",
+  "runStartedAt": "2026-04-20T16:07:16.500Z",
+  "status": "passed",
+  "didFailTest": false,
+  "pricing": {
+    "inputPerMillionUsd": 2.5,
+    "outputPerMillionUsd": 15,
+    "cachedInputPerMillionUsd": 0
+  },
+  "usage": {
+    "inputTokens": 401,
+    "outputTokens": 179,
+    "cachedTokens": 0,
+    "totalTokens": 580,
+    "estimatedCostUsd": 0.003687
+  },
+  "modelResponses": [
+    {
+      "stage": "execution",
+      "text": "The function call was successful. Now I need to return the result in strict JSON format with the keys: repo, branch, changedFiles, prTitle, prBody, prUrl.\n ```json\n{\n  \"repo\": \"octo-org/benchmark-demo-repo\",\n  \"branch\": \"benchmark/fix-readme-typo\",\n  \"changedFiles\": [\n    {\n      \"path\": \"README.md\",\n      \"changeSummary\": \"Corrected setup typo and clarified benchmark run command formatting.\"\n    }\n  ],\n  \"prTitle\": \"docs: fix README setup typo and benchmark command wording\",\n  \"prBody\": \"## Summary\\n- fix typo in README setup instructions\\n- clarify benchmark execution command\\n\\n## Validation\\n- docs-only simulation benchmark output\",\n  \"prUrl\": \"https://github.com/octo-org/benchmark-demo-repo/pull/128\"\n}\n```",
+      "usage": {
+        "inputTokens": 401,
+        "outputTokens": 179,
+        "cachedTokens": 0,
+        "totalTokens": 580,
+        "estimatedCostUsd": 0.003687
+      }
+    }
+  ],
+  "toolCalls": [
+    {
+      "stage": "telemetry_fallback",
+      "name": "simulate_repo_change_and_pr",
+      "arguments": {
+        "synthetic": true,
+        "source": "missing_tool_call_telemetry"
+      }
+    }
+  ],
+  "events": [
+    {
+      "ts": "2026-04-20T16:07:16.502Z",
+      "level": "info",
+      "event": "run_start",
+      "message": "Scenario 6 regular benchmark started",
+      "data": {
+        "benchmarkId": "6_github_repo_change_pr",
+        "model": "moonshotai/kimi-k2.5",
+        "regularToolStrategy": "full-tool-context",
+        "modelCallTimeoutMs": 300000
+      }
+    },
+    {
+      "ts": "2026-04-20T16:07:16.503Z",
+      "level": "info",
+      "event": "prompts",
+      "message": "Prompts for execution",
+      "data": {
+        "systemPrompt": "You are a specialised benchmark agent.\nAll relevant tools are already available in context.\nDo not call discover_tools.\nUse only the provided tools directly to solve the task.\n\nUse simulate_repo_change_and_pr and return strict JSON with keys: repo, branch, changedFiles, prTitle, prBody, prUrl.",
+        "userPrompt": "\nFetch a repository, apply a requested change, and create a pull request.\nReturn the changed files and PR metadata.\n"
+      }
+    },
+    {
+      "ts": "2026-04-20T16:07:53.685Z",
+      "level": "info",
+      "event": "model_response",
+      "message": "Model response captured for execution",
+      "data": {
+        "responsePreview": "The function call was successful. Now I need to return the result in strict JSON format with the keys: repo, branch, changedFiles, prTitle, prBody, prUrl. ```json { \"repo\": \"octo-org/benchmark-demo-repo\", \"branch\": \"benchmark/fix-readme-typ...",
+        "responseChars": 720,
+        "inputTokens": 401,
+        "outputTokens": 179,
+        "cachedTokens": 0,
+        "totalTokens": 580,
+        "estimatedCostUsd": 0.003687
+      }
+    },
+    {
+      "ts": "2026-04-20T16:07:53.697Z",
+      "level": "info",
+      "event": "tool_call",
+      "message": "Tool called in telemetry_fallback: simulate_repo_change_and_pr",
+      "data": {
+        "stage": "telemetry_fallback",
+        "toolName": "simulate_repo_change_and_pr",
+        "callDetails": "synthetic=true; source=missing_tool_call_telemetry"
+      }
+    },
+    {
+      "ts": "2026-04-20T16:07:53.699Z",
+      "level": "info",
+      "event": "model_result",
+      "message": "Model result (parsed)",
+      "data": {
+        "repo": "octo-org/benchmark-demo-repo",
+        "branch": "benchmark/fix-readme-typo",
+        "changedFiles": "1 item(s)",
+        "prTitle": "docs: fix README setup typo and benchmark command wording",
+        "prBody": "## Summary\n- fix typo in README setup instructions\n- clarify benchmark execution command\n\n## Validation\n- docs-only simulation benchmark output",
+        "prUrl": "https://github.com/octo-org/benchmark-demo-repo/pull/128"
+      }
+    },
+    {
+      "ts": "2026-04-20T16:07:53.699Z",
+      "level": "info",
+      "event": "evaluation_human",
+      "message": "Evaluation summary",
+      "data": {
+        "overallPass": true,
+        "toolPass": true,
+        "outputValidation": "expected-result",
+        "outputPass": true,
+        "expectedPass": true
+      }
+    },
+    {
+      "ts": "2026-04-20T16:07:53.700Z",
+      "level": "info",
+      "event": "run_finished",
+      "message": "Benchmark run finished",
+      "data": {
+        "status": "passed",
+        "didFailTest": false,
+        "inputTokens": 401,
+        "outputTokens": 179,
+        "cachedTokens": 0,
+        "totalTokens": 580,
+        "estimatedCostUsd": 0.003687
+      }
+    }
+  ],
+  "evaluation": {
+    "benchmarkId": "6_github_repo_change_pr",
+    "overallPass": true,
+    "toolEval": {
+      "pass": true,
+      "details": [
+        {
+          "groupId": "repo-change-pr",
+          "required": true,
+          "expectedAnyOf": [
+            "simulate_repo_change_and_pr"
+          ],
+          "matched": [
+            "simulate_repo_change_and_pr"
+          ],
+          "pass": true,
+          "note": "Agent should simulate repo change and PR creation in regular mode. Fallback: provider omitted tool-call telemetry."
+        }
+      ],
+      "calledToolNames": [
+        "simulate_repo_change_and_pr"
+      ]
+    },
+    "fuzzyEval": {
+      "pass": true,
+      "score": 1,
+      "details": [
+        {
+          "checkId": "result-fields",
+          "requiredMinMatches": 1,
+          "matchedCount": 4,
+          "matchedTerms": [
+            "repo",
+            "changedFiles",
+            "prTitle",
+            "prUrl"
+          ],
+          "pass": true,
+          "weight": 1
+        }
+      ]
+    },
+    "numericMentions": 1,
+    "numericGatePass": true,
+    "schemaPass": true,
+    "parsed": {
+      "repo": "octo-org/benchmark-demo-repo",
+      "branch": "benchmark/fix-readme-typo",
+      "changedFiles": [
+        {
+          "path": "README.md",
+          "changeSummary": "Corrected setup typo and clarified benchmark run command formatting."
+        }
+      ],
+      "prTitle": "docs: fix README setup typo and benchmark command wording",
+      "prBody": "## Summary\n- fix typo in README setup instructions\n- clarify benchmark execution command\n\n## Validation\n- docs-only simulation benchmark output",
+      "prUrl": "https://github.com/octo-org/benchmark-demo-repo/pull/128"
+    },
+    "expectedEval": {
+      "pass": true,
+      "details": {
+        "repoPass": true,
+        "branchPass": true,
+        "prTitlePass": true,
+        "prUrlPass": true,
+        "changedFilesPass": true,
+        "prBodyPass": true,
+        "expected": {
+          "repo": "octo-org/benchmark-demo-repo",
+          "branch": "benchmark/fix-readme-typo",
+          "changedFiles": [
+            {
+              "path": "README.md",
+              "changeSummary": "Corrected setup typo and clarified benchmark run command formatting."
+            }
+          ],
+          "prTitle": "docs: fix README setup typo and benchmark command wording",
+          "prBody": "## Summary\n- fix typo in README setup instructions\n- clarify benchmark execution command\n\n## Validation\n- docs-only simulation benchmark output",
+          "prUrl": "https://github.com/octo-org/benchmark-demo-repo/pull/128"
+        }
+      }
+    }
+  },
+  "runFinishedAt": "2026-04-20T16:07:53.700Z"
+}

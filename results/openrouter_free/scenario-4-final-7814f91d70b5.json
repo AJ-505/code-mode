@@ -1,0 +1,23 @@
+{
+  "benchmarkId": "4_drive_keyword_retrieval",
+  "scenarioNumber": 4,
+  "model": "openrouter/free",
+  "pairId": "7814f91d70b5",
+  "runId": "f77a12db3ee2",
+  "createdAt": "2026-04-20T13:41:55.802Z",
+  "winner": "regular",
+  "reasons": [
+    "regular: didFail=true, tokens=2488, costUsd=0.026095",
+    "code-mode: didFail=true, tokens=3677, costUsd=0.032643"
+  ],
+  "regular": {
+    "didFailTest": true,
+    "totalTokens": 2488,
+    "estimatedCostUsd": 0.026095
+  },
+  "codeMode": {
+    "didFailTest": true,
+    "totalTokens": 3677,
+    "estimatedCostUsd": 0.032643
+  }
+}

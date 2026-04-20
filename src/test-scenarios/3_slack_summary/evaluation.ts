@@ -2,6 +2,8 @@ import {
   evaluateBenchmarkRun,
   type BenchmarkEvaluationSpec,
 } from "../../lib/benchmark-evaluation.js";
+import type { RegularToolStrategy } from "../../lib/benchmark-logger.js";
+import { getScenario3ExpectedResult } from "./data.js";
 import { scenario3ResultSchema } from "./types.js";
 
 export const scenario3EvaluationSpec: BenchmarkEvaluationSpec = {
@@ -44,6 +46,13 @@ export const scenario3CodeModeEvaluationSpec: BenchmarkEvaluationSpec = {
   minNumericMentions: 0,
 };
 
+const scenario3NoDiscoveryEvaluationSpec: BenchmarkEvaluationSpec = {
+  ...scenario3EvaluationSpec,
+  expectedToolGroups: scenario3EvaluationSpec.expectedToolGroups.filter(
+    (group) => group.id !== "progressive-discovery"
+  ),
+};
+
 function extractJsonObject(text: string): Record<string, unknown> | null {
   const trimmed = text.trim();
 
@@ -64,6 +73,16 @@ function extractJsonObject(text: string): Record<string, unknown> | null {
     }
   }
 
+  const firstBrace = text.indexOf("{");
+  const lastBrace = text.lastIndexOf("}");
+  if (firstBrace >= 0 && lastBrace > firstBrace) {
+    try {
+      return JSON.parse(text.slice(firstBrace, lastBrace + 1)) as Record<string, unknown>;
+    } catch {
+      return null;
+    }
+  }
+
   return null;
 }
 
@@ -71,16 +90,23 @@ function normalizeScenario3ResultShape(value: Record<string, unknown>) {
   const fromIso =
     typeof value.fromIso === "string"
       ? value.fromIso
-      : typeof (value.timeWindow as { fromIso?: unknown } | undefined)?.fromIso ===
-            "string"
+      : typeof (value.timeWindow as { fromIso?: unknown; from?: unknown } | undefined)
+              ?.fromIso === "string"
         ? ((value.timeWindow as { fromIso?: string }).fromIso ?? "")
+        : typeof (value.timeWindow as { fromIso?: unknown; from?: unknown } | undefined)
+                ?.from === "string"
+          ? ((value.timeWindow as { from?: string }).from ?? "")
         : "";
 
   const toIso =
     typeof value.toIso === "string"
       ? value.toIso
-      : typeof (value.timeWindow as { toIso?: unknown } | undefined)?.toIso === "string"
+      : typeof (value.timeWindow as { toIso?: unknown; to?: unknown } | undefined)?.toIso ===
+            "string"
         ? ((value.timeWindow as { toIso?: string }).toIso ?? "")
+        : typeof (value.timeWindow as { toIso?: unknown; to?: unknown } | undefined)?.to ===
+              "string"
+          ? ((value.timeWindow as { to?: string }).to ?? "")
         : "";
 
   const topics = Array.isArray(value.topics)
@@ -97,15 +123,25 @@ function normalizeScenario3ResultShape(value: Record<string, unknown>) {
   };
 }
 
+const normalizeText = (value: string) =>
+  value
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
 export function evaluateScenario3Run(options: {
   mode: "regular" | "code-mode";
   calledToolNames: string[];
   finalText: string;
+  regularToolStrategy?: RegularToolStrategy;
 }) {
   const spec =
     options.mode === "code-mode"
       ? scenario3CodeModeEvaluationSpec
-      : scenario3EvaluationSpec;
+      : options.regularToolStrategy === "full-tool-context"
+        ? scenario3NoDiscoveryEvaluationSpec
+        : scenario3EvaluationSpec;
 
   const base = evaluateBenchmarkRun({
     calledToolNames: options.calledToolNames,
@@ -118,11 +154,58 @@ export function evaluateScenario3Run(options: {
   const schemaResult = normalized
     ? scenario3ResultSchema.safeParse(normalized)
     : null;
+  const expected = getScenario3ExpectedResult();
+  const parsedResult = schemaResult?.success ? schemaResult.data : null;
+
+  const topicCoverage =
+    parsedResult?.topics.filter((topic) => {
+      const normalizedTopic = normalizeText(topic);
+      return expected.topics.some((expectedTopic) =>
+        normalizedTopic.includes(normalizeText(expectedTopic))
+      );
+    }).length ?? 0;
+
+  const summaryText = normalizeText(parsedResult?.summary ?? "");
+  const summaryPass =
+    summaryText.includes("release") &&
+    summaryText.includes("analytics") &&
+    (summaryText.includes("ownership") || summaryText.includes("owner"));
+
+  const actionItemsPass =
+    parsedResult?.actionItems.some(
+      (item) =>
+        normalizeText(item.owner) === "avery" &&
+        normalizeText(item.task).includes("analytics event naming mismatch")
+    ) === true &&
+    parsedResult?.actionItems.some(
+      (item) =>
+        normalizeText(item.owner) === "jordan" &&
+        normalizeText(item.task).includes("rollout checklist")
+    ) === true;
+
+  const expectedEval = {
+    pass:
+      parsedResult?.channelId === expected.channelId &&
+      summaryPass &&
+      topicCoverage >= 2 &&
+      actionItemsPass,
+    details: {
+      channelIdPass: parsedResult?.channelId === expected.channelId,
+      summaryPass,
+      topicCoverage,
+      actionItemsPass,
+      expected,
+    },
+  };
 
   return {
     ...base,
     schemaPass: schemaResult?.success === true,
-    parsed: schemaResult?.success ? schemaResult.data : null,
-    overallPass: base.overallPass && schemaResult?.success === true,
+    parsed: parsedResult,
+    expectedEval,
+    overallPass:
+      base.overallPass &&
+      schemaResult?.success === true &&
+      expectedEval.pass,
   };
 }

@@ -48,6 +48,7 @@ export async function runScenario2CodeMode(model: Model = defaultScenario2Model)
     runId,
     pricing: BenchmarkLogger.getDefaultPricing(),
   });
+  logger.printBenchmarkHeader();
 
   try {
     logger.info("run_start", "Scenario 2 code-mode benchmark started", {
@@ -175,6 +176,7 @@ export async function runScenario2CodeMode(model: Model = defaultScenario2Model)
 
     logger.setEvaluation(evaluation as unknown as Record<string, unknown>);
     logger.finish({ didFailTest: !evaluation.overallPass });
+    logger.printBenchmarkSummary();
 
     const logPath = await logger.writeToFile();
     await markBenchmarkPairLog({
@@ -215,6 +217,7 @@ export async function runScenario2CodeMode(model: Model = defaultScenario2Model)
       error: error instanceof Error ? error.message : String(error),
     });
     logger.finish({ didFailTest: true, error: error instanceof Error ? error.message : String(error) });
+    logger.printBenchmarkSummary();
     await logger.writeToFile();
     throw error;
   }

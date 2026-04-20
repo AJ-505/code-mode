@@ -1,0 +1,182 @@
+{
+  "benchmarkId": "4_drive_keyword_retrieval",
+  "scenarioNumber": 4,
+  "mode": "regular",
+  "regularToolStrategy": "full-tool-context",
+  "model": "anthropic/claude-sonnet-4.6",
+  "pairId": "1485ceba6ac6",
+  "runId": "28ef207743d9",
+  "runStartedAt": "2026-04-20T14:54:32.753Z",
+  "status": "failed",
+  "didFailTest": true,
+  "pricing": {
+    "inputPerMillionUsd": 2.5,
+    "outputPerMillionUsd": 15,
+    "cachedInputPerMillionUsd": 0
+  },
+  "usage": {
+    "inputTokens": 767,
+    "outputTokens": 101,
+    "cachedTokens": 0,
+    "totalTokens": 868,
+    "estimatedCostUsd": 0.003432
+  },
+  "modelResponses": [
+    {
+      "stage": "execution",
+      "text": "Sure! Please provide the following details so I can search the meeting notes:\n\n1. **Keyword** – What word or phrase should I search for? *(e.g., \"rollback\")*\n2. **Speaker** – Whose speech should I look in? *(e.g., \"Avery\")*\n3. **Date** – Which day's meeting notes? *(e.g., \"2026-04-10\")*",
+      "usage": {
+        "inputTokens": 767,
+        "outputTokens": 101,
+        "cachedTokens": 0,
+        "totalTokens": 868,
+        "estimatedCostUsd": 0.003432
+      }
+    }
+  ],
+  "toolCalls": [],
+  "events": [
+    {
+      "ts": "2026-04-20T14:54:32.755Z",
+      "level": "info",
+      "event": "run_start",
+      "message": "Scenario 4 regular benchmark started",
+      "data": {
+        "benchmarkId": "4_drive_keyword_retrieval",
+        "model": "anthropic/claude-sonnet-4.6",
+        "regularToolStrategy": "full-tool-context",
+        "modelCallTimeoutMs": 120000
+      }
+    },
+    {
+      "ts": "2026-04-20T14:54:32.756Z",
+      "level": "info",
+      "event": "prompts",
+      "message": "Prompts for execution",
+      "data": {
+        "systemPrompt": "You are a specialised benchmark agent.\nAll relevant tools are already available in context.\nDo not call discover_tools.\nUse only the provided tools directly to solve the task.\n\nUse retrieve_drive_keyword and return strict JSON with keys: query, speaker, date, matches.",
+        "userPrompt": "\nFind a specific keyword spoken by a specific person in meeting notes from a given day in Google Drive.\nReturn exact matching excerpts and source file metadata.\n"
+      }
+    },
+    {
+      "ts": "2026-04-20T14:54:44.519Z",
+      "level": "info",
+      "event": "model_response",
+      "message": "Model response captured for execution",
+      "data": {
+        "responsePreview": "Sure! Please provide the following details so I can search the meeting notes: 1. **Keyword** – What word or phrase should I search for? *(e.g., \"rollback\")* 2. **Speaker** – Whose speech should I look in? *(e.g., \"Avery\")* 3. **Date** – Whi...",
+        "responseChars": 287,
+        "inputTokens": 767,
+        "outputTokens": 101,
+        "cachedTokens": 0,
+        "totalTokens": 868,
+        "estimatedCostUsd": 0.003432
+      }
+    },
+    {
+      "ts": "2026-04-20T14:54:44.529Z",
+      "level": "info",
+      "event": "model_result",
+      "message": "Model result (parsed)",
+      "data": {
+        "parsed": "(missing)"
+      }
+    },
+    {
+      "ts": "2026-04-20T14:54:44.529Z",
+      "level": "info",
+      "event": "evaluation_human",
+      "message": "Evaluation summary",
+      "data": {
+        "overallPass": false,
+        "toolPass": false,
+        "outputValidation": "expected-result",
+        "outputPass": false,
+        "expectedPass": false
+      }
+    },
+    {
+      "ts": "2026-04-20T14:54:44.530Z",
+      "level": "info",
+      "event": "run_finished",
+      "message": "Benchmark run finished",
+      "data": {
+        "status": "failed",
+        "didFailTest": true,
+        "inputTokens": 767,
+        "outputTokens": 101,
+        "cachedTokens": 0,
+        "totalTokens": 868,
+        "estimatedCostUsd": 0.003432
+      }
+    }
+  ],
+  "evaluation": {
+    "benchmarkId": "4_drive_keyword_retrieval",
+    "overallPass": false,
+    "toolEval": {
+      "pass": false,
+      "details": [
+        {
+          "groupId": "keyword-retrieval",
+          "required": true,
+          "expectedAnyOf": [
+            "retrieve_drive_keyword"
+          ],
+          "matched": [],
+          "pass": false,
+          "note": "Agent should retrieve keyword matches in regular mode."
+        }
+      ],
+      "calledToolNames": []
+    },
+    "fuzzyEval": {
+      "pass": true,
+      "score": 1,
+      "details": [
+        {
+          "checkId": "result-fields",
+          "requiredMinMatches": 1,
+          "matchedCount": 2,
+          "matchedTerms": [
+            "speaker",
+            "date"
+          ],
+          "pass": true,
+          "weight": 1
+        }
+      ]
+    },
+    "numericMentions": 6,
+    "numericGatePass": true,
+    "schemaPass": false,
+    "parsed": null,
+    "expectedEval": {
+      "pass": false,
+      "details": {
+        "queryPass": false,
+        "speakerPass": false,
+        "datePass": false,
+        "matchedFileIds": [],
+        "expected": {
+          "query": "rollback",
+          "speaker": "Avery",
+          "date": "2026-04-10",
+          "matches": [
+            {
+              "fileId": "drive-file-001",
+              "fileName": "Team Sync - 2026-04-10",
+              "excerpt": "Avery: If metrics degrade after deploy, we will rollback within 30 minutes."
+            },
+            {
+              "fileId": "drive-file-002",
+              "fileName": "Incident Review Notes",
+              "excerpt": "Avery: Document the rollback trigger and notify support before executing."
+            }
+          ]
+        }
+      }
+    }
+  },
+  "runFinishedAt": "2026-04-20T14:54:44.530Z"
+}

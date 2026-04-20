@@ -20,6 +20,7 @@
     "benchmark:scenario5:code-mode": "bun src/test-scenarios/5_calendar_timezone_scheduling/code-mode.ts",
     "benchmark:scenario6:regular": "bun src/test-scenarios/6_github_repo_change_pr/regular.ts",
     "benchmark:scenario6:code-mode": "bun src/test-scenarios/6_github_repo_change_pr/code-mode.ts",
+    "results:generate": "bun scripts/generate-results-report.ts",
     "seed:scenario1": "bun seed-scripts/scenario1-seed.ts",
     "typecheck": "bun tsc --noEmit",
     "db:generate": "bun drizzle-kit generate",

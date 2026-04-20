@@ -1,0 +1,64 @@
+{
+  "benchmarkId": "1_customer_db_average_spend",
+  "scenarioNumber": 1,
+  "mode": "code-mode",
+  "model": "openai/gpt-5.4-mini",
+  "pairId": "8a48076037be",
+  "runId": "58486459661e",
+  "runStartedAt": "2026-04-20T13:48:50.453Z",
+  "status": "failed",
+  "didFailTest": true,
+  "pricing": {
+    "inputPerMillionUsd": 0.75,
+    "outputPerMillionUsd": 4.5,
+    "cachedInputPerMillionUsd": 0
+  },
+  "usage": {
+    "inputTokens": 0,
+    "outputTokens": 0,
+    "cachedTokens": 0,
+    "totalTokens": 0,
+    "estimatedCostUsd": 0
+  },
+  "modelResponses": [],
+  "toolCalls": [],
+  "events": [
+    {
+      "ts": "2026-04-20T13:48:50.466Z",
+      "level": "info",
+      "event": "run_start",
+      "message": "Scenario 1 code-mode benchmark started",
+      "data": {
+        "benchmarkId": "1_customer_db_average_spend",
+        "model": "openai/gpt-5.4-mini",
+        "modelCallTimeoutMs": 120000
+      }
+    },
+    {
+      "ts": "2026-04-20T13:48:51.317Z",
+      "level": "error",
+      "event": "run_failed",
+      "message": "Scenario 1 code-mode benchmark failed",
+      "data": {
+        "error": "Failed query: select \"id\", \"customer_id\", \"amount\", \"created_at\" from \"transactions\" where (\"transactions\".\"created_at\" >= $1 and \"transactions\".\"created_at\" <= $2) order by \"transactions\".\"created_at\" asc limit $3\nparams: 2026-04-13T13:48:50.467Z,2026-04-20T13:48:50.467Z,50000"
+      }
+    },
+    {
+      "ts": "2026-04-20T13:48:51.318Z",
+      "level": "info",
+      "event": "run_finished",
+      "message": "Benchmark run finished",
+      "data": {
+        "status": "failed",
+        "didFailTest": true,
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "cachedTokens": 0,
+        "totalTokens": 0,
+        "estimatedCostUsd": 0
+      }
+    }
+  ],
+  "runFinishedAt": "2026-04-20T13:48:51.318Z",
+  "error": "Failed query: select \"id\", \"customer_id\", \"amount\", \"created_at\" from \"transactions\" where (\"transactions\".\"created_at\" >= $1 and \"transactions\".\"created_at\" <= $2) order by \"transactions\".\"created_at\" asc limit $3\nparams: 2026-04-13T13:48:50.467Z,2026-04-20T13:48:50.467Z,50000"
+}

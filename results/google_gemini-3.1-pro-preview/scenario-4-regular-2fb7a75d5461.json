@@ -1,0 +1,76 @@
+{
+  "benchmarkId": "4_drive_keyword_retrieval",
+  "scenarioNumber": 4,
+  "mode": "regular",
+  "regularToolStrategy": "full-tool-context",
+  "model": "google/gemini-3.1-pro-preview",
+  "pairId": "2fb7a75d5461",
+  "runId": "ed261ca24d6f",
+  "runStartedAt": "2026-04-20T16:01:43.938Z",
+  "status": "failed",
+  "didFailTest": true,
+  "pricing": {
+    "inputPerMillionUsd": 2.5,
+    "outputPerMillionUsd": 15,
+    "cachedInputPerMillionUsd": 0
+  },
+  "usage": {
+    "inputTokens": 0,
+    "outputTokens": 0,
+    "cachedTokens": 0,
+    "totalTokens": 0,
+    "estimatedCostUsd": 0
+  },
+  "modelResponses": [],
+  "toolCalls": [],
+  "events": [
+    {
+      "ts": "2026-04-20T16:01:43.940Z",
+      "level": "info",
+      "event": "run_start",
+      "message": "Scenario 4 regular benchmark started",
+      "data": {
+        "benchmarkId": "4_drive_keyword_retrieval",
+        "model": "google/gemini-3.1-pro-preview",
+        "regularToolStrategy": "full-tool-context",
+        "modelCallTimeoutMs": 300000
+      }
+    },
+    {
+      "ts": "2026-04-20T16:01:43.942Z",
+      "level": "info",
+      "event": "prompts",
+      "message": "Prompts for execution",
+      "data": {
+        "systemPrompt": "You are a specialised benchmark agent.\nAll relevant tools are already available in context.\nDo not call discover_tools.\nUse only the provided tools directly to solve the task.\n\nUse retrieve_drive_keyword and return strict JSON with keys: query, speaker, date, matches.",
+        "userPrompt": "\nFind a specific keyword spoken by a specific person in meeting notes from a given day in Google Drive.\nReturn exact matching excerpts and source file metadata.\n"
+      }
+    },
+    {
+      "ts": "2026-04-20T16:02:04.200Z",
+      "level": "error",
+      "event": "run_failed",
+      "message": "Scenario 4 regular benchmark failed",
+      "data": {
+        "error": "Unexpected HTTP client error: Error: Unable to connect. Is the computer able to access the url?"
+      }
+    },
+    {
+      "ts": "2026-04-20T16:02:04.202Z",
+      "level": "info",
+      "event": "run_finished",
+      "message": "Benchmark run finished",
+      "data": {
+        "status": "failed",
+        "didFailTest": true,
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "cachedTokens": 0,
+        "totalTokens": 0,
+        "estimatedCostUsd": 0
+      }
+    }
+  ],
+  "runFinishedAt": "2026-04-20T16:02:04.202Z",
+  "error": "Unexpected HTTP client error: Error: Unable to connect. Is the computer able to access the url?"
+}

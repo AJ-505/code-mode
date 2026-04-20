@@ -1,4 +1,5 @@
 import { evaluateBenchmarkRun, type BenchmarkEvaluationSpec } from "../../lib/benchmark-evaluation.js";
+import type { RegularToolStrategy } from "../../lib/benchmark-logger.js";
 import type { Scenario1ExpectedResult } from "./data.js";
 
 export const scenario1EvaluationSpec: BenchmarkEvaluationSpec = {
@@ -77,6 +78,13 @@ export const scenario1CodeModeEvaluationSpec: BenchmarkEvaluationSpec = {
     },
   ],
   minNumericMentions: 0,
+};
+
+const scenario1NoDiscoveryEvaluationSpec: BenchmarkEvaluationSpec = {
+  ...scenario1EvaluationSpec,
+  expectedToolGroups: scenario1EvaluationSpec.expectedToolGroups.filter(
+    (group) => group.id !== "progressive-discovery"
+  ),
 };
 
 type ParsedScenario1Answer = {
@@ -203,11 +211,14 @@ export function evaluateScenario1Run(options: {
   finalText: string;
   expected: Scenario1ExpectedResult;
   mode: "regular" | "code-mode";
+  regularToolStrategy?: RegularToolStrategy;
 }) {
   const spec =
     options.mode === "code-mode"
       ? scenario1CodeModeEvaluationSpec
-      : scenario1EvaluationSpec;
+      : options.regularToolStrategy === "full-tool-context"
+        ? scenario1NoDiscoveryEvaluationSpec
+        : scenario1EvaluationSpec;
 
   const base = evaluateBenchmarkRun({
     calledToolNames: options.calledToolNames,

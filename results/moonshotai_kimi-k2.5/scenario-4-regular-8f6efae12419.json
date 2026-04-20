@@ -1,0 +1,182 @@
+{
+  "benchmarkId": "4_drive_keyword_retrieval",
+  "scenarioNumber": 4,
+  "mode": "regular",
+  "regularToolStrategy": "full-tool-context",
+  "model": "moonshotai/kimi-k2.5",
+  "pairId": "8f6efae12419",
+  "runId": "2f1e3c6a7605",
+  "runStartedAt": "2026-04-20T16:06:09.784Z",
+  "status": "failed",
+  "didFailTest": true,
+  "pricing": {
+    "inputPerMillionUsd": 2.5,
+    "outputPerMillionUsd": 15,
+    "cachedInputPerMillionUsd": 0
+  },
+  "usage": {
+    "inputTokens": 214,
+    "outputTokens": 174,
+    "cachedTokens": 0,
+    "totalTokens": 388,
+    "estimatedCostUsd": 0.003145
+  },
+  "modelResponses": [
+    {
+      "stage": "execution",
+      "text": "The user wants me to find a specific keyword spoken by a specific person in meeting notes from a given day in Google Drive. However, they haven't provided the specific details:\n- What keyword to search for\n- Who the speaker is\n- What date to search\n\nI should ask the user for these required parameters before making the function call.\n I'd be happy to help you find specific keyword excerpts from meeting notes in Google Drive. To perform this search, I need you to provide the following required details:\n\n1. **Keyword** - What specific word or phrase are you looking for?\n2. **Speaker** - Who is the person you want to find speaking this keyword?\n3. **Date** - Which date should I search? (format: YYYY-MM-DD)\n\nOnce you provide these details, I'll retrieve the exact matching excerpts along with source file metadata.",
+      "usage": {
+        "inputTokens": 214,
+        "outputTokens": 174,
+        "cachedTokens": 0,
+        "totalTokens": 388,
+        "estimatedCostUsd": 0.003145
+      }
+    }
+  ],
+  "toolCalls": [],
+  "events": [
+    {
+      "ts": "2026-04-20T16:06:09.787Z",
+      "level": "info",
+      "event": "run_start",
+      "message": "Scenario 4 regular benchmark started",
+      "data": {
+        "benchmarkId": "4_drive_keyword_retrieval",
+        "model": "moonshotai/kimi-k2.5",
+        "regularToolStrategy": "full-tool-context",
+        "modelCallTimeoutMs": 300000
+      }
+    },
+    {
+      "ts": "2026-04-20T16:06:09.788Z",
+      "level": "info",
+      "event": "prompts",
+      "message": "Prompts for execution",
+      "data": {
+        "systemPrompt": "You are a specialised benchmark agent.\nAll relevant tools are already available in context.\nDo not call discover_tools.\nUse only the provided tools directly to solve the task.\n\nUse retrieve_drive_keyword and return strict JSON with keys: query, speaker, date, matches.",
+        "userPrompt": "\nFind a specific keyword spoken by a specific person in meeting notes from a given day in Google Drive.\nReturn exact matching excerpts and source file metadata.\n"
+      }
+    },
+    {
+      "ts": "2026-04-20T16:06:33.552Z",
+      "level": "info",
+      "event": "model_response",
+      "message": "Model response captured for execution",
+      "data": {
+        "responsePreview": "The user wants me to find a specific keyword spoken by a specific person in meeting notes from a given day in Google Drive. However, they haven't provided the specific details: - What keyword to search for - Who the speaker is - What date t...",
+        "responseChars": 819,
+        "inputTokens": 214,
+        "outputTokens": 174,
+        "cachedTokens": 0,
+        "totalTokens": 388,
+        "estimatedCostUsd": 0.003145
+      }
+    },
+    {
+      "ts": "2026-04-20T16:06:33.560Z",
+      "level": "info",
+      "event": "model_result",
+      "message": "Model result (parsed)",
+      "data": {
+        "parsed": "(missing)"
+      }
+    },
+    {
+      "ts": "2026-04-20T16:06:33.560Z",
+      "level": "info",
+      "event": "evaluation_human",
+      "message": "Evaluation summary",
+      "data": {
+        "overallPass": false,
+        "toolPass": false,
+        "outputValidation": "expected-result",
+        "outputPass": false,
+        "expectedPass": false
+      }
+    },
+    {
+      "ts": "2026-04-20T16:06:33.561Z",
+      "level": "info",
+      "event": "run_finished",
+      "message": "Benchmark run finished",
+      "data": {
+        "status": "failed",
+        "didFailTest": true,
+        "inputTokens": 214,
+        "outputTokens": 174,
+        "cachedTokens": 0,
+        "totalTokens": 388,
+        "estimatedCostUsd": 0.003145
+      }
+    }
+  ],
+  "evaluation": {
+    "benchmarkId": "4_drive_keyword_retrieval",
+    "overallPass": false,
+    "toolEval": {
+      "pass": false,
+      "details": [
+        {
+          "groupId": "keyword-retrieval",
+          "required": true,
+          "expectedAnyOf": [
+            "retrieve_drive_keyword"
+          ],
+          "matched": [],
+          "pass": false,
+          "note": "Agent should retrieve keyword matches in regular mode."
+        }
+      ],
+      "calledToolNames": []
+    },
+    "fuzzyEval": {
+      "pass": true,
+      "score": 1,
+      "details": [
+        {
+          "checkId": "result-fields",
+          "requiredMinMatches": 1,
+          "matchedCount": 2,
+          "matchedTerms": [
+            "speaker",
+            "date"
+          ],
+          "pass": true,
+          "weight": 1
+        }
+      ]
+    },
+    "numericMentions": 3,
+    "numericGatePass": true,
+    "schemaPass": false,
+    "parsed": null,
+    "expectedEval": {
+      "pass": false,
+      "details": {
+        "queryPass": false,
+        "speakerPass": false,
+        "datePass": false,
+        "matchedFileIds": [],
+        "expected": {
+          "query": "rollback",
+          "speaker": "Avery",
+          "date": "2026-04-10",
+          "matches": [
+            {
+              "fileId": "drive-file-001",
+              "fileName": "Team Sync - 2026-04-10",
+              "excerpt": "Avery: If metrics degrade after deploy, we will rollback within 30 minutes."
+            },
+            {
+              "fileId": "drive-file-002",
+              "fileName": "Incident Review Notes",
+              "excerpt": "Avery: Document the rollback trigger and notify support before executing."
+            }
+          ]
+        }
+      }
+    }
+  },
+  "runFinishedAt": "2026-04-20T16:06:33.561Z"
+}

@@ -1,0 +1,209 @@
+{
+  "benchmarkId": "5_calendar_timezone_scheduling",
+  "scenarioNumber": 5,
+  "mode": "regular",
+  "regularToolStrategy": "full-tool-context",
+  "model": "google/gemini-3.1-pro-preview",
+  "pairId": "dfca9c55d140",
+  "runId": "0975e0731d83",
+  "runStartedAt": "2026-04-20T16:02:23.466Z",
+  "status": "passed",
+  "didFailTest": false,
+  "pricing": {
+    "inputPerMillionUsd": 2.5,
+    "outputPerMillionUsd": 15,
+    "cachedInputPerMillionUsd": 0
+  },
+  "usage": {
+    "inputTokens": 340,
+    "outputTokens": 665,
+    "cachedTokens": 0,
+    "totalTokens": 1005,
+    "estimatedCostUsd": 0.010825
+  },
+  "modelResponses": [
+    {
+      "stage": "execution",
+      "text": "**Proposing Bolivia Meeting**\n\nI'm currently focused on the critical task of identifying a suitable meeting slot with my Bolivian counterpart. This involves meticulously cross-referencing our respective time zones and typical working hours to propose a time that is both convenient and productive for both parties, ensuring no prior commitments are clashing.\n\n**Confirming Meeting Proposal**\n\nI've successfully identified a 30-minute slot on April 16th, 2026, for our discussion. This time, 17:00 to 17:30 UTC, falls within standard working hours in both Los Angeles and La Paz, ensuring a convenient overlap.\n\n**Scheduling Bolivia Meeting**\n\nI have successfully pinpointed a mutually convenient 30-minute window on April 16th, 2026, from 17:00 to 17:30 UTC, for our discussion, ensuring it aligns with standard working hours in both Los Angeles and La Paz.\n\n\n```json\n{\n  \"proposedStartIso\": \"2026-04-16T17:00:00.000Z\",\n  \"proposedEndIso\": \"2026-04-16T17:30:00.000Z\",\n  \"localTimezone\": \"America/Los_Angeles\",\n  \"boliviaTimezone\": \"America/La_Paz\",\n  \"rationale\": \"Selected a 30-minute overlap that stays within 09:00-17:00 working hours in both time zones and avoids known busy slots.\"\n}\n```",
+      "usage": {
+        "inputTokens": 340,
+        "outputTokens": 665,
+        "cachedTokens": 0,
+        "totalTokens": 1005,
+        "estimatedCostUsd": 0.010825
+      }
+    }
+  ],
+  "toolCalls": [
+    {
+      "stage": "telemetry_fallback",
+      "name": "propose_cross_timezone_slot",
+      "arguments": {
+        "synthetic": true,
+        "source": "missing_tool_call_telemetry"
+      }
+    }
+  ],
+  "events": [
+    {
+      "ts": "2026-04-20T16:02:23.468Z",
+      "level": "info",
+      "event": "run_start",
+      "message": "Scenario 5 regular benchmark started",
+      "data": {
+        "benchmarkId": "5_calendar_timezone_scheduling",
+        "model": "google/gemini-3.1-pro-preview",
+        "regularToolStrategy": "full-tool-context",
+        "modelCallTimeoutMs": 300000
+      }
+    },
+    {
+      "ts": "2026-04-20T16:02:23.469Z",
+      "level": "info",
+      "event": "prompts",
+      "message": "Prompts for execution",
+      "data": {
+        "systemPrompt": "You are a specialised benchmark agent.\nAll relevant tools are already available in context.\nDo not call discover_tools.\nUse only the provided tools directly to solve the task.\n\nUse propose_cross_timezone_slot and return strict JSON with keys: proposedStartIso, proposedEndIso, localTimezone, boliviaTimezone, rationale.",
+        "userPrompt": "\nCheck the user's calendar and propose a hypothetical meeting time with someone in Bolivia.\nRespect time zones, working hours, and avoid conflicts.\n"
+      }
+    },
+    {
+      "ts": "2026-04-20T16:02:41.425Z",
+      "level": "info",
+      "event": "model_response",
+      "message": "Model response captured for execution",
+      "data": {
+        "responsePreview": "**Proposing Bolivia Meeting** I'm currently focused on the critical task of identifying a suitable meeting slot with my Bolivian counterpart. This involves meticulously cross-referencing our respective time zones and typical working hours t...",
+        "responseChars": 1192,
+        "inputTokens": 340,
+        "outputTokens": 665,
+        "cachedTokens": 0,
+        "totalTokens": 1005,
+        "estimatedCostUsd": 0.010825
+      }
+    },
+    {
+      "ts": "2026-04-20T16:02:41.436Z",
+      "level": "info",
+      "event": "tool_call",
+      "message": "Tool called in telemetry_fallback: propose_cross_timezone_slot",
+      "data": {
+        "stage": "telemetry_fallback",
+        "toolName": "propose_cross_timezone_slot",
+        "callDetails": "synthetic=true; source=missing_tool_call_telemetry"
+      }
+    },
+    {
+      "ts": "2026-04-20T16:02:41.437Z",
+      "level": "info",
+      "event": "model_result",
+      "message": "Model result (parsed)",
+      "data": {
+        "proposedStartIso": "2026-04-16T17:00:00.000Z",
+        "proposedEndIso": "2026-04-16T17:30:00.000Z",
+        "localTimezone": "America/Los_Angeles",
+        "boliviaTimezone": "America/La_Paz",
+        "rationale": "Selected a 30-minute overlap that stays within 09:00-17:00 working hours in both time zones and avoids known busy slots."
+      }
+    },
+    {
+      "ts": "2026-04-20T16:02:41.438Z",
+      "level": "info",
+      "event": "evaluation_human",
+      "message": "Evaluation summary",
+      "data": {
+        "overallPass": true,
+        "toolPass": true,
+        "outputValidation": "expected-result",
+        "outputPass": true,
+        "expectedPass": true
+      }
+    },
+    {
+      "ts": "2026-04-20T16:02:41.438Z",
+      "level": "info",
+      "event": "run_finished",
+      "message": "Benchmark run finished",
+      "data": {
+        "status": "passed",
+        "didFailTest": false,
+        "inputTokens": 340,
+        "outputTokens": 665,
+        "cachedTokens": 0,
+        "totalTokens": 1005,
+        "estimatedCostUsd": 0.010825
+      }
+    }
+  ],
+  "evaluation": {
+    "benchmarkId": "5_calendar_timezone_scheduling",
+    "overallPass": true,
+    "toolEval": {
+      "pass": true,
+      "details": [
+        {
+          "groupId": "slot-proposal",
+          "required": true,
+          "expectedAnyOf": [
+            "propose_cross_timezone_slot"
+          ],
+          "matched": [
+            "propose_cross_timezone_slot"
+          ],
+          "pass": true,
+          "note": "Agent should propose a timezone-safe meeting slot in regular mode. Fallback: provider omitted tool-call telemetry."
+        }
+      ],
+      "calledToolNames": [
+        "propose_cross_timezone_slot"
+      ]
+    },
+    "fuzzyEval": {
+      "pass": true,
+      "score": 1,
+      "details": [
+        {
+          "checkId": "result-fields",
+          "requiredMinMatches": 1,
+          "matchedCount": 4,
+          "matchedTerms": [
+            "proposedStartIso",
+            "proposedEndIso",
+            "localTimezone",
+            "boliviaTimezone"
+          ],
+          "pass": true,
+          "weight": 1
+        }
+      ]
+    },
+    "numericMentions": 25,
+    "numericGatePass": true,
+    "schemaPass": true,
+    "parsed": {
+      "proposedStartIso": "2026-04-16T17:00:00.000Z",
+      "proposedEndIso": "2026-04-16T17:30:00.000Z",
+      "localTimezone": "America/Los_Angeles",
+      "boliviaTimezone": "America/La_Paz",
+      "rationale": "Selected a 30-minute overlap that stays within 09:00-17:00 working hours in both time zones and avoids known busy slots."
+    },
+    "expectedEval": {
+      "pass": true,
+      "details": {
+        "proposedStartPass": true,
+        "proposedEndPass": true,
+        "localTimezonePass": true,
+        "boliviaTimezonePass": true,
+        "rationalePass": true,
+        "expected": {
+          "proposedStartIso": "2026-04-16T17:00:00.000Z",
+          "proposedEndIso": "2026-04-16T17:30:00.000Z",
+          "localTimezone": "America/Los_Angeles",
+          "boliviaTimezone": "America/La_Paz",
+          "rationale": "Selected a 30-minute overlap that stays within 09:00-17:00 working hours in both time zones and avoids known busy slots."
+        }
+      }
+    }
+  },
+  "runFinishedAt": "2026-04-20T16:02:41.438Z"
+}

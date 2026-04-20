@@ -433,5 +433,147 @@
     "pairId": "d598e1859cba",
     "updatedAt": "2026-04-16T16:31:40.202Z",
     "regularLogPath": "results/openai_gpt-5.4-scenario-3-regular-pair-d598e1859cba-24eba8ca1a1a-2026-04-16T16-31-29.479Z.json"
+  },
+  {
+    "scenarioNumber": 1,
+    "model": "openrouter/free",
+    "pairId": "9e5a9a3a7a88",
+    "updatedAt": "2026-04-20T13:18:43.435Z"
+  },
+  {
+    "scenarioNumber": 2,
+    "model": "openrouter/free",
+    "pairId": "f2542e385981",
+    "updatedAt": "2026-04-20T13:34:24.102Z",
+    "regularLogPath": "results/openrouter_free/scenario-2-regular-f2542e385981.json"
+  },
+  {
+    "scenarioNumber": 3,
+    "model": "openrouter/free",
+    "pairId": "51cd38e97b99",
+    "updatedAt": "2026-04-20T13:37:00.570Z",
+    "regularLogPath": "results/openrouter_free/scenario-3-regular-51cd38e97b99.json"
+  },
+  {
+    "scenarioNumber": 4,
+    "model": "openrouter/free",
+    "pairId": "7814f91d70b5",
+    "updatedAt": "2026-04-20T13:41:55.759Z",
+    "regularLogPath": "results/openrouter_free/scenario-4-regular-7814f91d70b5.json",
+    "codeModeLogPath": "results/openrouter_free/scenario-4-code-mode-7814f91d70b5.json"
+  },
+  {
+    "scenarioNumber": 5,
+    "model": "openrouter/free",
+    "pairId": "ff2944f94886",
+    "updatedAt": "2026-04-20T13:44:18.783Z",
+    "regularLogPath": "results/openrouter_free/scenario-5-regular-ff2944f94886.json",
+    "codeModeLogPath": "results/openrouter_free/scenario-5-code-mode-ff2944f94886.json"
+  },
+  {
+    "scenarioNumber": 6,
+    "model": "openrouter/free",
+    "pairId": "f66cebf88ceb",
+    "updatedAt": "2026-04-20T13:47:11.174Z",
+    "regularLogPath": "results/openrouter_free/scenario-6-regular-f66cebf88ceb-1.json",
+    "codeModeLogPath": "results/openrouter_free/scenario-6-code-mode-f66cebf88ceb.json"
+  },
+  {
+    "scenarioNumber": 1,
+    "model": "openai/gpt-5.4-mini",
+    "pairId": "8a48076037be",
+    "updatedAt": "2026-04-20T13:48:48.193Z",
+    "regularLogPath": "results/openai_gpt-5.4-mini/scenario-1-regular-8a48076037be.json"
+  },
+  {
+    "scenarioNumber": 2,
+    "model": "openai/gpt-5.4-mini",
+    "pairId": "ca2d2187221a",
+    "updatedAt": "2026-04-20T13:49:00.757Z",
+    "regularLogPath": "results/openai_gpt-5.4-mini/scenario-2-regular-ca2d2187221a.json"
+  },
+  {
+    "scenarioNumber": 3,
+    "model": "openai/gpt-5.4-mini",
+    "pairId": "1a7e8839e603",
+    "updatedAt": "2026-04-20T13:52:00.241Z",
+    "regularLogPath": "results/openai_gpt-5.4-mini/scenario-3-regular-1a7e8839e603-1.json"
+  },
+  {
+    "scenarioNumber": 4,
+    "model": "openai/gpt-5.4-mini",
+    "pairId": "955144330194",
+    "updatedAt": "2026-04-20T13:52:45.069Z",
+    "regularLogPath": "results/openai_gpt-5.4-mini/scenario-4-regular-955144330194.json",
+    "codeModeLogPath": "results/openai_gpt-5.4-mini/scenario-4-code-mode-955144330194.json"
+  },
+  {
+    "scenarioNumber": 5,
+    "model": "openai/gpt-5.4-mini",
+    "pairId": "caec58c8367f",
+    "updatedAt": "2026-04-20T13:52:57.905Z",
+    "codeModeLogPath": "results/openai_gpt-5.4-mini/scenario-5-code-mode-caec58c8367f.json"
+  },
+  {
+    "scenarioNumber": 6,
+    "model": "openai/gpt-5.4-mini",
+    "pairId": "a245a0609e78",
+    "updatedAt": "2026-04-20T13:53:19.555Z",
+    "codeModeLogPath": "results/openai_gpt-5.4-mini/scenario-6-code-mode-a245a0609e78.json"
+  },
+  {
+    "scenarioNumber": 1,
+    "model": "google/gemini-3.1-flash-lite-preview",
+    "pairId": "4bb46306bceb",
+    "updatedAt": "2026-04-20T13:54:56.250Z",
+    "regularLogPath": "results/google_gemini-3.1-flash-lite-preview/scenario-1-regular-4bb46306bceb.json",
+    "codeModeLogPath": "results/google_gemini-3.1-flash-lite-preview/scenario-1-code-mode-4bb46306bceb.json"
+  },
+  {
+    "scenarioNumber": 2,
+    "model": "google/gemini-3.1-flash-lite-preview",
+    "pairId": "f26d70a9c88b",
+    "updatedAt": "2026-04-20T13:55:50.253Z",
+    "regularLogPath": "results/google_gemini-3.1-flash-lite-preview/scenario-2-regular-f26d70a9c88b.json",
+    "codeModeLogPath": "results/google_gemini-3.1-flash-lite-preview/scenario-2-code-mode-f26d70a9c88b.json"
+  },
+  {
+    "scenarioNumber": 3,
+    "model": "google/gemini-3.1-flash-lite-preview",
+    "pairId": "292c220117a9",
+    "updatedAt": "2026-04-20T13:56:09.462Z",
+    "regularLogPath": "results/google_gemini-3.1-flash-lite-preview/scenario-3-regular-292c220117a9.json",
+    "codeModeLogPath": "results/google_gemini-3.1-flash-lite-preview/scenario-3-code-mode-292c220117a9.json"
+  },
+  {
+    "scenarioNumber": 4,
+    "model": "google/gemini-3.1-flash-lite-preview",
+    "pairId": "7c8047e9a141",
+    "updatedAt": "2026-04-20T13:56:28.077Z",
+    "regularLogPath": "results/google_gemini-3.1-flash-lite-preview/scenario-4-regular-7c8047e9a141.json",
+    "codeModeLogPath": "results/google_gemini-3.1-flash-lite-preview/scenario-4-code-mode-7c8047e9a141.json"
+  },
+  {
+    "scenarioNumber": 5,
+    "model": "google/gemini-3.1-flash-lite-preview",
+    "pairId": "cf0c788c2d91",
+    "updatedAt": "2026-04-20T13:56:51.437Z",
+    "regularLogPath": "results/google_gemini-3.1-flash-lite-preview/scenario-5-regular-cf0c788c2d91.json"
+  },
+  {
+    "scenarioNumber": 6,
+    "model": "google/gemini-3.1-flash-lite-preview",
+    "pairId": "70b6098dea20",
+    "updatedAt": "2026-04-20T13:57:32.638Z",
+    "regularLogPath": "results/google_gemini-3.1-flash-lite-preview/scenario-6-regular-70b6098dea20.json",
+    "codeModeLogPath": "results/google_gemini-3.1-flash-lite-preview/scenario-6-code-mode-70b6098dea20.json"
+  },
+  {
+    "scenarioNumber": 5,
+    "model": "anthropic/claude-opus-4.6",
+    "pairId": "fe9f59e2bd91",
+    "updatedAt": "2026-04-20T14:25:06.201Z",
+    "regularLogPath": "results/anthropic_claude-opus-4.6/scenario-5-regular-fe9f59e2bd91.json",
+    "codeModeLogPath": "results/anthropic_claude-opus-4.6/scenario-5-code-mode-fe9f59e2bd91.json"
   }
 ]

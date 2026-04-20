@@ -1,0 +1,227 @@
+{
+  "benchmarkId": "6_github_repo_change_pr",
+  "scenarioNumber": 6,
+  "mode": "regular",
+  "model": "google/gemini-3.1-flash-lite-preview",
+  "pairId": "70b6098dea20",
+  "runId": "f35e693d5c41",
+  "runStartedAt": "2026-04-20T13:57:11.636Z",
+  "status": "failed",
+  "didFailTest": true,
+  "pricing": {
+    "inputPerMillionUsd": 0.25,
+    "outputPerMillionUsd": 1.5,
+    "cachedInputPerMillionUsd": 0
+  },
+  "usage": {
+    "inputTokens": 698,
+    "outputTokens": 143,
+    "cachedTokens": 0,
+    "totalTokens": 841,
+    "estimatedCostUsd": 0.000389
+  },
+  "modelResponses": [
+    {
+      "stage": "discovery",
+      "text": "",
+      "usage": {
+        "inputTokens": 377,
+        "outputTokens": 50,
+        "cachedTokens": 0,
+        "totalTokens": 427,
+        "estimatedCostUsd": 0.000169
+      }
+    },
+    {
+      "stage": "execution",
+      "text": "{\n  \"pull_request\": {\n    \"id\": 123,\n    \"title\": \"Fix README typos and clarify benchmark command\",\n    \"url\": \"https://github.com/octo-org/benchmark-demo-repo/pull/123\",\n    \"status\": \"open\"\n  },\n  \"changed_files\": [\n    \"README.md\"\n  ]\n}",
+      "usage": {
+        "inputTokens": 321,
+        "outputTokens": 93,
+        "cachedTokens": 0,
+        "totalTokens": 414,
+        "estimatedCostUsd": 0.00022
+      }
+    }
+  ],
+  "toolCalls": [
+    {
+      "stage": "discovery",
+      "name": "simulate_repo_change_and_pr",
+      "arguments": {
+        "repo": "octo-org/benchmark-demo-repo",
+        "requestedChange": "Fix a typo in README setup steps and clarify the benchmark command."
+      }
+    }
+  ],
+  "events": [
+    {
+      "ts": "2026-04-20T13:57:11.639Z",
+      "level": "info",
+      "event": "run_start",
+      "message": "Scenario 6 regular benchmark started",
+      "data": {
+        "benchmarkId": "6_github_repo_change_pr",
+        "model": "google/gemini-3.1-flash-lite-preview",
+        "modelCallTimeoutMs": 120000
+      }
+    },
+    {
+      "ts": "2026-04-20T13:57:21.752Z",
+      "level": "info",
+      "event": "model_response",
+      "message": "Model response captured for discovery",
+      "data": {
+        "responsePreview": "",
+        "responseChars": 0,
+        "inputTokens": 377,
+        "outputTokens": 50,
+        "cachedTokens": 0,
+        "totalTokens": 427,
+        "estimatedCostUsd": 0.000169
+      }
+    },
+    {
+      "ts": "2026-04-20T13:57:21.762Z",
+      "level": "info",
+      "event": "tool_call",
+      "message": "Tool called in discovery: simulate_repo_change_and_pr",
+      "data": {
+        "stage": "discovery",
+        "toolName": "simulate_repo_change_and_pr",
+        "callDetails": "repo=octo-org/benchmark-demo-repo; requested change=Fix a typo in README setup steps and clarify the benchmark command."
+      }
+    },
+    {
+      "ts": "2026-04-20T13:57:23.053Z",
+      "level": "info",
+      "event": "model_response",
+      "message": "Model response captured for execution",
+      "data": {
+        "responsePreview": "{ \"pull_request\": { \"id\": 123, \"title\": \"Fix README typos and clarify benchmark command\", \"url\": \"https://github.com/octo-org/benchmark-demo-repo/pull/123\", \"status\": \"open\" }, \"changed_files\": [ \"README.md\" ] }",
+        "responseChars": 239,
+        "inputTokens": 321,
+        "outputTokens": 93,
+        "cachedTokens": 0,
+        "totalTokens": 414,
+        "estimatedCostUsd": 0.00022
+      }
+    },
+    {
+      "ts": "2026-04-20T13:57:23.081Z",
+      "level": "info",
+      "event": "model_result",
+      "message": "Model result (parsed)",
+      "data": {
+        "parsed": "(missing)"
+      }
+    },
+    {
+      "ts": "2026-04-20T13:57:23.081Z",
+      "level": "info",
+      "event": "evaluation_human",
+      "message": "Evaluation summary",
+      "data": {
+        "overallPass": false,
+        "toolPass": false,
+        "outputValidation": "expected-result",
+        "outputPass": false,
+        "expectedPass": false
+      }
+    },
+    {
+      "ts": "2026-04-20T13:57:23.081Z",
+      "level": "info",
+      "event": "run_finished",
+      "message": "Benchmark run finished",
+      "data": {
+        "status": "failed",
+        "didFailTest": true,
+        "inputTokens": 698,
+        "outputTokens": 143,
+        "cachedTokens": 0,
+        "totalTokens": 841,
+        "estimatedCostUsd": 0.000389
+      }
+    }
+  ],
+  "evaluation": {
+    "benchmarkId": "6_github_repo_change_pr",
+    "overallPass": false,
+    "toolEval": {
+      "pass": false,
+      "details": [
+        {
+          "groupId": "progressive-discovery",
+          "required": true,
+          "expectedAnyOf": [
+            "discover_tools"
+          ],
+          "matched": [],
+          "pass": false,
+          "note": "Agent should discover hidden tools first."
+        },
+        {
+          "groupId": "repo-change-pr",
+          "required": true,
+          "expectedAnyOf": [
+            "simulate_repo_change_and_pr"
+          ],
+          "matched": [
+            "simulate_repo_change_and_pr"
+          ],
+          "pass": true,
+          "note": "Agent should simulate repo change and PR creation in regular mode."
+        }
+      ],
+      "calledToolNames": [
+        "simulate_repo_change_and_pr"
+      ]
+    },
+    "fuzzyEval": {
+      "pass": true,
+      "score": 1,
+      "details": [
+        {
+          "checkId": "result-fields",
+          "requiredMinMatches": 1,
+          "matchedCount": 1,
+          "matchedTerms": [
+            "repo"
+          ],
+          "pass": true,
+          "weight": 1
+        }
+      ]
+    },
+    "numericMentions": 2,
+    "numericGatePass": true,
+    "schemaPass": false,
+    "parsed": null,
+    "expectedEval": {
+      "pass": false,
+      "details": {
+        "repoPass": false,
+        "branchPass": false,
+        "prTitlePass": false,
+        "prUrlPass": false,
+        "changedFilesPass": false,
+        "prBodyPass": false,
+        "expected": {
+          "repo": "octo-org/benchmark-demo-repo",
+          "branch": "benchmark/fix-readme-typo",
+          "changedFiles": [
+            {
+              "path": "README.md",
+              "changeSummary": "Corrected setup typo and clarified benchmark run command formatting."
+            }
+          ],
+          "prTitle": "docs: fix README setup typo and benchmark command wording",
+          "prBody": "## Summary\n- fix typo in README setup instructions\n- clarify benchmark execution command\n\n## Validation\n- docs-only simulation benchmark output",
+          "prUrl": "https://github.com/octo-org/benchmark-demo-repo/pull/128"
+        }
+      }
+    }
+  },
+  "runFinishedAt": "2026-04-20T13:57:23.081Z"
+}

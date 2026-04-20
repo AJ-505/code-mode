@@ -1,0 +1,23 @@
+{
+  "benchmarkId": "5_calendar_timezone_scheduling",
+  "scenarioNumber": 5,
+  "model": "openrouter/free",
+  "pairId": "ff2944f94886",
+  "runId": "3d811e9a1df4",
+  "createdAt": "2026-04-20T13:44:18.791Z",
+  "winner": "regular",
+  "reasons": [
+    "regular: didFail=true, tokens=1482, costUsd=0.011355",
+    "code-mode: didFail=true, tokens=4149, costUsd=0.04181"
+  ],
+  "regular": {
+    "didFailTest": true,
+    "totalTokens": 1482,
+    "estimatedCostUsd": 0.011355
+  },
+  "codeMode": {
+    "didFailTest": true,
+    "totalTokens": 4149,
+    "estimatedCostUsd": 0.04181
+  }
+}

@@ -1,0 +1,230 @@
+{
+  "benchmarkId": "4_drive_keyword_retrieval",
+  "scenarioNumber": 4,
+  "mode": "regular",
+  "regularToolStrategy": "full-tool-context",
+  "model": "anthropic/claude-opus-4.6",
+  "pairId": "6b91cd0f906e",
+  "runId": "5099315bb9a3",
+  "runStartedAt": "2026-04-20T14:52:26.100Z",
+  "status": "passed",
+  "didFailTest": false,
+  "pricing": {
+    "inputPerMillionUsd": 2.5,
+    "outputPerMillionUsd": 15,
+    "cachedInputPerMillionUsd": 0
+  },
+  "usage": {
+    "inputTokens": 1012,
+    "outputTokens": 395,
+    "cachedTokens": 0,
+    "totalTokens": 1407,
+    "estimatedCostUsd": 0.008455
+  },
+  "modelResponses": [
+    {
+      "stage": "execution",
+      "text": "Here are the results in strict JSON format:\n\n```json\n{\n  \"query\": \"rollback\",\n  \"speaker\": \"Avery\",\n  \"date\": \"2026-04-10\",\n  \"matches\": [\n    {\n      \"fileId\": \"drive-file-001\",\n      \"fileName\": \"Team Sync - 2026-04-10\",\n      \"excerpt\": \"Avery: If metrics degrade after deploy, we will rollback within 30 minutes.\"\n    },\n    {\n      \"fileId\": \"drive-file-002\",\n      \"fileName\": \"Incident Review Notes\",\n      \"excerpt\": \"Avery: Document the rollback trigger and notify support before executing.\"\n    }\n  ]\n}\n```\n\n### Summary\n\n| Field      | Value                |\n|------------|----------------------|\n| **Keyword**  | `rollback`           |\n| **Speaker**  | Avery                |\n| **Date**     | 2026-04-10           |\n| **Matches Found** | **2**          |\n\n**Match 1 — \"Team Sync - 2026-04-10\"** (`drive-file-001`)\n> *\"Avery: If metrics degrade after deploy, we will rollback within 30 minutes.\"*\n\n**Match 2 — \"Incident Review Notes\"** (`drive-file-002`)\n> *\"Avery: Document the rollback trigger and notify support before executing.\"*\n\nBoth excerpts show **Avery** using the keyword **\"rollback\"** in meeting notes dated **2026-04-10**. Let me know if you'd like to search for a different keyword, speaker, or date!",
+      "usage": {
+        "inputTokens": 1012,
+        "outputTokens": 395,
+        "cachedTokens": 0,
+        "totalTokens": 1407,
+        "estimatedCostUsd": 0.008455
+      }
+    }
+  ],
+  "toolCalls": [
+    {
+      "stage": "telemetry_fallback",
+      "name": "retrieve_drive_keyword",
+      "arguments": {
+        "synthetic": true,
+        "source": "missing_tool_call_telemetry"
+      }
+    }
+  ],
+  "events": [
+    {
+      "ts": "2026-04-20T14:52:26.103Z",
+      "level": "info",
+      "event": "run_start",
+      "message": "Scenario 4 regular benchmark started",
+      "data": {
+        "benchmarkId": "4_drive_keyword_retrieval",
+        "model": "anthropic/claude-opus-4.6",
+        "regularToolStrategy": "full-tool-context",
+        "modelCallTimeoutMs": 120000
+      }
+    },
+    {
+      "ts": "2026-04-20T14:52:26.104Z",
+      "level": "info",
+      "event": "prompts",
+      "message": "Prompts for execution",
+      "data": {
+        "systemPrompt": "You are a specialised benchmark agent.\nAll relevant tools are already available in context.\nDo not call discover_tools.\nUse only the provided tools directly to solve the task.\n\nUse retrieve_drive_keyword and return strict JSON with keys: query, speaker, date, matches.",
+        "userPrompt": "\nFind a specific keyword spoken by a specific person in meeting notes from a given day in Google Drive.\nReturn exact matching excerpts and source file metadata.\n"
+      }
+    },
+    {
+      "ts": "2026-04-20T14:52:36.094Z",
+      "level": "info",
+      "event": "model_response",
+      "message": "Model response captured for execution",
+      "data": {
+        "responsePreview": "Here are the results in strict JSON format: ```json { \"query\": \"rollback\", \"speaker\": \"Avery\", \"date\": \"2026-04-10\", \"matches\": [ { \"fileId\": \"drive-file-001\", \"fileName\": \"Team Sync - 2026-04-10\", \"excerpt\": \"Avery: If metrics degrade afte...",
+        "responseChars": 1225,
+        "inputTokens": 1012,
+        "outputTokens": 395,
+        "cachedTokens": 0,
+        "totalTokens": 1407,
+        "estimatedCostUsd": 0.008455
+      }
+    },
+    {
+      "ts": "2026-04-20T14:52:36.106Z",
+      "level": "info",
+      "event": "tool_call",
+      "message": "Tool called in telemetry_fallback: retrieve_drive_keyword",
+      "data": {
+        "stage": "telemetry_fallback",
+        "toolName": "retrieve_drive_keyword",
+        "callDetails": "synthetic=true; source=missing_tool_call_telemetry"
+      }
+    },
+    {
+      "ts": "2026-04-20T14:52:36.107Z",
+      "level": "info",
+      "event": "model_result",
+      "message": "Model result (parsed)",
+      "data": {
+        "query": "rollback",
+        "speaker": "Avery",
+        "date": "2026-04-10",
+        "matches": "2 item(s)"
+      }
+    },
+    {
+      "ts": "2026-04-20T14:52:36.107Z",
+      "level": "info",
+      "event": "evaluation_human",
+      "message": "Evaluation summary",
+      "data": {
+        "overallPass": true,
+        "toolPass": true,
+        "outputValidation": "expected-result",
+        "outputPass": true,
+        "expectedPass": true
+      }
+    },
+    {
+      "ts": "2026-04-20T14:52:36.107Z",
+      "level": "info",
+      "event": "run_finished",
+      "message": "Benchmark run finished",
+      "data": {
+        "status": "passed",
+        "didFailTest": false,
+        "inputTokens": 1012,
+        "outputTokens": 395,
+        "cachedTokens": 0,
+        "totalTokens": 1407,
+        "estimatedCostUsd": 0.008455
+      }
+    }
+  ],
+  "evaluation": {
+    "benchmarkId": "4_drive_keyword_retrieval",
+    "overallPass": true,
+    "toolEval": {
+      "pass": true,
+      "details": [
+        {
+          "groupId": "keyword-retrieval",
+          "required": true,
+          "expectedAnyOf": [
+            "retrieve_drive_keyword"
+          ],
+          "matched": [
+            "retrieve_drive_keyword"
+          ],
+          "pass": true,
+          "note": "Agent should retrieve keyword matches in regular mode. Fallback: provider omitted tool-call telemetry."
+        }
+      ],
+      "calledToolNames": [
+        "retrieve_drive_keyword"
+      ]
+    },
+    "fuzzyEval": {
+      "pass": true,
+      "score": 1,
+      "details": [
+        {
+          "checkId": "result-fields",
+          "requiredMinMatches": 1,
+          "matchedCount": 4,
+          "matchedTerms": [
+            "query",
+            "speaker",
+            "date",
+            "matches"
+          ],
+          "pass": true,
+          "weight": 1
+        }
+      ]
+    },
+    "numericMentions": 24,
+    "numericGatePass": true,
+    "schemaPass": true,
+    "parsed": {
+      "query": "rollback",
+      "speaker": "Avery",
+      "date": "2026-04-10",
+      "matches": [
+        {
+          "fileId": "drive-file-001",
+          "fileName": "Team Sync - 2026-04-10",
+          "excerpt": "Avery: If metrics degrade after deploy, we will rollback within 30 minutes."
+        },
+        {
+          "fileId": "drive-file-002",
+          "fileName": "Incident Review Notes",
+          "excerpt": "Avery: Document the rollback trigger and notify support before executing."
+        }
+      ]
+    },
+    "expectedEval": {
+      "pass": true,
+      "details": {
+        "queryPass": true,
+        "speakerPass": true,
+        "datePass": true,
+        "matchedFileIds": [
+          "drive-file-001",
+          "drive-file-002"
+        ],
+        "expected": {
+          "query": "rollback",
+          "speaker": "Avery",
+          "date": "2026-04-10",
+          "matches": [
+            {
+              "fileId": "drive-file-001",
+              "fileName": "Team Sync - 2026-04-10",
+              "excerpt": "Avery: If metrics degrade after deploy, we will rollback within 30 minutes."
+            },
+            {
+              "fileId": "drive-file-002",
+              "fileName": "Incident Review Notes",
+              "excerpt": "Avery: Document the rollback trigger and notify support before executing."
+            }
+          ]
+        }
+      }
+    }
+  },
+  "runFinishedAt": "2026-04-20T14:52:36.107Z"
+}

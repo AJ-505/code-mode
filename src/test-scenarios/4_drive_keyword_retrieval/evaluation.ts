@@ -2,6 +2,8 @@ import {
   evaluateBenchmarkRun,
   type BenchmarkEvaluationSpec,
 } from "../../lib/benchmark-evaluation.js";
+import type { RegularToolStrategy } from "../../lib/benchmark-logger.js";
+import { getScenario4ExpectedResult } from "./data.js";
 import { scenario4ResultSchema } from "./types.js";
 
 export const scenario4EvaluationSpec: BenchmarkEvaluationSpec = {
@@ -44,6 +46,13 @@ export const scenario4CodeModeEvaluationSpec: BenchmarkEvaluationSpec = {
   minNumericMentions: 0,
 };
 
+const scenario4NoDiscoveryEvaluationSpec: BenchmarkEvaluationSpec = {
+  ...scenario4EvaluationSpec,
+  expectedToolGroups: scenario4EvaluationSpec.expectedToolGroups.filter(
+    (group) => group.id !== "progressive-discovery"
+  ),
+};
+
 function extractJsonObject(text: string): Record<string, unknown> | null {
   const trimmed = text.trim();
 
@@ -64,18 +73,38 @@ function extractJsonObject(text: string): Record<string, unknown> | null {
     }
   }
 
+  const firstBrace = text.indexOf("{");
+  const lastBrace = text.lastIndexOf("}");
+  if (firstBrace >= 0 && lastBrace > firstBrace) {
+    try {
+      return JSON.parse(text.slice(firstBrace, lastBrace + 1)) as Record<string, unknown>;
+    } catch {
+      return null;
+    }
+  }
+
   return null;
 }
+
+const normalizeText = (value: string) =>
+  value
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 
 export function evaluateScenario4Run(options: {
   mode: "regular" | "code-mode";
   calledToolNames: string[];
   finalText: string;
+  regularToolStrategy?: RegularToolStrategy;
 }) {
   const spec =
     options.mode === "code-mode"
       ? scenario4CodeModeEvaluationSpec
-      : scenario4EvaluationSpec;
+      : options.regularToolStrategy === "full-tool-context"
+        ? scenario4NoDiscoveryEvaluationSpec
+        : scenario4EvaluationSpec;
 
   const base = evaluateBenchmarkRun({
     calledToolNames: options.calledToolNames,
@@ -85,11 +114,41 @@ export function evaluateScenario4Run(options: {
 
   const parsed = extractJsonObject(options.finalText);
   const schemaResult = parsed ? scenario4ResultSchema.safeParse(parsed) : null;
+  const expected = getScenario4ExpectedResult();
+  const parsedResult = schemaResult?.success ? schemaResult.data : null;
+  const fileIds = new Set(parsedResult?.matches.map((match) => match.fileId) ?? []);
+
+  const expectedEval = {
+    pass:
+      parsedResult?.query === expected.query &&
+      parsedResult?.speaker === expected.speaker &&
+      parsedResult?.date === expected.date &&
+      expected.matches.every(
+        (match) =>
+          fileIds.has(match.fileId) &&
+          parsedResult.matches.some(
+            (candidate) =>
+              candidate.fileId === match.fileId &&
+              normalizeText(candidate.excerpt).includes(normalizeText(match.excerpt))
+          )
+      ),
+    details: {
+      queryPass: parsedResult?.query === expected.query,
+      speakerPass: parsedResult?.speaker === expected.speaker,
+      datePass: parsedResult?.date === expected.date,
+      matchedFileIds: [...fileIds],
+      expected,
+    },
+  };
 
   return {
     ...base,
     schemaPass: schemaResult?.success === true,
-    parsed: schemaResult?.success ? schemaResult.data : null,
-    overallPass: base.overallPass && schemaResult?.success === true,
+    parsed: parsedResult,
+    expectedEval,
+    overallPass:
+      base.overallPass &&
+      schemaResult?.success === true &&
+      expectedEval.pass,
   };
 }

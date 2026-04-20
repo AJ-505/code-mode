@@ -1,0 +1,243 @@
+{
+  "benchmarkId": "5_calendar_timezone_scheduling",
+  "scenarioNumber": 5,
+  "mode": "regular",
+  "model": "google/gemini-3.1-flash-lite-preview",
+  "pairId": "cf0c788c2d91",
+  "runId": "b9c0fcd2878a",
+  "runStartedAt": "2026-04-20T13:56:29.656Z",
+  "status": "failed",
+  "didFailTest": true,
+  "pricing": {
+    "inputPerMillionUsd": 0.25,
+    "outputPerMillionUsd": 1.5,
+    "cachedInputPerMillionUsd": 0
+  },
+  "usage": {
+    "inputTokens": 826,
+    "outputTokens": 87,
+    "cachedTokens": 0,
+    "totalTokens": 913,
+    "estimatedCostUsd": 0.000337
+  },
+  "modelResponses": [
+    {
+      "stage": "discovery",
+      "text": "",
+      "usage": {
+        "inputTokens": 435,
+        "outputTokens": 57,
+        "cachedTokens": 0,
+        "totalTokens": 492,
+        "estimatedCostUsd": 0.000194
+      }
+    },
+    {
+      "stage": "execution",
+      "text": "",
+      "usage": {
+        "inputTokens": 391,
+        "outputTokens": 30,
+        "cachedTokens": 0,
+        "totalTokens": 421,
+        "estimatedCostUsd": 0.000143
+      }
+    }
+  ],
+  "toolCalls": [
+    {
+      "stage": "discovery",
+      "name": "propose_cross_timezone_slot",
+      "arguments": {
+        "boliviaTimezone": "America/La_Paz",
+        "localTimezone": "America/Los_Angeles",
+        "date": "2026-04-16"
+      }
+    },
+    {
+      "stage": "execution",
+      "name": "discover_tools",
+      "arguments": {
+        "tool_names": [
+          "list_calendar_events",
+          "get_current_datetime"
+        ]
+      }
+    }
+  ],
+  "events": [
+    {
+      "ts": "2026-04-20T13:56:29.659Z",
+      "level": "info",
+      "event": "run_start",
+      "message": "Scenario 5 regular benchmark started",
+      "data": {
+        "benchmarkId": "5_calendar_timezone_scheduling",
+        "model": "google/gemini-3.1-flash-lite-preview",
+        "modelCallTimeoutMs": 120000
+      }
+    },
+    {
+      "ts": "2026-04-20T13:56:49.851Z",
+      "level": "info",
+      "event": "model_response",
+      "message": "Model response captured for discovery",
+      "data": {
+        "responsePreview": "",
+        "responseChars": 0,
+        "inputTokens": 435,
+        "outputTokens": 57,
+        "cachedTokens": 0,
+        "totalTokens": 492,
+        "estimatedCostUsd": 0.000194
+      }
+    },
+    {
+      "ts": "2026-04-20T13:56:49.854Z",
+      "level": "info",
+      "event": "tool_call",
+      "message": "Tool called in discovery: propose_cross_timezone_slot",
+      "data": {
+        "stage": "discovery",
+        "toolName": "propose_cross_timezone_slot",
+        "callDetails": "bolivia timezone=America/La_Paz; local timezone=America/Los_Angeles; date=2026-04-16"
+      }
+    },
+    {
+      "ts": "2026-04-20T13:56:51.363Z",
+      "level": "info",
+      "event": "model_response",
+      "message": "Model response captured for execution",
+      "data": {
+        "responsePreview": "",
+        "responseChars": 0,
+        "inputTokens": 391,
+        "outputTokens": 30,
+        "cachedTokens": 0,
+        "totalTokens": 421,
+        "estimatedCostUsd": 0.000143
+      }
+    },
+    {
+      "ts": "2026-04-20T13:56:51.364Z",
+      "level": "info",
+      "event": "tool_call",
+      "message": "Tool called in execution: discover_tools",
+      "data": {
+        "stage": "execution",
+        "toolName": "discover_tools",
+        "callDetails": "tool names=list_calendar_events, get_current_datetime"
+      }
+    },
+    {
+      "ts": "2026-04-20T13:56:51.372Z",
+      "level": "info",
+      "event": "model_result",
+      "message": "Model result (parsed)",
+      "data": {
+        "parsed": "(missing)"
+      }
+    },
+    {
+      "ts": "2026-04-20T13:56:51.372Z",
+      "level": "info",
+      "event": "evaluation_human",
+      "message": "Evaluation summary",
+      "data": {
+        "overallPass": false,
+        "toolPass": true,
+        "outputValidation": "expected-result",
+        "outputPass": false,
+        "expectedPass": false
+      }
+    },
+    {
+      "ts": "2026-04-20T13:56:51.373Z",
+      "level": "info",
+      "event": "run_finished",
+      "message": "Benchmark run finished",
+      "data": {
+        "status": "failed",
+        "didFailTest": true,
+        "inputTokens": 826,
+        "outputTokens": 87,
+        "cachedTokens": 0,
+        "totalTokens": 913,
+        "estimatedCostUsd": 0.000337
+      }
+    }
+  ],
+  "evaluation": {
+    "benchmarkId": "5_calendar_timezone_scheduling",
+    "overallPass": false,
+    "toolEval": {
+      "pass": true,
+      "details": [
+        {
+          "groupId": "progressive-discovery",
+          "required": true,
+          "expectedAnyOf": [
+            "discover_tools"
+          ],
+          "matched": [
+            "discover_tools"
+          ],
+          "pass": true,
+          "note": "Agent should discover hidden tools first."
+        },
+        {
+          "groupId": "slot-proposal",
+          "required": true,
+          "expectedAnyOf": [
+            "propose_cross_timezone_slot"
+          ],
+          "matched": [
+            "propose_cross_timezone_slot"
+          ],
+          "pass": true,
+          "note": "Agent should propose a timezone-safe meeting slot in regular mode."
+        }
+      ],
+      "calledToolNames": [
+        "propose_cross_timezone_slot",
+        "discover_tools"
+      ]
+    },
+    "fuzzyEval": {
+      "pass": false,
+      "score": 0,
+      "details": [
+        {
+          "checkId": "result-fields",
+          "requiredMinMatches": 1,
+          "matchedCount": 0,
+          "matchedTerms": [],
+          "pass": false,
+          "weight": 1
+        }
+      ]
+    },
+    "numericMentions": 0,
+    "numericGatePass": true,
+    "schemaPass": false,
+    "parsed": null,
+    "expectedEval": {
+      "pass": false,
+      "details": {
+        "proposedStartPass": false,
+        "proposedEndPass": false,
+        "localTimezonePass": false,
+        "boliviaTimezonePass": false,
+        "rationalePass": false,
+        "expected": {
+          "proposedStartIso": "2026-04-16T17:00:00.000Z",
+          "proposedEndIso": "2026-04-16T17:30:00.000Z",
+          "localTimezone": "America/Los_Angeles",
+          "boliviaTimezone": "America/La_Paz",
+          "rationale": "Selected a 30-minute overlap that stays within 09:00-17:00 working hours in both time zones and avoids known busy slots."
+        }
+      }
+    }
+  },
+  "runFinishedAt": "2026-04-20T13:56:51.373Z"
+}

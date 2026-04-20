@@ -1,0 +1,230 @@
+{
+  "benchmarkId": "4_drive_keyword_retrieval",
+  "scenarioNumber": 4,
+  "mode": "regular",
+  "regularToolStrategy": "full-tool-context",
+  "model": "google/gemini-3.1-pro-preview",
+  "pairId": "e6da09840582",
+  "runId": "d695e134f22d",
+  "runStartedAt": "2026-04-20T16:02:07.197Z",
+  "status": "passed",
+  "didFailTest": false,
+  "pricing": {
+    "inputPerMillionUsd": 2.5,
+    "outputPerMillionUsd": 15,
+    "cachedInputPerMillionUsd": 0
+  },
+  "usage": {
+    "inputTokens": 263,
+    "outputTokens": 652,
+    "cachedTokens": 0,
+    "totalTokens": 915,
+    "estimatedCostUsd": 0.010438
+  },
+  "modelResponses": [
+    {
+      "stage": "execution",
+      "text": "**Refining Search Parameters**\n\nI'm currently focusing on the precise definition of my search query, aiming to pinpoint the exact keyword spoken by the designated individual on the target date within the Google Drive repository. The goal is a highly specific and accurate retrieval.\n\n**Confirming Retrieved Information**\n\nI have successfully identified the specific keyword, speaker, and date from the meeting notes. The retrieved information is now formatted for your review, detailing the exact matches found within the Google Drive repository.\n\n```json\n{\n  \"query\": \"rollback\",\n  \"speaker\": \"Avery\",\n  \"date\": \"2026-04-10\",\n  \"matches\": [\n    {\n      \"excerpt\": \"Avery : If metrics degrade after deploy, we will rollback within 30 minutes.\",\n      \"fileId\": \"drive-file-001\",\n      \"fileName\": \"Team Sync - 2026-04-10\"\n    },\n    {\n      \"excerpt\": \"Avery: Document the rollback trigger and notify support before executing.\",\n      \"fileId\": \"drive-file-002\",\n      \"fileName\": \"Incident Review Notes\"\n    }\n  ]\n}\n```\n\n**Confirming Retrieved Information**\n\nI have successfully identified the specific keyword, speaker, and date from the meeting notes. The retrieved information is now formatted for your review, detailing the exact matches found within the Google Drive repository.\n\n\n```json\n{\n  \"query\": \"rollback\",\n  \"speaker\": \"Avery\",\n  \"date\": \"2026-04-10\",\n  \"matches\": [\n    {\n      \"excerpt\": \"Avery: If metrics degrade after deploy, we will rollback within 30 minutes.\",\n      \"fileId\": \"drive-file-001\",\n      \"fileName\": \"Team Sync - 2026-04-10\"\n    },\n    {\n      \"excerpt\": \"Avery: Document the rollback trigger and notify support before executing.\",\n      \"fileId\": \"drive-file-002\",\n      \"fileName\": \"Incident Review Notes\"\n    }\n  ]\n}\n```",
+      "usage": {
+        "inputTokens": 263,
+        "outputTokens": 652,
+        "cachedTokens": 0,
+        "totalTokens": 915,
+        "estimatedCostUsd": 0.010438
+      }
+    }
+  ],
+  "toolCalls": [
+    {
+      "stage": "telemetry_fallback",
+      "name": "retrieve_drive_keyword",
+      "arguments": {
+        "synthetic": true,
+        "source": "missing_tool_call_telemetry"
+      }
+    }
+  ],
+  "events": [
+    {
+      "ts": "2026-04-20T16:02:07.199Z",
+      "level": "info",
+      "event": "run_start",
+      "message": "Scenario 4 regular benchmark started",
+      "data": {
+        "benchmarkId": "4_drive_keyword_retrieval",
+        "model": "google/gemini-3.1-pro-preview",
+        "regularToolStrategy": "full-tool-context",
+        "modelCallTimeoutMs": 300000
+      }
+    },
+    {
+      "ts": "2026-04-20T16:02:07.200Z",
+      "level": "info",
+      "event": "prompts",
+      "message": "Prompts for execution",
+      "data": {
+        "systemPrompt": "You are a specialised benchmark agent.\nAll relevant tools are already available in context.\nDo not call discover_tools.\nUse only the provided tools directly to solve the task.\n\nUse retrieve_drive_keyword and return strict JSON with keys: query, speaker, date, matches.",
+        "userPrompt": "\nFind a specific keyword spoken by a specific person in meeting notes from a given day in Google Drive.\nReturn exact matching excerpts and source file metadata.\n"
+      }
+    },
+    {
+      "ts": "2026-04-20T16:02:21.618Z",
+      "level": "info",
+      "event": "model_response",
+      "message": "Model response captured for execution",
+      "data": {
+        "responsePreview": "**Refining Search Parameters** I'm currently focusing on the precise definition of my search query, aiming to pinpoint the exact keyword spoken by the designated individual on the target date within the Google Drive repository. The goal is ...",
+        "responseChars": 1758,
+        "inputTokens": 263,
+        "outputTokens": 652,
+        "cachedTokens": 0,
+        "totalTokens": 915,
+        "estimatedCostUsd": 0.010438
+      }
+    },
+    {
+      "ts": "2026-04-20T16:02:21.630Z",
+      "level": "info",
+      "event": "tool_call",
+      "message": "Tool called in telemetry_fallback: retrieve_drive_keyword",
+      "data": {
+        "stage": "telemetry_fallback",
+        "toolName": "retrieve_drive_keyword",
+        "callDetails": "synthetic=true; source=missing_tool_call_telemetry"
+      }
+    },
+    {
+      "ts": "2026-04-20T16:02:21.632Z",
+      "level": "info",
+      "event": "model_result",
+      "message": "Model result (parsed)",
+      "data": {
+        "query": "rollback",
+        "speaker": "Avery",
+        "date": "2026-04-10",
+        "matches": "2 item(s)"
+      }
+    },
+    {
+      "ts": "2026-04-20T16:02:21.632Z",
+      "level": "info",
+      "event": "evaluation_human",
+      "message": "Evaluation summary",
+      "data": {
+        "overallPass": true,
+        "toolPass": true,
+        "outputValidation": "expected-result",
+        "outputPass": true,
+        "expectedPass": true
+      }
+    },
+    {
+      "ts": "2026-04-20T16:02:21.633Z",
+      "level": "info",
+      "event": "run_finished",
+      "message": "Benchmark run finished",
+      "data": {
+        "status": "passed",
+        "didFailTest": false,
+        "inputTokens": 263,
+        "outputTokens": 652,
+        "cachedTokens": 0,
+        "totalTokens": 915,
+        "estimatedCostUsd": 0.010438
+      }
+    }
+  ],
+  "evaluation": {
+    "benchmarkId": "4_drive_keyword_retrieval",
+    "overallPass": true,
+    "toolEval": {
+      "pass": true,
+      "details": [
+        {
+          "groupId": "keyword-retrieval",
+          "required": true,
+          "expectedAnyOf": [
+            "retrieve_drive_keyword"
+          ],
+          "matched": [
+            "retrieve_drive_keyword"
+          ],
+          "pass": true,
+          "note": "Agent should retrieve keyword matches in regular mode. Fallback: provider omitted tool-call telemetry."
+        }
+      ],
+      "calledToolNames": [
+        "retrieve_drive_keyword"
+      ]
+    },
+    "fuzzyEval": {
+      "pass": true,
+      "score": 1,
+      "details": [
+        {
+          "checkId": "result-fields",
+          "requiredMinMatches": 1,
+          "matchedCount": 4,
+          "matchedTerms": [
+            "query",
+            "speaker",
+            "date",
+            "matches"
+          ],
+          "pass": true,
+          "weight": 1
+        }
+      ]
+    },
+    "numericMentions": 18,
+    "numericGatePass": true,
+    "schemaPass": true,
+    "parsed": {
+      "query": "rollback",
+      "speaker": "Avery",
+      "date": "2026-04-10",
+      "matches": [
+        {
+          "fileId": "drive-file-001",
+          "fileName": "Team Sync - 2026-04-10",
+          "excerpt": "Avery : If metrics degrade after deploy, we will rollback within 30 minutes."
+        },
+        {
+          "fileId": "drive-file-002",
+          "fileName": "Incident Review Notes",
+          "excerpt": "Avery: Document the rollback trigger and notify support before executing."
+        }
+      ]
+    },
+    "expectedEval": {
+      "pass": true,
+      "details": {
+        "queryPass": true,
+        "speakerPass": true,
+        "datePass": true,
+        "matchedFileIds": [
+          "drive-file-001",
+          "drive-file-002"
+        ],
+        "expected": {
+          "query": "rollback",
+          "speaker": "Avery",
+          "date": "2026-04-10",
+          "matches": [
+            {
+              "fileId": "drive-file-001",
+              "fileName": "Team Sync - 2026-04-10",
+              "excerpt": "Avery: If metrics degrade after deploy, we will rollback within 30 minutes."
+            },
+            {
+              "fileId": "drive-file-002",
+              "fileName": "Incident Review Notes",
+              "excerpt": "Avery: Document the rollback trigger and notify support before executing."
+            }
+          ]
+        }
+      }
+    }
+  },
+  "runFinishedAt": "2026-04-20T16:02:21.633Z"
+}

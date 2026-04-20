@@ -1,0 +1,113 @@
+{
+  "benchmarkId": "5_calendar_timezone_scheduling",
+  "scenarioNumber": 5,
+  "mode": "regular",
+  "model": "openai/gpt-5.4-mini",
+  "pairId": "caec58c8367f",
+  "runId": "c5bf4096286d",
+  "runStartedAt": "2026-04-20T13:52:46.928Z",
+  "status": "failed",
+  "didFailTest": true,
+  "pricing": {
+    "inputPerMillionUsd": 0.75,
+    "outputPerMillionUsd": 4.5,
+    "cachedInputPerMillionUsd": 0
+  },
+  "usage": {
+    "inputTokens": 481,
+    "outputTokens": 28,
+    "cachedTokens": 0,
+    "totalTokens": 509,
+    "estimatedCostUsd": 0.000487
+  },
+  "modelResponses": [
+    {
+      "stage": "discovery",
+      "text": "",
+      "usage": {
+        "inputTokens": 481,
+        "outputTokens": 28,
+        "cachedTokens": 0,
+        "totalTokens": 509,
+        "estimatedCostUsd": 0.000487
+      }
+    }
+  ],
+  "toolCalls": [
+    {
+      "stage": "discovery",
+      "name": "discover_tools",
+      "arguments": {
+        "toolNames": [
+          "get_current_datetime",
+          "list_transactions_in_window"
+        ]
+      }
+    }
+  ],
+  "events": [
+    {
+      "ts": "2026-04-20T13:52:46.931Z",
+      "level": "info",
+      "event": "run_start",
+      "message": "Scenario 5 regular benchmark started",
+      "data": {
+        "benchmarkId": "5_calendar_timezone_scheduling",
+        "model": "openai/gpt-5.4-mini",
+        "modelCallTimeoutMs": 120000
+      }
+    },
+    {
+      "ts": "2026-04-20T13:52:52.418Z",
+      "level": "info",
+      "event": "model_response",
+      "message": "Model response captured for discovery",
+      "data": {
+        "responsePreview": "",
+        "responseChars": 0,
+        "inputTokens": 481,
+        "outputTokens": 28,
+        "cachedTokens": 0,
+        "totalTokens": 509,
+        "estimatedCostUsd": 0.000487
+      }
+    },
+    {
+      "ts": "2026-04-20T13:52:52.422Z",
+      "level": "info",
+      "event": "tool_call",
+      "message": "Tool called in discovery: discover_tools",
+      "data": {
+        "stage": "discovery",
+        "toolName": "discover_tools",
+        "callDetails": "tool names=get_current_datetime, list_transactions_in_window"
+      }
+    },
+    {
+      "ts": "2026-04-20T13:52:53.063Z",
+      "level": "error",
+      "event": "run_failed",
+      "message": "Scenario 5 regular benchmark failed",
+      "data": {
+        "error": "Provider returned error"
+      }
+    },
+    {
+      "ts": "2026-04-20T13:52:53.064Z",
+      "level": "info",
+      "event": "run_finished",
+      "message": "Benchmark run finished",
+      "data": {
+        "status": "failed",
+        "didFailTest": true,
+        "inputTokens": 481,
+        "outputTokens": 28,
+        "cachedTokens": 0,
+        "totalTokens": 509,
+        "estimatedCostUsd": 0.000487
+      }
+    }
+  ],
+  "runFinishedAt": "2026-04-20T13:52:53.064Z",
+  "error": "Provider returned error"
+}

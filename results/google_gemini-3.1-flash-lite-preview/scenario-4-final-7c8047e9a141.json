@@ -1,0 +1,23 @@
+{
+  "benchmarkId": "4_drive_keyword_retrieval",
+  "scenarioNumber": 4,
+  "model": "google/gemini-3.1-flash-lite-preview",
+  "pairId": "7c8047e9a141",
+  "runId": "098362fe20ed",
+  "createdAt": "2026-04-20T13:56:28.087Z",
+  "winner": "regular",
+  "reasons": [
+    "regular: didFail=true, tokens=900, costUsd=0.000475",
+    "code-mode: didFail=true, tokens=960, costUsd=0.000249"
+  ],
+  "regular": {
+    "didFailTest": true,
+    "totalTokens": 900,
+    "estimatedCostUsd": 0.000475
+  },
+  "codeMode": {
+    "didFailTest": true,
+    "totalTokens": 960,
+    "estimatedCostUsd": 0.000249
+  }
+}

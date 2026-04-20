@@ -1,0 +1,23 @@
+{
+  "benchmarkId": "2_playwright_ui_audit",
+  "scenarioNumber": 2,
+  "model": "google/gemini-3.1-flash-lite-preview",
+  "pairId": "f26d70a9c88b",
+  "runId": "0c504f60ad76",
+  "createdAt": "2026-04-20T13:55:50.280Z",
+  "winner": "regular",
+  "reasons": [
+    "regular: didFail=false, tokens=868, costUsd=0.000505",
+    "code-mode: didFail=true, tokens=5636, costUsd=0.001847"
+  ],
+  "regular": {
+    "didFailTest": false,
+    "totalTokens": 868,
+    "estimatedCostUsd": 0.000505
+  },
+  "codeMode": {
+    "didFailTest": true,
+    "totalTokens": 5636,
+    "estimatedCostUsd": 0.001847
+  }
+}

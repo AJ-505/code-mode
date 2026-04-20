@@ -7,6 +7,7 @@ import {
   writeScenarioFinalComparison,
 } from "../../lib/benchmark-logger.js";
 import { type Model, openrouter } from "../../lib/chat-generation.js";
+import { env } from "../../env.js";
 import { extractResponseText, isInvalidFinalResponseError } from "../../lib/openrouter-response.js";
 import {
   discoverTools,
@@ -24,12 +25,16 @@ const cleanToolName = (value: string) =>
 
 export async function runScenario5Regular(model: Model = defaultScenario5Model) {
   registerProgressiveTools([...benchmark5Tools]);
+  const regularToolStrategy = env.REGULAR_TOOL_STRATEGY;
+  const useProgressiveDiscovery = regularToolStrategy === "progressive-discovery";
 
   const runId = createRunId();
-  const pairId = await getOrCreateBenchmarkPairId({
-    scenarioNumber: scenario5Number,
-    model,
-  });
+  const pairId = useProgressiveDiscovery
+    ? await getOrCreateBenchmarkPairId({
+        scenarioNumber: scenario5Number,
+        model,
+      })
+    : createRunId();
 
   let state = createInitialState();
 
@@ -37,18 +42,144 @@ export async function runScenario5Regular(model: Model = defaultScenario5Model) 
     benchmarkId: scenario5BenchmarkId,
     scenarioNumber: scenario5Number,
     mode: "regular",
+    regularToolStrategy,
     model,
     pairId,
     runId,
     pricing: BenchmarkLogger.getDefaultPricing(),
   });
+  logger.printBenchmarkHeader();
 
   try {
     logger.info("run_start", "Scenario 5 regular benchmark started", {
       benchmarkId: scenario5BenchmarkId,
       model,
+      regularToolStrategy,
       modelCallTimeoutMs,
     });
+
+    if (!useProgressiveDiscovery) {
+      const executionSystemPrompt = `${PROMPTS.systemPromptFullToolContext}\nUse propose_cross_timezone_slot and return strict JSON with keys: proposedStartIso, proposedEndIso, localTimezone, boliviaTimezone, rationale.`;
+      logger.logPrompts("execution", {
+        systemPrompt: executionSystemPrompt,
+        userPrompt: PROMPTS.scenario5,
+      });
+
+      const execution = openrouter.callModel({
+        model,
+        input: [
+          {
+            role: "system",
+            content: executionSystemPrompt,
+          },
+          { role: "user", content: PROMPTS.scenario5 },
+        ],
+        tools: benchmark5Tools,
+        stopWhen: stepCountIs(4),
+        temperature: 0,
+      });
+
+      let finalText = "";
+      let executionUsage: Parameters<BenchmarkLogger["addModelResponse"]>[2] = undefined;
+      try {
+        const executionResponse = await withTimeout(
+          "scenario5 regular full-tool-context response",
+          execution.getResponse(),
+          modelCallTimeoutMs
+        );
+        finalText = extractResponseText(executionResponse);
+        executionUsage = executionResponse.usage;
+      } catch (error) {
+        if (!isInvalidFinalResponseError(error)) throw error;
+        logger.info(
+          "execution_response_empty",
+          "Execution response had empty final output; continuing with empty final text",
+          {
+            error: error instanceof Error ? error.message : String(error),
+          }
+        );
+      }
+      logger.addModelResponse("execution", finalText, executionUsage);
+
+      const executionCallsRaw = await withTimeout(
+        "scenario5 regular full-tool-context tool calls",
+        execution.getToolCalls(),
+        modelCallTimeoutMs
+      );
+      const executionCalls = executionCallsRaw.map((call) => ({
+        name: cleanToolName(call.name),
+        arguments: call.arguments,
+      }));
+      logger.addToolCalls("execution", executionCalls);
+
+      const calledToolNames = executionCalls.map((call) => call.name);
+      const evaluation = evaluateScenario5Run({
+        mode: "regular",
+        regularToolStrategy,
+        calledToolNames,
+        finalText,
+      });
+
+      if (
+        !evaluation.overallPass &&
+        evaluation.schemaPass === true &&
+        evaluation.expectedEval.pass &&
+        calledToolNames.length === 0
+      ) {
+        const syntheticToolNames = [
+          ...new Set(
+            evaluation.toolEval.details
+              .filter((detail) => detail.required && detail.matched.length === 0)
+              .map((detail) => detail.expectedAnyOf[0])
+              .filter((name): name is string => typeof name === "string")
+          ),
+        ];
+
+        if (syntheticToolNames.length > 0) {
+          evaluation.toolEval = {
+            ...evaluation.toolEval,
+            pass: true,
+            calledToolNames: syntheticToolNames,
+            details: evaluation.toolEval.details.map((detail) => ({
+              ...detail,
+              matched:
+                detail.required && detail.expectedAnyOf.length > 0
+                  ? [detail.expectedAnyOf[0] as string]
+                  : detail.matched,
+              pass: detail.required ? true : detail.pass,
+              note: detail.note
+                ? `${detail.note} Fallback: provider omitted tool-call telemetry.`
+                : "Fallback: provider omitted tool-call telemetry.",
+            })),
+          };
+          evaluation.overallPass =
+            evaluation.toolEval.pass &&
+            evaluation.fuzzyEval.pass &&
+            evaluation.numericGatePass &&
+            evaluation.schemaPass &&
+            evaluation.expectedEval.pass;
+
+          logger.addToolCalls(
+            "telemetry_fallback",
+            syntheticToolNames.map((name) => ({
+              name,
+              arguments: {
+                synthetic: true,
+                source: "missing_tool_call_telemetry",
+              },
+            }))
+          );
+        }
+      }
+
+      logger.setEvaluation(evaluation as unknown as Record<string, unknown>);
+      logger.finish({ didFailTest: !evaluation.overallPass });
+      logger.printBenchmarkSummary();
+
+      const logPath = await logger.writeToFile();
+      console.log(`scenario5_regular_log_file=${logPath}`);
+      return;
+    }
 
     const discovery = openrouter.callModel({
       model,
@@ -183,11 +314,16 @@ export async function runScenario5Regular(model: Model = defaultScenario5Model) 
 
     const evaluation = evaluateScenario5Run({
       mode: "regular",
+      regularToolStrategy,
       calledToolNames,
       finalText,
     });
 
-    if (!evaluation.overallPass && evaluation.schemaPass === true) {
+    if (
+      !evaluation.overallPass &&
+      evaluation.schemaPass === true &&
+      evaluation.expectedEval.pass
+    ) {
       const syntheticToolNames = [
         ...new Set(
           evaluation.toolEval.details
@@ -222,7 +358,8 @@ export async function runScenario5Regular(model: Model = defaultScenario5Model) 
           evaluation.toolEval.pass &&
           evaluation.fuzzyEval.pass &&
           evaluation.numericGatePass &&
-          evaluation.schemaPass;
+          evaluation.schemaPass &&
+          evaluation.expectedEval.pass;
 
         logger.addToolCalls(
           "telemetry_fallback",
@@ -244,6 +381,7 @@ export async function runScenario5Regular(model: Model = defaultScenario5Model) 
 
     logger.setEvaluation(evaluation as unknown as Record<string, unknown>);
     logger.finish({ didFailTest: !evaluation.overallPass });
+    logger.printBenchmarkSummary();
 
     const logPath = await logger.writeToFile();
     await markBenchmarkPairLog({
@@ -283,6 +421,7 @@ export async function runScenario5Regular(model: Model = defaultScenario5Model) 
       error: error instanceof Error ? error.message : String(error),
     });
     logger.finish({ didFailTest: true, error: error instanceof Error ? error.message : String(error) });
+    logger.printBenchmarkSummary();
     await logger.writeToFile();
     throw error;
   }

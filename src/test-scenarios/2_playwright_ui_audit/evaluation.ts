@@ -2,6 +2,8 @@ import {
   evaluateBenchmarkRun,
   type BenchmarkEvaluationSpec,
 } from "../../lib/benchmark-evaluation.js";
+import type { RegularToolStrategy } from "../../lib/benchmark-logger.js";
+import { getScenario2ExpectedResult } from "./data.js";
 import { scenario2ResultSchema } from "./types.js";
 
 export const scenario2EvaluationSpec: BenchmarkEvaluationSpec = {
@@ -44,6 +46,13 @@ export const scenario2CodeModeEvaluationSpec: BenchmarkEvaluationSpec = {
   minNumericMentions: 0,
 };
 
+const scenario2NoDiscoveryEvaluationSpec: BenchmarkEvaluationSpec = {
+  ...scenario2EvaluationSpec,
+  expectedToolGroups: scenario2EvaluationSpec.expectedToolGroups.filter(
+    (group) => group.id !== "progressive-discovery"
+  ),
+};
+
 function extractJsonObject(text: string): Record<string, unknown> | null {
   const trimmed = text.trim();
 
@@ -64,8 +73,25 @@ function extractJsonObject(text: string): Record<string, unknown> | null {
     }
   }
 
+  const firstBrace = text.indexOf("{");
+  const lastBrace = text.lastIndexOf("}");
+  if (firstBrace >= 0 && lastBrace > firstBrace) {
+    try {
+      return JSON.parse(text.slice(firstBrace, lastBrace + 1)) as Record<string, unknown>;
+    } catch {
+      return null;
+    }
+  }
+
   return null;
 }
+
+const normalizeText = (value: string) =>
+  value
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 
 function normalizeScenario2ResultShape(value: Record<string, unknown>) {
   const findings = Array.isArray(value.findings) ? value.findings : [];
@@ -94,11 +120,14 @@ export function evaluateScenario2Run(options: {
   mode: "regular" | "code-mode";
   calledToolNames: string[];
   finalText: string;
+  regularToolStrategy?: RegularToolStrategy;
 }) {
   const spec =
     options.mode === "code-mode"
       ? scenario2CodeModeEvaluationSpec
-      : scenario2EvaluationSpec;
+      : options.regularToolStrategy === "full-tool-context"
+        ? scenario2NoDiscoveryEvaluationSpec
+        : scenario2EvaluationSpec;
 
   const base = evaluateBenchmarkRun({
     calledToolNames: options.calledToolNames,
@@ -111,11 +140,53 @@ export function evaluateScenario2Run(options: {
   const schemaResult = normalized
     ? scenario2ResultSchema.safeParse(normalized)
     : null;
+  const expected = getScenario2ExpectedResult();
+  const parsedResult = schemaResult?.success ? schemaResult.data : null;
+
+  const summaryText = normalizeText(parsedResult?.summary ?? "");
+  const summaryPass =
+    summaryText.includes("hierarchy") &&
+    (summaryText.includes("accessibility") || summaryText.includes("focus"));
+
+  const hasHierarchyFinding =
+    parsedResult?.findings.some((finding) => {
+      const haystack = normalizeText(
+        `${finding.title} ${finding.description} ${finding.suggestedFix}`
+      );
+      return finding.severity === "medium" && haystack.includes("hierarchy");
+    }) ?? false;
+
+  const hasFocusFinding =
+    parsedResult?.findings.some((finding) => {
+      const haystack = normalizeText(
+        `${finding.title} ${finding.description} ${finding.suggestedFix}`
+      );
+      return finding.severity === "low" && haystack.includes("focus");
+    }) ?? false;
+
+  const expectedEval = {
+    pass:
+      parsedResult?.siteUrl === expected.siteUrl &&
+      summaryPass &&
+      hasHierarchyFinding &&
+      hasFocusFinding,
+    details: {
+      siteUrlPass: parsedResult?.siteUrl === expected.siteUrl,
+      summaryPass,
+      hasHierarchyFinding,
+      hasFocusFinding,
+      expected,
+    },
+  };
 
   return {
     ...base,
     schemaPass: schemaResult?.success === true,
-    parsed: schemaResult?.success ? schemaResult.data : null,
-    overallPass: base.overallPass && schemaResult?.success === true,
+    parsed: parsedResult,
+    expectedEval,
+    overallPass:
+      base.overallPass &&
+      schemaResult?.success === true &&
+      expectedEval.pass,
   };
 }

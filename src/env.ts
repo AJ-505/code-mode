@@ -15,6 +15,9 @@ export const envSchema = z.object({
   DATABASE_URL: z.string().min(10),
   BENCHMARK_MODEL_TIMEOUT_MS: numberFromEnv(240_000, z.number().int().positive()),
   MODEL: z.string().min(1).default("openrouter/free"),
+  REGULAR_TOOL_STRATEGY: z
+    .enum(["progressive-discovery", "full-tool-context"])
+    .default("progressive-discovery"),
   INPUT_COST_PER_MILLION_USD: numberFromEnv(0, z.number().nonnegative()),
   OUTPUT_COST_PER_MILLION_USD: numberFromEnv(0, z.number().nonnegative()),
   CACHED_INPUT_COST_PER_MILLION_USD: numberFromEnv(0, z.number().nonnegative()),

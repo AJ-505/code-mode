@@ -1,0 +1,23 @@
+{
+  "benchmarkId": "6_github_repo_change_pr",
+  "scenarioNumber": 6,
+  "model": "openrouter/free",
+  "pairId": "f66cebf88ceb",
+  "runId": "295419cf4952",
+  "createdAt": "2026-04-20T13:47:11.192Z",
+  "winner": "regular",
+  "reasons": [
+    "regular: didFail=false, tokens=2051, costUsd=0.010603",
+    "code-mode: didFail=true, tokens=4390, costUsd=0.026937"
+  ],
+  "regular": {
+    "didFailTest": false,
+    "totalTokens": 2051,
+    "estimatedCostUsd": 0.010603
+  },
+  "codeMode": {
+    "didFailTest": true,
+    "totalTokens": 4390,
+    "estimatedCostUsd": 0.026937
+  }
+}
